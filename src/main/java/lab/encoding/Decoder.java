@@ -9,7 +9,7 @@ public class Decoder {
         float result = 0;
         switch (GeneticUtils.ENCODING) {
             case GRAY -> result = decodeGray(toDecode);
-            case BINARY -> result = decodeBinary(toDecode);
+            case STANDARD -> result = decodeStandard(toDecode);
         }
 
         if (fitnessFunction == FitnessFunction.F2)
@@ -18,7 +18,7 @@ public class Decoder {
         return Math.round(result) / 100.;
     }
 
-    private static float decodeBinary(String toDecode) {
+    private static float decodeStandard(String toDecode) {
         char[] bits = toDecode.toCharArray();
         float res = 0;
         for (int i = bits.length - 1, j = 0; i >= 0; i--, j++) {

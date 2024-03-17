@@ -16,7 +16,7 @@ public class Encoder {
 
         switch (encoding) {
             case GRAY -> result.append(encodeGray(toEncode));
-            case BINARY -> result.append(encodeBinary(toEncode));
+            case STANDARD -> result.append(encodeStandard(toEncode));
         }
 
         int diff = ENCODING_LENGTH - result.length();
@@ -27,14 +27,14 @@ public class Encoder {
         return result.toString();
     }
 
-    private static String encodeBinary(float number) {
+    private static String encodeStandard(float number) {
         return Integer.toBinaryString((Math.round(number * 100)));
     }
 
     private static String encodeGray(float number) {
-        String binary = encodeBinary(number);
+        String standardBinary = encodeStandard(number);
         StringBuilder gray = new StringBuilder();
-        char[] bits = binary.toCharArray();
+        char[] bits = standardBinary.toCharArray();
 
         gray.append(bits[0]);
         for (int i = 1; i < bits.length; i++) {
@@ -51,6 +51,6 @@ public class Encoder {
     public static void main(String[] args) {
         float toEncode = 2.52f;
         System.out.println(encodeGray(toEncode));
-        System.out.println(encodeBinary(toEncode));
+        System.out.println(encodeStandard(toEncode));
     }
 }

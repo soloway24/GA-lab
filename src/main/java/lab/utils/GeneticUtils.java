@@ -15,8 +15,9 @@ public class GeneticUtils {
 
     public static final int ENCODING_LENGTH = 10;
     public static List<Float> SELECTION_PROBABILITY = List.of(0.95f, 0.9f, 0.8f, 0.75f);
-    //public static List<Integer> POPULATION_SIZE = List.of(10);
-    public static List<Integer> POPULATION_SIZE = List.of(200, 500);
+    public static List<Integer> POPULATION_SIZES = List.of(10);
+//    public static List<Integer> POPULATION_SIZES = List.of(100);
+//    public static List<Integer> POPULATION_SIZES = List.of(200, 500);
     public static float P_SWAP = 0.9f;
 
     public static int N = 100;
@@ -54,7 +55,7 @@ public class GeneticUtils {
     }
 
     public static void main(String[] args) {
-        GeneticUtils.ENCODING = Encoding.BINARY;
+        GeneticUtils.ENCODING = Encoding.STANDARD;
         FitnessFunction func = FitnessFunction.F2;
         Individual best = func.getBest();
 

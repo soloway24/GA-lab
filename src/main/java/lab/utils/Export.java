@@ -112,7 +112,7 @@ public class Export {
             theDir1.mkdirs();
         }
 
-        drawHistogram(data.ones, exportPath, "count_ones", 0, GeneticUtils.FITNESS_FUNCTION.getL());
+        drawHistogram(data.ones, exportPath, "count_ones", 0, GeneticUtils.FITNESS_FUNCTION.getLength());
         if (GeneticUtils.FITNESS_FUNCTION == FitnessFunction.F1 || GeneticUtils.FITNESS_FUNCTION == FitnessFunction.F2) {
             drawHistogram(data.fitness, exportPath, "fitness", GeneticUtils.FITNESS_FUNCTION.getMin(), GeneticUtils.FITNESS_FUNCTION.getMax());
             drawHistogram(data.phenotypes, exportPath, "phenotypes", GeneticUtils.FITNESS_FUNCTION.getMinX(), GeneticUtils.FITNESS_FUNCTION.getMaxX());

@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum Encoding {
-    BINARY("Binary"),
+    STANDARD("Standard"),
     GRAY("Gray");
 
     private final String outPath;
