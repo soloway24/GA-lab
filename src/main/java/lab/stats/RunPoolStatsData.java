@@ -5,14 +5,14 @@ import lab.parameters.ContestType;
 import lab.parameters.Encoding;
 import lab.parameters.FitnessFunction;
 import lab.parameters.GeneticOperatorsApplication;
-import lab.utils.*;
+import lab.utils.GeneticUtils;
 
 public class RunPoolStatsData {
-    public int Min_NI, Max_NI ;
+    public int Min_NI, Max_NI;
 
-    public int nSuccessfulRuns, NI_I_min, NI_I_max = 0;
-    public double Avg_NI = 0,Sigma_NI, Suc = 0, Min_I_min = 0, Max_I_max = 0, Avg_I_min = 0, Avg_I_max = 0, Avg_I_avg = 0;
-    public double Sigma_I_max = 0, Sigma_I_min = 0, Sigma_I_avg = 0;
+    public int nSuccessfulRuns, NI_I_min, NI_I_max;
+    public double Avg_NI, Sigma_NI, Suc, Min_I_min, Max_I_max, Avg_I_min, Avg_I_max, Avg_I_avg;
+    public double Sigma_I_max, Sigma_I_min, Sigma_I_avg;
 
     public double Min_GR_early, Max_GR_early, Avg_GR_early;
     public double Min_GR_late, Max_GR_late, Avg_GR_late;

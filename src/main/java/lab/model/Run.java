@@ -10,10 +10,11 @@ import lab.parameters.GeneticOperatorsApplication;
 import lab.selection.Arena;
 import lab.stats.RunStatsData;
 import lab.stop_conditions.StopCondition;
-import lab.utils.*;
 import lombok.Getter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static lab.utils.GeneticUtils.N;
@@ -142,7 +143,7 @@ public class Run {
         double RR = countUniqueIndices(population) / (double) population.size();
         double Teta = countDuplicatedIndices(population) / (double) population.size();
         double growsRate = growsRate(population, population, iteration);
-        RunStatsData runStatsData = new RunStatsData(iteration + 1, F_avg(population), F_found(population), selectionIntensity(population, population), F_avg(population) - F_avg(population), countSigma(population), countBestIndividualEntries(population)/(double)N * 100 , growsRate, RR, Teta);
+        RunStatsData runStatsData = new RunStatsData(iteration + 1, F_avg(population), F_found(population), selectionIntensity(population, population), F_avg(population) - F_avg(population), countSigma(population), countBestIndividualEntries(population) / (double) N * 100, growsRate, RR, Teta);
         runStatsData.ones = countGenes(population);
         if (fitnessFunction == FitnessFunction.F1 || fitnessFunction == FitnessFunction.F2) {
             runStatsData.phenotypes = countPhenotypes(population);

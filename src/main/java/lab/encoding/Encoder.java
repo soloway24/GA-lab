@@ -11,8 +11,8 @@ public class Encoder {
     public static String encode(float toEncode, Encoding encoding) {
         StringBuilder result = new StringBuilder();
 
-        if(GeneticUtils.FITNESS_FUNCTION == FitnessFunction.F2)
-            toEncode+= 5.11f;
+        if (GeneticUtils.FITNESS_FUNCTION == FitnessFunction.F2)
+            toEncode += 5.11f;
 
         switch (encoding) {
             case GRAY -> result.append(encodeGray(toEncode));

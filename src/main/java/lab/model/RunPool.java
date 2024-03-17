@@ -27,10 +27,10 @@ public class RunPool {
 
     public double Min_RR_min = Float.MAX_VALUE, Max_RR_max = Float.MIN_VALUE, Avg_RR_min = Float.MAX_VALUE, Avg_RR_max = Float.MIN_VALUE, Avg_RR_avg;
     public long NI_RR_min = Long.MAX_VALUE, NI_RR_max = Long.MIN_VALUE;
-    public double Sigma_RR_max= Float.MIN_VALUE, Sigma_RR_min= Float.MAX_VALUE, Sigma_RR_avg;
+    public double Sigma_RR_max = Float.MIN_VALUE, Sigma_RR_min = Float.MAX_VALUE, Sigma_RR_avg;
 
     public double Min_Teta_min = Float.MAX_VALUE, Max_Teta_max = Float.MIN_VALUE, Avg_Teta_min = Float.MAX_VALUE, Avg_Teta_max = Float.MIN_VALUE, Avg_Teta_avg;
-    public long NI_Teta_min = Long.MAX_VALUE, NI_Teta_max= Long.MIN_VALUE;
+    public long NI_Teta_min = Long.MAX_VALUE, NI_Teta_max = Long.MIN_VALUE;
     public double Sigma_Teta_max = Float.MAX_VALUE, Sigma_Teta_min = Float.MIN_VALUE, Sigma_Teta_avg;
 
     public double Min_s_min = Float.MAX_VALUE, Max_s_max = Float.MIN_VALUE, Avg_s_min = Float.MAX_VALUE, Avg_s_max = Float.MIN_VALUE, Avg_s_avg;
@@ -90,7 +90,7 @@ public class RunPool {
                 Min_NI = run.nIterationBeforeStop;
             }
 
-            ni.add((double)run.nIterationBeforeStop);
+            ni.add((double) run.nIterationBeforeStop);
             Avg_NI += run.nIterationBeforeStop;
 
             if (run.I_max > Max_I_max) {

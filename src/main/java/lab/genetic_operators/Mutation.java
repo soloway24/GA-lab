@@ -1,8 +1,6 @@
 package lab.genetic_operators;
 
 import lab.model.Individual;
-import lab.parameters.FitnessFunction;
-import lab.utils.GeneticUtils;
 
 import java.util.List;
 import java.util.Random;
@@ -32,22 +30,22 @@ public class Mutation {
 0,00001/5
 0,000001
 */
-   public static float MUTATION_PROBABILITY;
+    public static float MUTATION_PROBABILITY;
 
-    public static void mutation(List<Individual> population){
-        for (Individual individual: population) {
+    public static void mutation(List<Individual> population) {
+        for (Individual individual : population) {
             applyMutation(individual);
         }
     }
 
     private static void applyMutation(Individual individual) {
         char[] data = individual.getData().toCharArray();
-        for(int i = 0; i < data.length; i++){
+        for (int i = 0; i < data.length; i++) {
             float value = random.nextFloat();
-            if(value > MUTATION_PROBABILITY)
+            if (value > MUTATION_PROBABILITY)
                 continue;
 
-            data[i] =  data[i] == '0' ? '1' : '0';
+            data[i] = data[i] == '0' ? '1' : '0';
         }
         individual.setData(new String(data));
     }

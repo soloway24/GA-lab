@@ -17,14 +17,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
-import static lab.utils.GeneticUtils.FITNESS_FUNCTION;
 import static lab.utils.GeneticUtils.N;
 
 public class Export {
-    private static int index = 1;
+    private static final int index = 1;
 
     public static String getRootString() {
         return Paths.get(".").toAbsolutePath().normalize().toString().replace("\\", "/") + "/stats/";
@@ -213,15 +211,15 @@ public class Export {
         row.createCell(i++).setCellValue("RR");
         row.createCell(i).setCellValue("TETA");
 
-      //  if (GeneticUtils.FITNESS_FUNCTION != FitnessFunction.F_ALL_CONST) {
-            row.createCell(i++).setCellValue("F_found");
-            row.createCell(i++).setCellValue("F_avg");
-            row.createCell(i++).setCellValue("Intensity");
-            row.createCell(i++).setCellValue("Diversity");
-            row.createCell(i++).setCellValue("Sigma");
-            row.createCell(i++).setCellValue("Percentage of best individuals");
-            row.createCell(i++).setCellValue("GR");
-     //   }
+        //  if (GeneticUtils.FITNESS_FUNCTION != FitnessFunction.F_ALL_CONST) {
+        row.createCell(i++).setCellValue("F_found");
+        row.createCell(i++).setCellValue("F_avg");
+        row.createCell(i++).setCellValue("Intensity");
+        row.createCell(i++).setCellValue("Diversity");
+        row.createCell(i++).setCellValue("Sigma");
+        row.createCell(i++).setCellValue("Percentage of best individuals");
+        row.createCell(i).setCellValue("GR");
+        //   }
     }
 
     private static void createIterationRow(Sheet sheet, int index, RunStatsData runStatsData, FitnessFunction function) {
@@ -238,7 +236,7 @@ public class Export {
             row.createCell(i++).setCellValue(runStatsData.Diversity);
             row.createCell(i++).setCellValue(runStatsData.Sigma);
             row.createCell(i++).setCellValue(runStatsData.BestPercent);
-            row.createCell(i++).setCellValue(runStatsData.GR);
+            row.createCell(i).setCellValue(runStatsData.GR);
         }
     }
 

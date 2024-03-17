@@ -8,7 +8,8 @@ public enum ContestType {
     MULTIPLE_ENTRY("with_replacement");
 
     private final String outPath;
-    ContestType(String out){
+
+    ContestType(String out) {
         outPath = out;
     }
 }

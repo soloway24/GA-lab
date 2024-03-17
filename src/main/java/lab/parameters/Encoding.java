@@ -8,7 +8,8 @@ public enum Encoding {
     GRAY("Gray");
 
     private final String outPath;
-    Encoding(String out){
+
+    Encoding(String out) {
         outPath = out;
     }
 

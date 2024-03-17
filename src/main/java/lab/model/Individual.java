@@ -17,6 +17,7 @@ public class Individual {
 
     public Individual() {
     }
+
     public Individual(String data) {
         this.data = data;
     }
