@@ -131,7 +131,7 @@ public class Run {
             RunStatsData runStatsData = new RunStatsData(iteration + 1, F_avg(parentsPool), F_found(parentsPool), selectionIntensity(population, parentsPool), s, countSigma(parentsPool), countBestIndividualEntries(parentsPool) / (double) N * 100, growsRate, RR, Teta);
             if (iteration < 5) {
                 runStatsData.ones = countGenes(population);
-                if (fitnessFunction == FitnessFunction.F1 || fitnessFunction == FitnessFunction.F2) {
+                if (fitnessFunction == FitnessFunction.QUAD || fitnessFunction == FitnessFunction.QUAD_SYM) {
                     runStatsData.phenotypes = countPhenotypes(population);
                     runStatsData.fitness = countFitnessFunction(population);
                 }
@@ -145,7 +145,7 @@ public class Run {
         double growsRate = growsRate(population, population, iteration);
         RunStatsData runStatsData = new RunStatsData(iteration + 1, F_avg(population), F_found(population), selectionIntensity(population, population), F_avg(population) - F_avg(population), countSigma(population), countBestIndividualEntries(population) / (double) N * 100, growsRate, RR, Teta);
         runStatsData.ones = countGenes(population);
-        if (fitnessFunction == FitnessFunction.F1 || fitnessFunction == FitnessFunction.F2) {
+        if (fitnessFunction == FitnessFunction.QUAD || fitnessFunction == FitnessFunction.QUAD_SYM) {
             runStatsData.phenotypes = countPhenotypes(population);
             runStatsData.fitness = countFitnessFunction(population);
         }

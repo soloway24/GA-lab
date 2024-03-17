@@ -12,7 +12,7 @@ public class Decoder {
             case STANDARD -> result = decodeStandard(toDecode);
         }
 
-        if (fitnessFunction == FitnessFunction.F2)
+        if (fitnessFunction == FitnessFunction.QUAD_SYM)
             result -= 512;
 
         return Math.round(result) / 100.;

@@ -46,17 +46,17 @@ public class GeneticUtils {
     }
 
     public static double F1(Individual individual) {
-        return Math.pow(Decoder.decode(individual.getData(), FitnessFunction.F1), 2);
+        return Math.pow(Decoder.decode(individual.getData(), FitnessFunction.QUAD), 2);
     }
 
 
     public static double F2(Individual individual) {
-        return 26.2144 - Math.pow(Decoder.decode(individual.getData(), FitnessFunction.F2), 2);
+        return 26.2144 - Math.pow(Decoder.decode(individual.getData(), FitnessFunction.QUAD_SYM), 2);
     }
 
     public static void main(String[] args) {
         GeneticUtils.ENCODING = Encoding.STANDARD;
-        FitnessFunction func = FitnessFunction.F2;
+        FitnessFunction func = FitnessFunction.QUAD_SYM;
         Individual best = func.getBest();
 
 

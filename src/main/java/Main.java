@@ -35,11 +35,12 @@ public class Main {
         List<RunPoolStatsData> all_pools = new ArrayList<>();
 
         for (Integer populationSize : POPULATION_SIZES) {
+            N = populationSize;
             List<RunPoolStatsData> n_pools = new ArrayList<>();
             for (FitnessFunction function : FitnessFunction.values()) {
                 GeneticUtils.FITNESS_FUNCTION = function;
                 Encoding[] values;
-                if (function == FitnessFunction.F1 || function == FitnessFunction.F2)
+                if (function == FitnessFunction.QUAD || function == FitnessFunction.QUAD_SYM)
                     values = Encoding.values();
                 else
                     values = new Encoding[]{Encoding.STANDARD};
@@ -59,7 +60,7 @@ public class Main {
                     }
                 }
             }
-            Export.exportRunPools(n_pools, populationSize + "_");
+            Export.exportRunPools(n_pools, N + "_");
         }
         Export.exportRunPools(all_pools, "");
     }

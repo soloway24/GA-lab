@@ -4,13 +4,32 @@ import lab.model.Individual;
 import lab.utils.GeneticUtils;
 import lombok.Getter;
 
+import static lab.model.Individual.ALL_100_ZEROS_INDIVIDUAL;
+
 @Getter
 public enum FitnessFunction {
 
-    F2(10, '0', "5.12^2 - x^2", 0, 26.2144, -5.12, 5.12, new Individual("1000000000"), new Individual("1100000000"), true),
-    F1(10, '1', "x^2", 0, 104.6529, 0, 10.23, new Individual("1111111111"), new Individual("1000000000"), true),
-    FHD(100, '0', "FHD", 0, 10000, 0, 100, new Individual("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"), null, false),
-    F_ALL_CONST(100, '0', "FConst", 0, 100, 0, 100, new Individual("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"), null, true);
+    F_ALL_CONST(100, '0', "FConst",
+            0, 100, 0, 100,
+            ALL_100_ZEROS_INDIVIDUAL,
+            null,
+            true),
+    FHD(100, '0', "FHD",
+            0, 10000, 0, 100,
+            ALL_100_ZEROS_INDIVIDUAL,
+            null,
+            false),
+    QUAD(10, '1', "x^2",
+            0, 104.6529, 0, 10.23,
+            new Individual("1111111111"),
+            new Individual("1000000000"),
+            true),
+    QUAD_SYM(10, '0', "5.12^2 - x^2",
+            0, 26.2144, -5.12, 5.12,
+            new Individual("1000000000"),
+            new Individual("1100000000"),
+            true),
+    ;
 
     private final int length;
     private final char optimal;
@@ -23,13 +42,17 @@ public enum FitnessFunction {
     private final Individual optimalGray;
     private final boolean applyOperators;
 
-    FitnessFunction(int length, char optimal, String out, double min, double max, double minX, double maxX, Individual optimalStandard, Individual optimalGray, boolean applyOperators) {
+    FitnessFunction(int length, char optimal, String out,
+                    double min, double max, double minX, double maxX,
+                    Individual optimalStandard,
+                    Individual optimalGray,
+                    boolean applyOperators) {
         this.length = length;
         this.optimal = optimal;
         this.outPath = out;
+
         this.min = min;
         this.max = max;
-
         this.minX = minX;
         this.maxX = maxX;
 

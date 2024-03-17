@@ -12,6 +12,8 @@ import java.util.Random;
 @Setter
 public class Individual {
 
+    public static final Individual ALL_100_ZEROS_INDIVIDUAL = new Individual("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
+
     private int index;
     private String data;
 
@@ -40,8 +42,8 @@ public class Individual {
         switch (function) {
             case F_ALL_CONST -> x = GeneticUtils.FconstALL(this);
             case FHD -> x = GeneticUtils.FHD(this);
-            case F1 -> x = GeneticUtils.F1(this);
-            case F2 -> x = GeneticUtils.F2(this);
+            case QUAD -> x = GeneticUtils.F1(this);
+            case QUAD_SYM -> x = GeneticUtils.F2(this);
         }
         return Math.round(x * 10000.0) / 10000.0;
     }
