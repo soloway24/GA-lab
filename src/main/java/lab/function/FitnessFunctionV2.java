@@ -26,4 +26,6 @@ public interface FitnessFunctionV2<ARG_T, RES_T extends Number> {
 
     RES_T evaluate(ARG_T x);
 
+    Optional<ARG_T> convertToX(long decimalValue);
+
 }

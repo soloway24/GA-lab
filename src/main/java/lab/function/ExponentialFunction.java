@@ -11,6 +11,7 @@ import static java.util.Optional.of;
 import static lab.model.Individual.ALL_100_ZEROS_INDIVIDUAL;
 import static lab.parameters.Encoding.GRAY;
 import static lab.parameters.Encoding.STANDARD;
+import static lab.utils.Constants.PRECISION_BASE;
 import static lab.utils.EncodingSpaceValidator.validateEncodingSpace;
 
 public class ExponentialFunction implements FitnessFunctionV2<Double, Double> {
@@ -73,6 +74,12 @@ public class ExponentialFunction implements FitnessFunctionV2<Double, Double> {
     @Override
     public Double evaluate(Double x) {
         return pow(x, exponent);
+    }
+
+    @Override
+    public Optional<Double> convertToX(long decimalValue) {
+        double scaledValue = decimalValue / pow(PRECISION_BASE, argumentPrecision);
+        return of(minX + scaledValue);
     }
 
 }

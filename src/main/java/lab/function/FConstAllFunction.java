@@ -13,6 +13,11 @@ import static lab.parameters.Encoding.STANDARD;
 
 public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
 
+    public static final FConstAllFunction F_CONST_ALL_FUNCTION = new FConstAllFunction();
+
+    private FConstAllFunction() {
+    }
+
     @Override
     public String getName() {
         return "FconstALL";
@@ -56,5 +61,10 @@ public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
     @Override
     public Integer evaluate(Number x) {
         return 100;
+    }
+
+    @Override
+    public Optional<Number> convertToX(long decimalValue) {
+        return empty();
     }
 }
