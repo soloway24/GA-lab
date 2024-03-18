@@ -1,6 +1,7 @@
 package lab.model;
 
-import lab.parameters.FitnessFunction;
+import lab.function.FitnessFunction;
+import lab.parameters.Encoding;
 import lab.utils.GeneticUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,13 +16,19 @@ public class Individual {
     public static final Individual ALL_100_ZEROS_INDIVIDUAL = new Individual("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
 
     private int index;
-    private String data;
+    private String binaryCode;
+    private Encoding encoding;
 
     public Individual() {
     }
 
-    public Individual(String data) {
-        this.data = data;
+    public Individual(String binaryCode) {
+        this.binaryCode = binaryCode;
+    }
+
+    public Individual(String binaryCode, Encoding encoding) {
+        this.binaryCode = binaryCode;
+        this.encoding = encoding;
     }
 
     public void fillRandomly(int L) {
@@ -30,11 +37,11 @@ public class Individual {
         for (int i = 0; i < L; i++) {
             sb.append(random.nextDouble() < 0.5 ? 1 : 0);
         }
-        data = sb.toString();
+        binaryCode = sb.toString();
     }
 
     public void fillWithChar(int L, char ch) {
-        data = String.valueOf(ch).repeat(Math.max(0, L));
+        binaryCode = String.valueOf(ch).repeat(Math.max(0, L));
     }
 
     public double getHealth(FitnessFunction function) {
@@ -50,19 +57,19 @@ public class Individual {
 
     @Override
     public String toString() {
-        return data;
+        return binaryCode;
     }
 
     @Override
     public Individual clone() {
         Individual clone = new Individual();
-        clone.setData(data);
+        clone.setBinaryCode(binaryCode);
         clone.setIndex(index);
         return clone;
     }
 
     public int getOnes() {
 
-        return Arrays.stream(data.split("")).mapToInt(Integer::parseInt).sum();
+        return Arrays.stream(binaryCode.split("")).mapToInt(Integer::parseInt).sum();
     }
 }

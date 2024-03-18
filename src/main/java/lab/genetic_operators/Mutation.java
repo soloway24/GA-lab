@@ -39,7 +39,7 @@ public class Mutation {
     }
 
     private static void applyMutation(Individual individual) {
-        char[] data = individual.getData().toCharArray();
+        char[] data = individual.getBinaryCode().toCharArray();
         for (int i = 0; i < data.length; i++) {
             float value = random.nextFloat();
             if (value > MUTATION_PROBABILITY)
@@ -47,7 +47,7 @@ public class Mutation {
 
             data[i] = data[i] == '0' ? '1' : '0';
         }
-        individual.setData(new String(data));
+        individual.setBinaryCode(new String(data));
     }
 
 }

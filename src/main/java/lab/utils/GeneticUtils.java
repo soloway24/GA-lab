@@ -35,7 +35,7 @@ public class GeneticUtils {
     }
 
     public static double FHD(Individual individual) {
-        char[] bits = individual.getData().toCharArray();
+        char[] bits = individual.getBinaryCode().toCharArray();
         int k = 0;
 
         for (char bit : bits) {
@@ -46,12 +46,12 @@ public class GeneticUtils {
     }
 
     public static double F1(Individual individual) {
-        return Math.pow(Decoder.decode(individual.getData(), FitnessFunction.QUAD), 2);
+        return Math.pow(Decoder.decode(individual.getBinaryCode(), FitnessFunction.QUAD), 2);
     }
 
 
     public static double F2(Individual individual) {
-        return 26.2144 - Math.pow(Decoder.decode(individual.getData(), FitnessFunction.QUAD_SYM), 2);
+        return 26.2144 - Math.pow(Decoder.decode(individual.getBinaryCode(), FitnessFunction.QUAD_SYM), 2);
     }
 
     public static void main(String[] args) {
@@ -62,7 +62,7 @@ public class GeneticUtils {
 
         Individual ind = new Individual("0111111110");
         System.out.println(ind);
-        System.out.println(Decoder.decode(ind.getData(), func));
+        System.out.println(Decoder.decode(ind.getBinaryCode(), func));
         System.out.println(ind.getHealth(func));
 
         Date now = new Date();

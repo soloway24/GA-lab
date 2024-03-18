@@ -20,12 +20,12 @@ public class StopCondition {
     }
 
     private static boolean isHomogenPopulation(List<Individual> population) {
-        int l = population.get(0).getData().length();
+        int l = population.get(0).getBinaryCode().length();
         float deviation = population.size() - population.size() * HOMOGEN_PERCENTAGE;
         for (int i = 0; i < l; i++) {
             float total = 0;
             for (int j = 0; j < population.size(); j++) {
-                total += population.get(j).getData().charAt(i) - 48;
+                total += population.get(j).getBinaryCode().charAt(i) - 48;
             }
 
             float averageValue = total;

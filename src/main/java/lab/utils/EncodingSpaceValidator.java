@@ -3,10 +3,10 @@ package lab.utils;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-public class EncodingSpaceValidator {
+import static lab.utils.Constants.BINARY_BASE;
+import static lab.utils.Constants.PRECISION_BASE;
 
-    private static final int PRECISION_BASE = 10;
-    private static final int BINARY_BASE = 2;
+public class EncodingSpaceValidator {
 
     public static void validateEncodingSpace(int chromosomeLength, double minX, double maxX, int argumentPrecision) {
         if (maxX < minX) {

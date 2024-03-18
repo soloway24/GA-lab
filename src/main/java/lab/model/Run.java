@@ -253,9 +253,9 @@ public class Run {
     private int countBestIndividualEntries(List<Individual> population) {
         int total = 0;
         Individual optimal = fitnessFunction.getBest();
-        String bestValue = optimal.getData();
+        String bestValue = optimal.getBinaryCode();
         for (Individual individual : population) {
-            if (individual.getData().equals(bestValue)) {
+            if (individual.getBinaryCode().equals(bestValue)) {
                 total++;
             }
         }
@@ -298,7 +298,7 @@ public class Run {
     private boolean isOptimalPopulation() {
         Individual optimal = fitnessFunction.getBest();
         for (Individual individual : population) {
-            if (!individual.getData().equals(optimal.getData())) {
+            if (!individual.getBinaryCode().equals(optimal.getBinaryCode())) {
                 return false;
             }
         }
@@ -309,7 +309,7 @@ public class Run {
         Individual optimal = fitnessFunction.getBest();
         int counter = 0;
         for (Individual individual : population) {
-            if (individual.getData().equals(optimal.getData())) {
+            if (individual.getBinaryCode().equals(optimal.getBinaryCode())) {
                 counter++;
             }
         }
@@ -322,7 +322,7 @@ public class Run {
 
 
     private List<Double> countPhenotypes(List<Individual> population) {
-        return population.stream().map(entry -> Decoder.decode(entry.getData(), fitnessFunction)).collect(Collectors.toList());
+        return population.stream().map(entry -> Decoder.decode(entry.getBinaryCode(), fitnessFunction)).collect(Collectors.toList());
     }
 
     private List<Double> countFitnessFunction(List<Individual> population) {

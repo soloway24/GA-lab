@@ -29,8 +29,8 @@ public class Crossover {
     }
 
     private static void applyCrossover(Individual individual1, Individual individual2) {
-        String data1 = individual1.getData();
-        String data2 = individual2.getData();
+        String data1 = individual1.getBinaryCode();
+        String data2 = individual2.getBinaryCode();
 
         int crossIndex = new Random().nextInt(data1.length());
 
@@ -40,7 +40,7 @@ public class Crossover {
         String data2Left = data2.substring(0, crossIndex);
         String data2Right = data2.substring(crossIndex);
 
-        individual1.setData(data1Left + data2Right);
-        individual2.setData(data2Left + data1Right);
+        individual1.setBinaryCode(data1Left + data2Right);
+        individual2.setBinaryCode(data2Left + data1Right);
     }
 }
