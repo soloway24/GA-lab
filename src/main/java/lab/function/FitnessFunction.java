@@ -1,6 +1,7 @@
-package lab.parameters;
+package lab.function;
 
 import lab.model.Individual;
+import lab.parameters.Encoding;
 import lab.utils.GeneticUtils;
 import lombok.Getter;
 

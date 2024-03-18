@@ -2,7 +2,7 @@ package lab.model;
 
 import lab.parameters.ContestType;
 import lab.parameters.Encoding;
-import lab.parameters.FitnessFunction;
+import lab.function.FitnessFunction;
 import lab.parameters.GeneticOperatorsApplication;
 import lombok.Getter;
 

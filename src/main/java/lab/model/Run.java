@@ -5,7 +5,7 @@ import lab.genetic_operators.Crossover;
 import lab.genetic_operators.Mutation;
 import lab.parameters.ContestType;
 import lab.parameters.Encoding;
-import lab.parameters.FitnessFunction;
+import lab.function.FitnessFunction;
 import lab.parameters.GeneticOperatorsApplication;
 import lab.selection.Arena;
 import lab.stats.RunStatsData;

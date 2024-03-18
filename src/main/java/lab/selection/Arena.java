@@ -2,7 +2,7 @@ package lab.selection;
 
 import lab.model.Individual;
 import lab.parameters.ContestType;
-import lab.parameters.FitnessFunction;
+import lab.function.FitnessFunction;
 import lab.utils.GeneticUtils;
 
 import java.util.ArrayList;

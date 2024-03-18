@@ -4,7 +4,7 @@ import lab.encoding.Decoder;
 import lab.model.Individual;
 import lab.parameters.ContestType;
 import lab.parameters.Encoding;
-import lab.parameters.FitnessFunction;
+import lab.function.FitnessFunction;
 import lab.parameters.GeneticOperatorsApplication;
 
 import java.util.Date;

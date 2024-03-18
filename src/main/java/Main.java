@@ -3,7 +3,7 @@ import lab.model.Individual;
 import lab.model.RunPool;
 import lab.parameters.ContestType;
 import lab.parameters.Encoding;
-import lab.parameters.FitnessFunction;
+import lab.function.FitnessFunction;
 import lab.parameters.GeneticOperatorsApplication;
 import lab.stats.RunPoolStatsData;
 import lab.utils.Export;

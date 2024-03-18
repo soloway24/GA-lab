@@ -5,7 +5,7 @@ import com.github.sh0nk.matplotlib4j.PythonExecutionException;
 import com.github.sh0nk.matplotlib4j.builder.HistBuilder;
 import lab.model.Run;
 import lab.model.RunPool;
-import lab.parameters.FitnessFunction;
+import lab.function.FitnessFunction;
 import lab.stats.RunPoolStatsData;
 import lab.stats.RunStatsData;
 import org.apache.poi.ss.usermodel.Row;

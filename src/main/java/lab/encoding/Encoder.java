@@ -1,7 +1,7 @@
 package lab.encoding;
 
 import lab.parameters.Encoding;
-import lab.parameters.FitnessFunction;
+import lab.function.FitnessFunction;
 import lab.utils.GeneticUtils;
 
 import static lab.utils.GeneticUtils.ENCODING_LENGTH;
