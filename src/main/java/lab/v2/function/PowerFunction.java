@@ -6,11 +6,12 @@ import lab.v2.parameters.OperatorsApplicationType;
 import lab.v2.population.PopulationConfiguration;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.Math.pow;
 import static java.util.Optional.of;
-import static lab.model.Individual.ALL_100_ZEROS_INDIVIDUAL;
+import static java.util.Optional.ofNullable;
 import static lab.parameters.Encoding.GRAY;
 import static lab.parameters.Encoding.STANDARD;
 import static lab.utils.Constants.PRECISION_BASE;
@@ -18,7 +19,15 @@ import static lab.v2.parameters.OperatorsApplicationType.NONE;
 import static lab.v2.population.PopulationConfiguration.*;
 import static lab.v2.validators.EncodingSpaceValidator.validateEncodingSpace;
 
-public class ExponentialFunction implements FitnessFunctionV2<Double, Double> {
+public class PowerFunction implements FitnessFunctionV2<Double, Double> {
+
+    private static final Individual OPTIMAL_STANDARD_INDIVIDUAL = new Individual("1111111111", STANDARD);
+    private static final Individual OPTIMAL_GRAY_INDIVIDUAL = new Individual("1000000000", GRAY);
+
+    private static final Map<Encoding, Individual> ENCODING_TO_OPTIMAL = Map.of(
+            STANDARD, OPTIMAL_STANDARD_INDIVIDUAL,
+            GRAY, OPTIMAL_GRAY_INDIVIDUAL
+    );
 
     private final Integer chromosomeLength;
     private final Double minX;
@@ -26,7 +35,7 @@ public class ExponentialFunction implements FitnessFunctionV2<Double, Double> {
     private final int argumentPrecision;
     private final double exponent;
 
-    public ExponentialFunction(int chromosomeLength, double minX, double maxX, int argumentPrecision, double exponent) {
+    public PowerFunction(int chromosomeLength, double minX, double maxX, int argumentPrecision, double exponent) {
         validateEncodingSpace(chromosomeLength, minX, maxX, argumentPrecision);
         this.chromosomeLength = chromosomeLength;
         this.minX = minX;
@@ -71,8 +80,9 @@ public class ExponentialFunction implements FitnessFunctionV2<Double, Double> {
     }
 
     @Override
-    public Individual getOptimalIndividual(Encoding encoding) {
-        return ALL_100_ZEROS_INDIVIDUAL;
+    public Optional<Individual> getOptimalIndividual(Encoding encoding) {
+        return ofNullable(ENCODING_TO_OPTIMAL.get(encoding));
+
     }
 
     @Override

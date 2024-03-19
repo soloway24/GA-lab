@@ -61,8 +61,8 @@ public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
     }
 
     @Override
-    public Individual getOptimalIndividual(Encoding encoding) {
-        return ALL_100_ZEROS_INDIVIDUAL;
+    public Optional<Individual> getOptimalIndividual(Encoding encoding) {
+        return of(ALL_100_ZEROS_INDIVIDUAL);
     }
 
     @Override

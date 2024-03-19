@@ -10,11 +10,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static lab.parameters.Encoding.STANDARD;
 import static lab.v2.parameters.OperatorsApplicationType.NONE;
 import static lab.v2.population.PopulationConfiguration.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -64,9 +67,19 @@ class PopulationInitializerTest {
         testInitializeOptimalPercentagePopulation(TEN_PERCENT_OPTIMAL);
     }
 
+    @Test
+    public void whenPopulationConfigRequiresOptimalAndFunctionDoesNotSupportEncodingThenFailure() {
+        when(function.getOptimalIndividual(STANDARD)).thenReturn(empty());
+
+        RunConfiguration runConfiguration = new RunConfiguration(POPULATION_SIZE, function, NONE, ONE_OPTIMAL, STANDARD);
+
+        assertThrows(IllegalStateException.class,
+                () -> populationInitializer.initializePopulation(runConfiguration));
+    }
+
     private void testInitializeOptimalQuantityPopulation(PopulationConfiguration optimalQuantityConfig) {
         when(function.getChromosomeLength()).thenReturn(CHROMOSOME_LENGTH);
-        when(function.getOptimalIndividual(STANDARD)).thenReturn(OPTIMAL);
+        when(function.getOptimalIndividual(STANDARD)).thenReturn(of(OPTIMAL));
 
         RunConfiguration runConfiguration = new RunConfiguration(POPULATION_SIZE, function, NONE, optimalQuantityConfig, STANDARD);
 
@@ -80,7 +93,7 @@ class PopulationInitializerTest {
 
     private void testInitializeOptimalPercentagePopulation(PopulationConfiguration optimalPercentageConfig) {
         when(function.getChromosomeLength()).thenReturn(CHROMOSOME_LENGTH);
-        when(function.getOptimalIndividual(STANDARD)).thenReturn(OPTIMAL);
+        when(function.getOptimalIndividual(STANDARD)).thenReturn(of(OPTIMAL));
 
         RunConfiguration runConfiguration = new RunConfiguration(POPULATION_SIZE, function, NONE, optimalPercentageConfig, STANDARD);
 

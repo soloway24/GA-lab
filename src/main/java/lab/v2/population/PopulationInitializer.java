@@ -117,14 +117,14 @@ public class PopulationInitializer {
     }
 
     private Stream<Individual> createRandomNotOptimalIndividuals(FitnessFunctionV2<?, ?> function, Encoding encoding, int quantity) {
-        Individual optimal = function.getOptimalIndividual(encoding);
+        Individual optimal = getOptimalIndividual(function, encoding);
         return IntStream.range(0, quantity)
                 .mapToObj(i -> createNotOptimalIndividual(function.getChromosomeLength(), encoding, optimal));
     }
 
     private Stream<Individual> createOptimalIndividuals(FitnessFunctionV2<?, ?> function, Encoding encoding, int quantity) {
         return IntStream.range(0, quantity)
-                .mapToObj(i -> function.getOptimalIndividual(encoding));
+                .mapToObj(i -> getOptimalIndividual(function, encoding));
     }
 
     private Individual createNotOptimalIndividual(int chromosomeLength, Encoding encoding, Individual optimal) {
@@ -133,6 +133,12 @@ public class PopulationInitializer {
             individual = createRandomIndividual(chromosomeLength, encoding);
         } while (isOptimal(individual, optimal));
         return individual;
+    }
+
+    private Individual getOptimalIndividual(FitnessFunctionV2<?, ?> function, Encoding encoding) {
+        return function.getOptimalIndividual(encoding)
+                .orElseThrow(() -> new IllegalStateException("Function + " + function + " does not provide and optimal " +
+                        "individual for the encoding: " + encoding + " !"));
     }
 
     private boolean isOptimal(Individual individual, Individual optimal) {
