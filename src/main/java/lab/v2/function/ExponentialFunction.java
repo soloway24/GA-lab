@@ -2,6 +2,8 @@ package lab.v2.function;
 
 import lab.model.Individual;
 import lab.parameters.Encoding;
+import lab.v2.parameters.OperatorsApplicationType;
+import lab.v2.population.PopulationConfiguration;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +14,8 @@ import static lab.model.Individual.ALL_100_ZEROS_INDIVIDUAL;
 import static lab.parameters.Encoding.GRAY;
 import static lab.parameters.Encoding.STANDARD;
 import static lab.utils.Constants.PRECISION_BASE;
+import static lab.v2.parameters.OperatorsApplicationType.NONE;
+import static lab.v2.population.PopulationConfiguration.*;
 import static lab.v2.validators.EncodingSpaceValidator.validateEncodingSpace;
 
 public class ExponentialFunction implements FitnessFunctionV2<Double, Double> {
@@ -42,7 +46,7 @@ public class ExponentialFunction implements FitnessFunctionV2<Double, Double> {
     }
 
     @Override
-    public List<Encoding> getEncodings() {
+    public List<Encoding> getSupportedEncodings() {
         return List.of(STANDARD, GRAY);
     }
 
@@ -82,4 +86,12 @@ public class ExponentialFunction implements FitnessFunctionV2<Double, Double> {
         return of(minX + scaledValue);
     }
 
+    @Override
+    public List<PopulationConfiguration> getSupportedPopulationConfigurations(OperatorsApplicationType operatorsApplicationType) {
+        if (operatorsApplicationType == NONE) {
+            return List.of(ONE_OPTIMAL, FIVE_PERCENT_OPTIMAL, TEN_PERCENT_OPTIMAL);
+        }
+
+        return List.of(ZERO_OPTIMAL, ONE_OPTIMAL, FIVE_PERCENT_OPTIMAL, TEN_PERCENT_OPTIMAL);
+    }
 }

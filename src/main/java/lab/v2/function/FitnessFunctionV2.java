@@ -2,6 +2,8 @@ package lab.v2.function;
 
 import lab.model.Individual;
 import lab.parameters.Encoding;
+import lab.v2.parameters.OperatorsApplicationType;
+import lab.v2.population.PopulationConfiguration;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +14,7 @@ public interface FitnessFunctionV2<ARG_T, RES_T extends Number> {
 
     int getChromosomeLength();
 
-    List<Encoding> getEncodings();
+    List<Encoding> getSupportedEncodings();
 
     RES_T getMinFitness();
 
@@ -27,5 +29,7 @@ public interface FitnessFunctionV2<ARG_T, RES_T extends Number> {
     RES_T evaluate(ARG_T x);
 
     Optional<ARG_T> convertToX(long decimalValue);
+
+    List<PopulationConfiguration> getSupportedPopulationConfigurations(OperatorsApplicationType operatorsApplicationType);
 
 }
