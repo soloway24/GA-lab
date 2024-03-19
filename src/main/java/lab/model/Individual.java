@@ -15,6 +15,8 @@ public class Individual {
 
     public static final Individual ALL_100_ZEROS_INDIVIDUAL = new Individual("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
 
+    private static final Random RANDOM = new Random();
+
     private int index;
     private String binaryCode;
     private Encoding encoding;
@@ -29,6 +31,14 @@ public class Individual {
     public Individual(String binaryCode, Encoding encoding) {
         this.binaryCode = binaryCode;
         this.encoding = encoding;
+    }
+
+    public static Individual createRandomIndividual(int length, Encoding encoding) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            sb.append(RANDOM.nextBoolean() ? "1" : "0");
+        }
+        return new Individual(sb.toString(), encoding);
     }
 
     public void fillRandomly(int L) {
