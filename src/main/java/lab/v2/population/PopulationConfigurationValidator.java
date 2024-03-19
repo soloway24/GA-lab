@@ -2,11 +2,18 @@ package lab.v2.population;
 
 import java.math.BigDecimal;
 
+import static java.util.Optional.ofNullable;
+
 public class PopulationConfigurationValidator {
 
-    public static final PopulationConfigurationValidator POPULATION_CONFIGURATION_VALIDATOR = new PopulationConfigurationValidator();
+    private static PopulationConfigurationValidator instance;
 
     private PopulationConfigurationValidator() {
+    }
+
+    public static PopulationConfigurationValidator getInstance() {
+        return ofNullable(instance)
+                .orElse(new PopulationConfigurationValidator());
     }
 
     public void verifyOptimalQuantity(int optimalQuantity, int populationSize) {

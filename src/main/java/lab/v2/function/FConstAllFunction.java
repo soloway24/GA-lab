@@ -8,17 +8,21 @@ import lab.v2.population.PopulationConfiguration;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
+import static java.util.Optional.*;
 import static lab.model.Individual.ALL_100_ZEROS_INDIVIDUAL;
 import static lab.parameters.Encoding.STANDARD;
 import static lab.v2.population.PopulationConfiguration.RANDOM;
 
 public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
 
-    public static final FConstAllFunction F_CONST_ALL_FUNCTION = new FConstAllFunction();
+    private static FConstAllFunction instance;
 
     private FConstAllFunction() {
+    }
+
+    public static FConstAllFunction getInstance() {
+        return ofNullable(instance)
+                .orElse(new FConstAllFunction());
     }
 
     @Override

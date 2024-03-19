@@ -1,8 +1,8 @@
 package lab.v2.encoding;
 
-import lab.v2.function.FitnessFunctionV2;
 import lab.model.Individual;
 import lab.parameters.Encoding;
+import lab.v2.function.FitnessFunctionV2;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -14,7 +14,7 @@ import static lab.utils.Constants.MAX_CHROMOSOME_LENGTH;
 
 public class DecoderV2 {
 
-    public static final DecoderV2 DECODER_V2 = new DecoderV2();
+    private static DecoderV2 instance;
 
     private static final Map<Encoding, Function<String, Long>> ENCODING_TO_DECODER =
             Map.of(
@@ -23,6 +23,11 @@ public class DecoderV2 {
             );
 
     private DecoderV2() {
+    }
+
+    public static DecoderV2 getInstance() {
+        return ofNullable(instance)
+                .orElse(new DecoderV2());
     }
 
     public <ARG_T> ARG_T decodeV2(Individual individual, FitnessFunctionV2<ARG_T, ?> fitnessFunction) {

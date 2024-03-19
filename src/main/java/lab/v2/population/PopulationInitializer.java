@@ -17,12 +17,13 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.concat;
 import static lab.model.Individual.createRandomIndividual;
-import static lab.v2.population.PopulationConfigurationValidator.POPULATION_CONFIGURATION_VALIDATOR;
 import static lab.v2.population.PopulationType.*;
 
 public class PopulationInitializer {
 
-    public static final PopulationInitializer POPULATION_INITIALIZER = new PopulationInitializer();
+    private static PopulationInitializer instance;
+
+    private final PopulationConfigurationValidator populationConfigurationValidator = PopulationConfigurationValidator.getInstance();
 
     private final Map<PopulationType, Function<RunConfiguration, List<Individual>>> populationTypeToInitializer =
             Map.of(
@@ -32,6 +33,11 @@ public class PopulationInitializer {
             );
 
     private PopulationInitializer() {
+    }
+
+    public static PopulationInitializer getInstance() {
+        return ofNullable(instance)
+                .orElse(new PopulationInitializer());
     }
 
     public List<Individual> initializePopulation(RunConfiguration runConfiguration) {
@@ -66,7 +72,7 @@ public class PopulationInitializer {
                                                                            Encoding encoding,
                                                                            int populationSize,
                                                                            int optimalQuantity) {
-        POPULATION_CONFIGURATION_VALIDATOR.verifyOptimalQuantity(optimalQuantity, populationSize);
+        populationConfigurationValidator.verifyOptimalQuantity(optimalQuantity, populationSize);
 
         if (optimalQuantity == 0) {
             return initializeRandomPopulationWithoutOptimal(function, encoding, populationSize);
@@ -92,7 +98,7 @@ public class PopulationInitializer {
                                                                              Encoding encoding,
                                                                              int populationSize,
                                                                              double optimalPercentage) {
-        POPULATION_CONFIGURATION_VALIDATOR.verifyOptimalPercentage(optimalPercentage);
+        populationConfigurationValidator.verifyOptimalPercentage(optimalPercentage);
 
         int optimalQuantity = (int) (populationSize * optimalPercentage);
         return initializeRandomPopulationWithOptimalQuantity(function, encoding, populationSize, optimalQuantity);

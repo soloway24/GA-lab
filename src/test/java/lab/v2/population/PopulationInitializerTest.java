@@ -13,7 +13,6 @@ import java.util.List;
 import static lab.parameters.Encoding.STANDARD;
 import static lab.v2.parameters.OperatorsApplicationType.NONE;
 import static lab.v2.population.PopulationConfiguration.*;
-import static lab.v2.population.PopulationInitializer.POPULATION_INITIALIZER;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
@@ -25,6 +24,8 @@ class PopulationInitializerTest {
     private static final int CHROMOSOME_LENGTH = 10;
     private static final Individual OPTIMAL = new Individual("1111011110");
 
+    private final PopulationInitializer populationInitializer = PopulationInitializer.getInstance();
+
     @Mock
     private FitnessFunctionV2<Double, Double> function;
 
@@ -34,7 +35,7 @@ class PopulationInitializerTest {
 
         RunConfiguration runConfiguration = new RunConfiguration(POPULATION_SIZE, function, NONE, RANDOM, STANDARD);
 
-        List<Individual> population = POPULATION_INITIALIZER.initializePopulation(runConfiguration);
+        List<Individual> population = populationInitializer.initializePopulation(runConfiguration);
         assertThat(population, hasSize(POPULATION_SIZE));
 
         List<Individual> validIndividuals = population.stream()
@@ -69,7 +70,7 @@ class PopulationInitializerTest {
 
         RunConfiguration runConfiguration = new RunConfiguration(POPULATION_SIZE, function, NONE, optimalQuantityConfig, STANDARD);
 
-        List<Individual> population = POPULATION_INITIALIZER.initializePopulation(runConfiguration);
+        List<Individual> population = populationInitializer.initializePopulation(runConfiguration);
         assertThat(population, hasSize(POPULATION_SIZE));
 
         int optimalQuantity = getOptimalQuantity(optimalQuantityConfig);
@@ -83,7 +84,7 @@ class PopulationInitializerTest {
 
         RunConfiguration runConfiguration = new RunConfiguration(POPULATION_SIZE, function, NONE, optimalPercentageConfig, STANDARD);
 
-        List<Individual> population = POPULATION_INITIALIZER.initializePopulation(runConfiguration);
+        List<Individual> population = populationInitializer.initializePopulation(runConfiguration);
         assertThat(population, hasSize(POPULATION_SIZE));
 
         int optimalQuantity = (int) (getOptimalPercentage(optimalPercentageConfig) * POPULATION_SIZE);
