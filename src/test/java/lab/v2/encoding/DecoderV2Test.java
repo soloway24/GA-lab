@@ -1,6 +1,6 @@
-package lab.encoding;
+package lab.v2.encoding;
 
-import lab.function.FitnessFunctionV2;
+import lab.v2.function.FitnessFunctionV2;
 import lab.model.Individual;
 import lab.parameters.Encoding;
 import org.junit.jupiter.api.Test;

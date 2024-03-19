@@ -1,4 +1,4 @@
-package lab.function;
+package lab.v2.function;
 
 import lab.model.Individual;
 import lab.parameters.Encoding;
@@ -12,7 +12,7 @@ import static lab.model.Individual.ALL_100_ZEROS_INDIVIDUAL;
 import static lab.parameters.Encoding.GRAY;
 import static lab.parameters.Encoding.STANDARD;
 import static lab.utils.Constants.PRECISION_BASE;
-import static lab.utils.EncodingSpaceValidator.validateEncodingSpace;
+import static lab.v2.validators.EncodingSpaceValidator.validateEncodingSpace;
 
 public class ExponentialFunction implements FitnessFunctionV2<Double, Double> {
 

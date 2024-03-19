@@ -1,7 +1,7 @@
-package lab.population;
+package lab.v2.population;
 
-import lab.function.FitnessFunctionV2;
 import lab.model.Individual;
+import lab.v2.function.FitnessFunctionV2;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,7 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static lab.parameters.Encoding.STANDARD;
-import static lab.population.PopulationInitializer.*;
+import static lab.v2.population.PopulationInitializer.POPULATION_INITIALIZER;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,7 +34,7 @@ class PopulationInitializerTest {
 
     @Test
     public void whenInitializeRandomPopulationThenSuccess() {
-        List<Individual> population = initializeRandomPopulation(CHROMOSOME_LENGTH, STANDARD, POPULATION_SIZE);
+        List<Individual> population = POPULATION_INITIALIZER.initializeRandomPopulation(CHROMOSOME_LENGTH, STANDARD, POPULATION_SIZE);
         assertThat(population, hasSize(POPULATION_SIZE));
 
         List<Individual> validIndividuals = population.stream()
@@ -48,7 +48,7 @@ class PopulationInitializerTest {
         when(function.getChromosomeLength()).thenReturn(CHROMOSOME_LENGTH);
         when(function.getOptimalIndividual(STANDARD)).thenReturn(OPTIMAL);
 
-        List<Individual> population = initializeRandomPopulationWithoutOptimal(function, STANDARD, POPULATION_SIZE);
+        List<Individual> population = POPULATION_INITIALIZER.initializeRandomPopulationWithoutOptimal(function, STANDARD, POPULATION_SIZE);
         assertThat(population, hasSize(POPULATION_SIZE));
 
         List<Individual> notOptimalValidIndividuals = getNotOptimalValidIndividuals(population);
@@ -60,7 +60,7 @@ class PopulationInitializerTest {
         when(function.getChromosomeLength()).thenReturn(CHROMOSOME_LENGTH);
         when(function.getOptimalIndividual(STANDARD)).thenReturn(OPTIMAL);
 
-        List<Individual> population = initializeRandomPopulationWithOptimal(function, STANDARD, POPULATION_SIZE, OPTIMAL_SIZE);
+        List<Individual> population = POPULATION_INITIALIZER.initializeRandomPopulationWithOptimal(function, STANDARD, POPULATION_SIZE, OPTIMAL_SIZE);
         assertThat(population, hasSize(POPULATION_SIZE));
 
         List<Individual> notOptimalValidIndividuals = getNotOptimalValidIndividuals(population);
@@ -73,7 +73,7 @@ class PopulationInitializerTest {
         when(function.getChromosomeLength()).thenReturn(CHROMOSOME_LENGTH);
         when(function.getOptimalIndividual(STANDARD)).thenReturn(OPTIMAL);
 
-        List<Individual> population = initializeRandomPopulationWithOptimal(function, STANDARD, POPULATION_SIZE, optimalPercentage);
+        List<Individual> population = POPULATION_INITIALIZER.initializeRandomPopulationWithOptimal(function, STANDARD, POPULATION_SIZE, optimalPercentage);
         assertThat(population, hasSize(POPULATION_SIZE));
 
         int optimalSize = (int) (optimalPercentage * POPULATION_SIZE);
@@ -85,7 +85,7 @@ class PopulationInitializerTest {
     public void whenInitializeRandomPopulationWithAllOptimalPercentageThenSuccess() {
         when(function.getOptimalIndividual(STANDARD)).thenReturn(OPTIMAL);
 
-        List<Individual> population = initializeRandomPopulationWithOptimal(function, STANDARD, POPULATION_SIZE, ALL_OPTIMAL_PERCENTAGE);
+        List<Individual> population = POPULATION_INITIALIZER.initializeRandomPopulationWithOptimal(function, STANDARD, POPULATION_SIZE, ALL_OPTIMAL_PERCENTAGE);
         assertThat(population, hasSize(POPULATION_SIZE));
 
         List<Individual> notOptimalValidIndividuals = getNotOptimalValidIndividuals(population);
@@ -96,7 +96,7 @@ class PopulationInitializerTest {
     @ValueSource(doubles = {-0.01, 1.01})
     public void whenInitializeRandomPopulationWithOptimalWithInvalidPercentageThenFailure(double invalidOptimalPercentage) {
         assertThrows(IllegalArgumentException.class,
-                () -> initializeRandomPopulationWithOptimal(function, STANDARD, POPULATION_SIZE, invalidOptimalPercentage),
+                () -> POPULATION_INITIALIZER.initializeRandomPopulationWithOptimal(function, STANDARD, POPULATION_SIZE, invalidOptimalPercentage),
                 "Provided percentage of optimal individuals in the population " + invalidOptimalPercentage
                         + " is not in the range of [0.0, 1.0]!");
     }
@@ -104,7 +104,7 @@ class PopulationInitializerTest {
     @Test
     public void whenInitializeRandomPopulationWithOptimalWithOverScaledPercentageThenFailure() {
         assertThrows(IllegalArgumentException.class,
-                () -> initializeRandomPopulationWithOptimal(function, STANDARD, POPULATION_SIZE, OVER_SCALED_OPTIMAL_PERCENTAGE),
+                () -> POPULATION_INITIALIZER.initializeRandomPopulationWithOptimal(function, STANDARD, POPULATION_SIZE, OVER_SCALED_OPTIMAL_PERCENTAGE),
                 "Provided percentage of optimal individuals in the population " + OVER_SCALED_OPTIMAL_PERCENTAGE
                         + " should have max scale of 2 in order to represent a whole number of individuals, but has scale of "
                         + EXCESSIVE_SCAlE + " !");
@@ -123,5 +123,4 @@ class PopulationInitializerTest {
     private boolean isNotOptimal(Individual individual) {
         return !individual.getBinaryCode().equals(OPTIMAL.getBinaryCode());
     }
-
 }

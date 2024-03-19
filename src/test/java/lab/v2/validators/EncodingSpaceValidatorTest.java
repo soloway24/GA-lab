@@ -1,8 +1,8 @@
-package lab.utils;
+package lab.v2.validators;
 
 import org.junit.jupiter.api.Test;
 
-import static lab.utils.EncodingSpaceValidator.validateEncodingSpace;
+import static lab.v2.validators.EncodingSpaceValidator.validateEncodingSpace;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class EncodingSpaceValidatorTest {

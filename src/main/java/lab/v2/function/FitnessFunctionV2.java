@@ -1,4 +1,4 @@
-package lab.function;
+package lab.v2.function;
 
 import lab.model.Individual;
 import lab.parameters.Encoding;
