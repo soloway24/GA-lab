@@ -3,7 +3,7 @@ package lab.v2.function;
 import lab.model.Individual;
 import lab.parameters.Encoding;
 import lab.v2.parameters.OperatorsApplicationType;
-import lab.v2.population.PopulationConfiguration;
+import lab.v2.population.PopulationType;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +30,6 @@ public interface FitnessFunctionV2<ARG_T, RES_T extends Number> {
 
     Optional<ARG_T> convertToX(long decimalValue);
 
-    List<PopulationConfiguration> getSupportedPopulationConfigurations(OperatorsApplicationType operatorsApplicationType);
+    List<PopulationType> getSupportedPopulationConfigurations(OperatorsApplicationType operatorsApplicationType);
 
 }

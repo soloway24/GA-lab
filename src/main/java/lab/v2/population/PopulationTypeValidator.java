@@ -4,16 +4,16 @@ import java.math.BigDecimal;
 
 import static java.util.Optional.ofNullable;
 
-public class PopulationConfigurationValidator {
+public class PopulationTypeValidator {
 
-    private static PopulationConfigurationValidator instance;
+    private static PopulationTypeValidator instance;
 
-    private PopulationConfigurationValidator() {
+    private PopulationTypeValidator() {
     }
 
-    public static PopulationConfigurationValidator getInstance() {
+    public static PopulationTypeValidator getInstance() {
         return ofNullable(instance)
-                .orElse(new PopulationConfigurationValidator());
+                .orElse(new PopulationTypeValidator());
     }
 
     public void verifyOptimalQuantity(int optimalQuantity, int populationSize) {

@@ -3,7 +3,7 @@ package lab.v2.function;
 import lab.model.Individual;
 import lab.parameters.Encoding;
 import lab.v2.parameters.OperatorsApplicationType;
-import lab.v2.population.PopulationConfiguration;
+import lab.v2.population.PopulationType;
 
 import java.util.List;
 import java.util.Map;
@@ -16,7 +16,7 @@ import static lab.parameters.Encoding.GRAY;
 import static lab.parameters.Encoding.STANDARD;
 import static lab.utils.Constants.PRECISION_BASE;
 import static lab.v2.parameters.OperatorsApplicationType.NONE;
-import static lab.v2.population.PopulationConfiguration.*;
+import static lab.v2.population.PopulationType.*;
 import static lab.v2.validators.EncodingSpaceValidator.validateEncodingSpace;
 
 public class PowerFunction implements FitnessFunctionV2<Double, Double> {
@@ -97,7 +97,7 @@ public class PowerFunction implements FitnessFunctionV2<Double, Double> {
     }
 
     @Override
-    public List<PopulationConfiguration> getSupportedPopulationConfigurations(OperatorsApplicationType operatorsApplicationType) {
+    public List<PopulationType> getSupportedPopulationConfigurations(OperatorsApplicationType operatorsApplicationType) {
         if (operatorsApplicationType == NONE) {
             return List.of(ONE_OPTIMAL, FIVE_PERCENT_OPTIMAL, TEN_PERCENT_OPTIMAL);
         }

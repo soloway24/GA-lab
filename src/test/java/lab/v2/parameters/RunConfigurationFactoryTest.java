@@ -13,7 +13,7 @@ import static lab.parameters.Encoding.GRAY;
 import static lab.parameters.Encoding.STANDARD;
 import static lab.v2.parameters.OperatorsApplicationType.CROSSOVER;
 import static lab.v2.parameters.OperatorsApplicationType.MUTATION;
-import static lab.v2.population.PopulationConfiguration.*;
+import static lab.v2.population.PopulationType.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.Mockito.when;

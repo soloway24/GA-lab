@@ -1,7 +1,7 @@
 package lab.v2.parameters;
 
 import lab.v2.function.FitnessFunctionV2;
-import lab.v2.population.PopulationConfiguration;
+import lab.v2.population.PopulationType;
 import lombok.Getter;
 
 import java.util.List;
@@ -55,7 +55,7 @@ public class RunConfigurationFactory {
     private Stream<RunConfiguration> createParameters(int populationSize,
                                                       FitnessFunctionV2<?, ?> function,
                                                       OperatorsApplicationType operatorsApplicationType,
-                                                      PopulationConfiguration populationConfig) {
+                                                      PopulationType populationConfig) {
         return function.getSupportedEncodings()
                 .stream()
                 .map(encoding -> new RunConfiguration(populationSize, function, operatorsApplicationType, populationConfig, encoding));

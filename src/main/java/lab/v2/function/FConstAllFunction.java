@@ -3,7 +3,7 @@ package lab.v2.function;
 import lab.model.Individual;
 import lab.parameters.Encoding;
 import lab.v2.parameters.OperatorsApplicationType;
-import lab.v2.population.PopulationConfiguration;
+import lab.v2.population.PopulationType;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +11,7 @@ import java.util.Optional;
 import static java.util.Optional.*;
 import static lab.model.Individual.ALL_100_ZEROS_INDIVIDUAL;
 import static lab.parameters.Encoding.STANDARD;
-import static lab.v2.population.PopulationConfiguration.RANDOM;
+import static lab.v2.population.PopulationType.RANDOM;
 
 public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
 
@@ -76,7 +76,7 @@ public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
     }
 
     @Override
-    public List<PopulationConfiguration> getSupportedPopulationConfigurations(OperatorsApplicationType operatorsApplicationType) {
+    public List<PopulationType> getSupportedPopulationConfigurations(OperatorsApplicationType operatorsApplicationType) {
         return List.of(RANDOM);
     }
 }

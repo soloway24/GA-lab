@@ -2,7 +2,6 @@ package lab.v2.population;
 
 import lab.model.Individual;
 import lab.v2.function.FitnessFunctionV2;
-import lab.v2.parameters.RunConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -13,10 +12,10 @@ import java.util.List;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static lab.parameters.Encoding.STANDARD;
-import static lab.v2.parameters.OperatorsApplicationType.NONE;
-import static lab.v2.population.PopulationConfiguration.*;
+import static lab.v2.population.PopulationType.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -36,12 +35,12 @@ class PopulationInitializerTest {
     public void whenInitializeRandomPopulationThenSuccess() {
         when(function.getChromosomeLength()).thenReturn(CHROMOSOME_LENGTH);
 
-        RunConfiguration runConfiguration = new RunConfiguration(POPULATION_SIZE, function, NONE, RANDOM, STANDARD);
+        PopulationConfiguration populationConfiguration = new PopulationConfiguration(function, RANDOM, STANDARD, POPULATION_SIZE);
 
-        List<Individual> population = populationInitializer.initializePopulation(runConfiguration);
-        assertThat(population, hasSize(POPULATION_SIZE));
+        Population population = populationInitializer.initializePopulation(populationConfiguration);
+        assertThat(population.getSize(), is(POPULATION_SIZE));
 
-        List<Individual> validIndividuals = population.stream()
+        List<Individual> validIndividuals = population.individuals().stream()
                 .filter(this::hasLength)
                 .toList();
         assertThat(validIndividuals, hasSize(POPULATION_SIZE));
@@ -71,37 +70,37 @@ class PopulationInitializerTest {
     public void whenPopulationConfigRequiresOptimalAndFunctionDoesNotSupportEncodingThenFailure() {
         when(function.getOptimalIndividual(STANDARD)).thenReturn(empty());
 
-        RunConfiguration runConfiguration = new RunConfiguration(POPULATION_SIZE, function, NONE, ONE_OPTIMAL, STANDARD);
+        PopulationConfiguration populationConfiguration = new PopulationConfiguration(function, ONE_OPTIMAL, STANDARD, POPULATION_SIZE);
 
         assertThrows(IllegalStateException.class,
-                () -> populationInitializer.initializePopulation(runConfiguration));
+                () -> populationInitializer.initializePopulation(populationConfiguration));
     }
 
-    private void testInitializeOptimalQuantityPopulation(PopulationConfiguration optimalQuantityConfig) {
+    private void testInitializeOptimalQuantityPopulation(PopulationType optimalQuantityConfig) {
         when(function.getChromosomeLength()).thenReturn(CHROMOSOME_LENGTH);
         when(function.getOptimalIndividual(STANDARD)).thenReturn(of(OPTIMAL));
 
-        RunConfiguration runConfiguration = new RunConfiguration(POPULATION_SIZE, function, NONE, optimalQuantityConfig, STANDARD);
+        PopulationConfiguration populationConfiguration = new PopulationConfiguration(function, optimalQuantityConfig, STANDARD, POPULATION_SIZE);
 
-        List<Individual> population = populationInitializer.initializePopulation(runConfiguration);
-        assertThat(population, hasSize(POPULATION_SIZE));
+        Population population = populationInitializer.initializePopulation(populationConfiguration);
+        assertThat(population.getSize(), is(POPULATION_SIZE));
 
         int optimalQuantity = getOptimalQuantity(optimalQuantityConfig);
-        List<Individual> notOptimalValidIndividuals = getNotOptimalValidIndividuals(population);
+        List<Individual> notOptimalValidIndividuals = getNotOptimalValidIndividuals(population.individuals());
         assertThat(notOptimalValidIndividuals, hasSize(POPULATION_SIZE - optimalQuantity));
     }
 
-    private void testInitializeOptimalPercentagePopulation(PopulationConfiguration optimalPercentageConfig) {
+    private void testInitializeOptimalPercentagePopulation(PopulationType optimalPercentageConfig) {
         when(function.getChromosomeLength()).thenReturn(CHROMOSOME_LENGTH);
         when(function.getOptimalIndividual(STANDARD)).thenReturn(of(OPTIMAL));
 
-        RunConfiguration runConfiguration = new RunConfiguration(POPULATION_SIZE, function, NONE, optimalPercentageConfig, STANDARD);
+        PopulationConfiguration populationConfiguration = new PopulationConfiguration(function, optimalPercentageConfig, STANDARD, POPULATION_SIZE);
 
-        List<Individual> population = populationInitializer.initializePopulation(runConfiguration);
-        assertThat(population, hasSize(POPULATION_SIZE));
+        Population population = populationInitializer.initializePopulation(populationConfiguration);
+        assertThat(population.getSize(), is(POPULATION_SIZE));
 
         int optimalQuantity = (int) (getOptimalPercentage(optimalPercentageConfig) * POPULATION_SIZE);
-        List<Individual> notOptimalValidIndividuals = getNotOptimalValidIndividuals(population);
+        List<Individual> notOptimalValidIndividuals = getNotOptimalValidIndividuals(population.individuals());
         assertThat(notOptimalValidIndividuals, hasSize(POPULATION_SIZE - optimalQuantity));
     }
 
@@ -119,13 +118,13 @@ class PopulationInitializerTest {
         return !individual.getBinaryCode().equals(OPTIMAL.getBinaryCode());
     }
 
-    private int getOptimalQuantity(PopulationConfiguration populationConfiguration) {
-        return populationConfiguration.getOptimalQuantity()
+    private int getOptimalQuantity(PopulationType populationType) {
+        return populationType.getOptimalQuantity()
                 .orElseThrow(IllegalArgumentException::new);
     }
 
-    private double getOptimalPercentage(PopulationConfiguration populationConfiguration) {
-        return populationConfiguration.getOptimalPercentage()
+    private double getOptimalPercentage(PopulationType populationType) {
+        return populationType.getOptimalPercentage()
                 .orElseThrow(IllegalArgumentException::new);
     }
 }

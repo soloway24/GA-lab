@@ -3,7 +3,6 @@ package lab.v2.population;
 import lab.model.Individual;
 import lab.parameters.Encoding;
 import lab.v2.function.FitnessFunctionV2;
-import lab.v2.parameters.RunConfiguration;
 
 import java.util.List;
 import java.util.Map;
@@ -17,15 +16,15 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.concat;
 import static lab.model.Individual.createRandomIndividual;
-import static lab.v2.population.PopulationType.*;
+import static lab.v2.population.PopulationInitializationType.*;
 
 public class PopulationInitializer {
 
     private static PopulationInitializer instance;
 
-    private final PopulationConfigurationValidator populationConfigurationValidator = PopulationConfigurationValidator.getInstance();
+    private final PopulationTypeValidator populationTypeValidator = PopulationTypeValidator.getInstance();
 
-    private final Map<PopulationType, Function<RunConfiguration, List<Individual>>> populationTypeToInitializer =
+    private final Map<PopulationInitializationType, Function<PopulationConfiguration, Population>> initializationTypeToInitializer =
             Map.of(
                     RANDOM, this::initializeRandomPopulation,
                     OPTIMAL_QUANTITY, this::initializeRandomPopulationWithOptimalQuantity,
@@ -40,75 +39,66 @@ public class PopulationInitializer {
                 .orElse(new PopulationInitializer());
     }
 
-    public List<Individual> initializePopulation(RunConfiguration runConfiguration) {
-        PopulationType populationType = runConfiguration.populationConfiguration().getPopulationType();
+    public Population initializePopulation(PopulationConfiguration populationConfig) {
+        PopulationInitializationType initializationType = populationConfig.populationType().getInitializationType();
 
-        return getInitializer(populationType).apply(runConfiguration);
+        return getInitializer(initializationType).apply(populationConfig);
     }
 
-    private Function<RunConfiguration, List<Individual>> getInitializer(PopulationType populationType) {
-        return ofNullable(populationTypeToInitializer.get(populationType))
-                .orElseThrow(() -> new IllegalArgumentException("Provided population type " + populationType
+    private Function<PopulationConfiguration, Population> getInitializer(PopulationInitializationType populationInitializationType) {
+        return ofNullable(initializationTypeToInitializer.get(populationInitializationType))
+                .orElseThrow(() -> new IllegalArgumentException("Provided population type " + populationInitializationType
                         + " does not have corresponding initializer!"));
     }
 
-    private List<Individual> initializeRandomPopulation(RunConfiguration runConfiguration) {
-        return initializeRandomPopulation(runConfiguration.function(), runConfiguration.encoding(), runConfiguration.populationSize());
-    }
-
-    private List<Individual> initializeRandomPopulation(FitnessFunctionV2<?, ?> function, Encoding encoding, int populationSize) {
-        return createRandomIndividuals(function.getChromosomeLength(), encoding, populationSize)
+    private Population initializeRandomPopulation(PopulationConfiguration populationConfig) {
+        List<Individual> individuals = createRandomIndividuals(populationConfig.function().getChromosomeLength(),
+                populationConfig.encoding(), populationConfig.populationSize())
                 .toList();
+        return new Population(populationConfig, individuals);
     }
 
-    private List<Individual> initializeRandomPopulationWithOptimalQuantity(RunConfiguration runConfiguration) {
-        int optimalQuantity = getOptimalQuantity(runConfiguration.populationConfiguration());
+    private Population initializeRandomPopulationWithOptimalQuantity(PopulationConfiguration populationConfig) {
+        int optimalQuantity = getOptimalQuantity(populationConfig.populationType());
 
-        return initializeRandomPopulationWithOptimalQuantity(runConfiguration.function(), runConfiguration.encoding(),
-                runConfiguration.populationSize(), optimalQuantity);
+        return initializeRandomPopulationWithOptimalQuantity(populationConfig, optimalQuantity);
     }
 
-    private List<Individual> initializeRandomPopulationWithOptimalQuantity(FitnessFunctionV2<?, ?> function,
-                                                                           Encoding encoding,
-                                                                           int populationSize,
-                                                                           int optimalQuantity) {
-        populationConfigurationValidator.verifyOptimalQuantity(optimalQuantity, populationSize);
+    private Population initializeRandomPopulationWithOptimalPercentage(PopulationConfiguration populationConfig) {
+        double optimalPercentage = getOptimalPercentage(populationConfig.populationType());
+        populationTypeValidator.verifyOptimalPercentage(optimalPercentage);
+        int optimalQuantity = (int) (populationConfig.populationSize() * optimalPercentage);
 
+        return initializeRandomPopulationWithOptimalQuantity(populationConfig, optimalQuantity);
+    }
+
+    private Population initializeRandomPopulationWithOptimalQuantity(PopulationConfiguration populationConfig,
+                                                                     int optimalQuantity) {
         if (optimalQuantity == 0) {
-            return initializeRandomPopulationWithoutOptimal(function, encoding, populationSize);
+            return initializeRandomPopulationWithoutOptimal(populationConfig);
         }
 
+        int populationSize = populationConfig.populationSize();
+        populationTypeValidator.verifyOptimalQuantity(optimalQuantity, populationSize);
+
+        FitnessFunctionV2<?, ?> function = populationConfig.function();
+        Encoding encoding = populationConfig.encoding();
         int restSize = populationSize - optimalQuantity;
+
         Stream<Individual> optimalIndividuals = createOptimalIndividuals(function, encoding, optimalQuantity);
         Stream<Individual> restPopulation = createRandomNotOptimalIndividuals(function, encoding, restSize);
         List<Individual> wholePopulation = concat(optimalIndividuals, restPopulation)
                 .collect(toList());
         shuffle(wholePopulation);
-        return copyOf(wholePopulation);
+        List<Individual> individuals = copyOf(wholePopulation);
+        return new Population(populationConfig, individuals);
     }
 
-    private List<Individual> initializeRandomPopulationWithOptimalPercentage(RunConfiguration runConfiguration) {
-        double optimalPercentage = getOptimalPercentage(runConfiguration.populationConfiguration());
-
-        return initializeRandomPopulationWithOptimalPercentage(runConfiguration.function(), runConfiguration.encoding(),
-                runConfiguration.populationSize(), optimalPercentage);
-    }
-
-    private List<Individual> initializeRandomPopulationWithOptimalPercentage(FitnessFunctionV2<?, ?> function,
-                                                                             Encoding encoding,
-                                                                             int populationSize,
-                                                                             double optimalPercentage) {
-        populationConfigurationValidator.verifyOptimalPercentage(optimalPercentage);
-
-        int optimalQuantity = (int) (populationSize * optimalPercentage);
-        return initializeRandomPopulationWithOptimalQuantity(function, encoding, populationSize, optimalQuantity);
-    }
-
-    private List<Individual> initializeRandomPopulationWithoutOptimal(FitnessFunctionV2<?, ?> function,
-                                                                      Encoding encoding,
-                                                                      int populationSize) {
-        return createRandomNotOptimalIndividuals(function, encoding, populationSize)
+    private Population initializeRandomPopulationWithoutOptimal(PopulationConfiguration populationConfiguration) {
+        List<Individual> individuals = createRandomNotOptimalIndividuals(populationConfiguration.function(),
+                populationConfiguration.encoding(), populationConfiguration.populationSize())
                 .toList();
+        return new Population(populationConfiguration, individuals);
     }
 
     private Stream<Individual> createRandomIndividuals(int chromosomeLength, Encoding encoding, int quantity) {
@@ -145,15 +135,15 @@ public class PopulationInitializer {
         return individual.getBinaryCode().equals(optimal.getBinaryCode());
     }
 
-    private int getOptimalQuantity(PopulationConfiguration populationConfiguration) {
-        return populationConfiguration.getOptimalQuantity()
-                .orElseThrow(() -> new IllegalArgumentException("Provided population configuration " + populationConfiguration
-                        + "does not contain required optimal quantity value for population type " + populationConfiguration.getPopulationType() + " !"));
+    private int getOptimalQuantity(PopulationType populationType) {
+        return populationType.getOptimalQuantity()
+                .orElseThrow(() -> new IllegalArgumentException("Provided population configuration " + populationType
+                        + "does not contain required optimal quantity value for population type " + populationType.getInitializationType() + " !"));
     }
 
-    private double getOptimalPercentage(PopulationConfiguration populationConfiguration) {
-        return populationConfiguration.getOptimalPercentage()
-                .orElseThrow(() -> new IllegalArgumentException("Provided population configuration " + populationConfiguration
-                        + "does not contain required optimal percentage value for population type " + populationConfiguration.getPopulationType() + " !"));
+    private double getOptimalPercentage(PopulationType populationType) {
+        return populationType.getOptimalPercentage()
+                .orElseThrow(() -> new IllegalArgumentException("Provided population configuration " + populationType
+                        + "does not contain required optimal percentage value for population type " + populationType.getInitializationType() + " !"));
     }
 }
