@@ -22,42 +22,42 @@ public class RunConfigurationFactory {
                 .orElse(new RunConfigurationFactory());
     }
 
-    public List<RunConfiguration> createAll(List<Integer> populationSizes,
-                                            List<FitnessFunctionV2<?, ?>> functions,
-                                            List<OperatorsApplicationType> operatorsApplicationTypes) {
+    public List<RunConfiguration> createAll(List<FitnessFunctionV2<?, ?>> functions,
+                                            List<OperatorsApplicationType> operatorsApplicationTypes,
+                                            List<Integer> populationSizes) {
         return populationSizes.stream()
-                .flatMap(populationSize -> createConfiguration(populationSize, functions, operatorsApplicationTypes))
+                .flatMap(populationSize -> createConfiguration(functions, operatorsApplicationTypes, populationSize))
                 .toList();
     }
 
-    private Stream<RunConfiguration> createConfiguration(int populationSize,
-                                                         List<FitnessFunctionV2<?, ?>> functions,
-                                                         List<OperatorsApplicationType> operatorsApplicationTypes) {
+    private Stream<RunConfiguration> createConfiguration(List<FitnessFunctionV2<?, ?>> functions,
+                                                         List<OperatorsApplicationType> operatorsApplicationTypes,
+                                                         int populationSize) {
         return functions.stream()
-                .flatMap(function -> createConfiguration(populationSize, function, operatorsApplicationTypes));
+                .flatMap(function -> createConfiguration(function, operatorsApplicationTypes, populationSize));
     }
 
-    private Stream<RunConfiguration> createConfiguration(int populationSize,
-                                                         FitnessFunctionV2<?, ?> function,
-                                                         List<OperatorsApplicationType> operatorsApplicationTypes) {
+    private Stream<RunConfiguration> createConfiguration(FitnessFunctionV2<?, ?> function,
+                                                         List<OperatorsApplicationType> operatorsApplicationTypes,
+                                                         int populationSize) {
         return operatorsApplicationTypes.stream()
-                .flatMap(operatorsType -> createConfiguration(populationSize, function, operatorsType));
+                .flatMap(operatorsType -> createConfiguration(function, operatorsType, populationSize));
     }
 
-    private Stream<RunConfiguration> createConfiguration(int populationSize,
-                                                         FitnessFunctionV2<?, ?> function,
-                                                         OperatorsApplicationType operatorsApplicationType) {
+    private Stream<RunConfiguration> createConfiguration(FitnessFunctionV2<?, ?> function,
+                                                         OperatorsApplicationType operatorsApplicationType,
+                                                         int populationSize) {
         return function.getSupportedPopulationConfigurations(operatorsApplicationType)
                 .stream()
-                .flatMap(populationConfig -> createConfiguration(populationSize, function, operatorsApplicationType, populationConfig));
+                .flatMap(populationConfig -> createConfiguration(function, operatorsApplicationType, populationConfig, populationSize));
     }
 
-    private Stream<RunConfiguration> createConfiguration(int populationSize,
-                                                         FitnessFunctionV2<?, ?> function,
+    private Stream<RunConfiguration> createConfiguration(FitnessFunctionV2<?, ?> function,
                                                          OperatorsApplicationType operatorsApplicationType,
-                                                         PopulationType populationConfig) {
+                                                         PopulationType populationType,
+                                                         int populationSize) {
         return function.getSupportedEncodings()
                 .stream()
-                .map(encoding -> new RunConfiguration(populationSize, function, operatorsApplicationType, populationConfig, encoding));
+                .map(encoding -> new RunConfiguration(function, operatorsApplicationType, populationType, encoding, populationSize));
     }
 }

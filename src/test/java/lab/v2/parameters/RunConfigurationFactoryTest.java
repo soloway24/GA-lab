@@ -50,52 +50,52 @@ class RunConfigurationFactoryTest {
 
     @Test
     public void whenCreateAllThenSuccess() {
-        assertThat(runConfigurationFactory.createAll(POPULATION_SIZES, functions, OPERATORS_APPLICATION_TYPES),
+        assertThat(runConfigurationFactory.createAll(functions, OPERATORS_APPLICATION_TYPES, POPULATION_SIZES),
                 containsInAnyOrder(buildExpectedRunConfigurations().toArray()));
     }
 
     private List<RunConfiguration> buildExpectedRunConfigurations() {
         return List.of(
-                new RunConfiguration(POPULATION_SIZE_1, function1, CROSSOVER, ZERO_OPTIMAL, STANDARD),
-                new RunConfiguration(POPULATION_SIZE_1, function1, CROSSOVER, ZERO_OPTIMAL, GRAY),
-                new RunConfiguration(POPULATION_SIZE_1, function1, CROSSOVER, ONE_OPTIMAL, STANDARD),
-                new RunConfiguration(POPULATION_SIZE_1, function1, CROSSOVER, ONE_OPTIMAL, GRAY),
+                new RunConfiguration(function1, CROSSOVER, ZERO_OPTIMAL, STANDARD, POPULATION_SIZE_1),
+                new RunConfiguration(function1, CROSSOVER, ZERO_OPTIMAL, GRAY, POPULATION_SIZE_1),
+                new RunConfiguration(function1, CROSSOVER, ONE_OPTIMAL, STANDARD, POPULATION_SIZE_1),
+                new RunConfiguration(function1, CROSSOVER, ONE_OPTIMAL, GRAY, POPULATION_SIZE_1),
 
-                new RunConfiguration(POPULATION_SIZE_1, function1, MUTATION, ZERO_OPTIMAL, STANDARD),
-                new RunConfiguration(POPULATION_SIZE_1, function1, MUTATION, ZERO_OPTIMAL, GRAY),
-                new RunConfiguration(POPULATION_SIZE_1, function1, MUTATION, ONE_OPTIMAL, STANDARD),
-                new RunConfiguration(POPULATION_SIZE_1, function1, MUTATION, ONE_OPTIMAL, GRAY),
+                new RunConfiguration(function1, MUTATION, ZERO_OPTIMAL, STANDARD, POPULATION_SIZE_1),
+                new RunConfiguration(function1, MUTATION, ZERO_OPTIMAL, GRAY, POPULATION_SIZE_1),
+                new RunConfiguration(function1, MUTATION, ONE_OPTIMAL, STANDARD, POPULATION_SIZE_1),
+                new RunConfiguration(function1, MUTATION, ONE_OPTIMAL, GRAY, POPULATION_SIZE_1),
 
-                new RunConfiguration(POPULATION_SIZE_1, function2, CROSSOVER, FIVE_PERCENT_OPTIMAL, STANDARD),
-                new RunConfiguration(POPULATION_SIZE_1, function2, CROSSOVER, FIVE_PERCENT_OPTIMAL, GRAY),
-                new RunConfiguration(POPULATION_SIZE_1, function2, CROSSOVER, TEN_PERCENT_OPTIMAL, STANDARD),
-                new RunConfiguration(POPULATION_SIZE_1, function2, CROSSOVER, TEN_PERCENT_OPTIMAL, GRAY),
+                new RunConfiguration(function2, CROSSOVER, FIVE_PERCENT_OPTIMAL, STANDARD, POPULATION_SIZE_1),
+                new RunConfiguration(function2, CROSSOVER, FIVE_PERCENT_OPTIMAL, GRAY, POPULATION_SIZE_1),
+                new RunConfiguration(function2, CROSSOVER, TEN_PERCENT_OPTIMAL, STANDARD, POPULATION_SIZE_1),
+                new RunConfiguration(function2, CROSSOVER, TEN_PERCENT_OPTIMAL, GRAY, POPULATION_SIZE_1),
 
-                new RunConfiguration(POPULATION_SIZE_1, function2, MUTATION, FIVE_PERCENT_OPTIMAL, STANDARD),
-                new RunConfiguration(POPULATION_SIZE_1, function2, MUTATION, FIVE_PERCENT_OPTIMAL, GRAY),
-                new RunConfiguration(POPULATION_SIZE_1, function2, MUTATION, TEN_PERCENT_OPTIMAL, STANDARD),
-                new RunConfiguration(POPULATION_SIZE_1, function2, MUTATION, TEN_PERCENT_OPTIMAL, GRAY),
+                new RunConfiguration(function2, MUTATION, FIVE_PERCENT_OPTIMAL, STANDARD, POPULATION_SIZE_1),
+                new RunConfiguration(function2, MUTATION, FIVE_PERCENT_OPTIMAL, GRAY, POPULATION_SIZE_1),
+                new RunConfiguration(function2, MUTATION, TEN_PERCENT_OPTIMAL, STANDARD, POPULATION_SIZE_1),
+                new RunConfiguration(function2, MUTATION, TEN_PERCENT_OPTIMAL, GRAY, POPULATION_SIZE_1),
 
 
-                new RunConfiguration(POPULATION_SIZE_2, function1, CROSSOVER, ZERO_OPTIMAL, STANDARD),
-                new RunConfiguration(POPULATION_SIZE_2, function1, CROSSOVER, ZERO_OPTIMAL, GRAY),
-                new RunConfiguration(POPULATION_SIZE_2, function1, CROSSOVER, ONE_OPTIMAL, STANDARD),
-                new RunConfiguration(POPULATION_SIZE_2, function1, CROSSOVER, ONE_OPTIMAL, GRAY),
+                new RunConfiguration(function1, CROSSOVER, ZERO_OPTIMAL, STANDARD, POPULATION_SIZE_2),
+                new RunConfiguration(function1, CROSSOVER, ZERO_OPTIMAL, GRAY, POPULATION_SIZE_2),
+                new RunConfiguration(function1, CROSSOVER, ONE_OPTIMAL, STANDARD, POPULATION_SIZE_2),
+                new RunConfiguration(function1, CROSSOVER, ONE_OPTIMAL, GRAY, POPULATION_SIZE_2),
 
-                new RunConfiguration(POPULATION_SIZE_2, function1, MUTATION, ZERO_OPTIMAL, STANDARD),
-                new RunConfiguration(POPULATION_SIZE_2, function1, MUTATION, ZERO_OPTIMAL, GRAY),
-                new RunConfiguration(POPULATION_SIZE_2, function1, MUTATION, ONE_OPTIMAL, STANDARD),
-                new RunConfiguration(POPULATION_SIZE_2, function1, MUTATION, ONE_OPTIMAL, GRAY),
+                new RunConfiguration(function1, MUTATION, ZERO_OPTIMAL, STANDARD, POPULATION_SIZE_2),
+                new RunConfiguration(function1, MUTATION, ZERO_OPTIMAL, GRAY, POPULATION_SIZE_2),
+                new RunConfiguration(function1, MUTATION, ONE_OPTIMAL, STANDARD, POPULATION_SIZE_2),
+                new RunConfiguration(function1, MUTATION, ONE_OPTIMAL, GRAY, POPULATION_SIZE_2),
 
-                new RunConfiguration(POPULATION_SIZE_2, function2, CROSSOVER, FIVE_PERCENT_OPTIMAL, STANDARD),
-                new RunConfiguration(POPULATION_SIZE_2, function2, CROSSOVER, FIVE_PERCENT_OPTIMAL, GRAY),
-                new RunConfiguration(POPULATION_SIZE_2, function2, CROSSOVER, TEN_PERCENT_OPTIMAL, STANDARD),
-                new RunConfiguration(POPULATION_SIZE_2, function2, CROSSOVER, TEN_PERCENT_OPTIMAL, GRAY),
+                new RunConfiguration(function2, CROSSOVER, FIVE_PERCENT_OPTIMAL, STANDARD, POPULATION_SIZE_2),
+                new RunConfiguration(function2, CROSSOVER, FIVE_PERCENT_OPTIMAL, GRAY, POPULATION_SIZE_2),
+                new RunConfiguration(function2, CROSSOVER, TEN_PERCENT_OPTIMAL, STANDARD, POPULATION_SIZE_2),
+                new RunConfiguration(function2, CROSSOVER, TEN_PERCENT_OPTIMAL, GRAY, POPULATION_SIZE_2),
 
-                new RunConfiguration(POPULATION_SIZE_2, function2, MUTATION, FIVE_PERCENT_OPTIMAL, STANDARD),
-                new RunConfiguration(POPULATION_SIZE_2, function2, MUTATION, FIVE_PERCENT_OPTIMAL, GRAY),
-                new RunConfiguration(POPULATION_SIZE_2, function2, MUTATION, TEN_PERCENT_OPTIMAL, STANDARD),
-                new RunConfiguration(POPULATION_SIZE_2, function2, MUTATION, TEN_PERCENT_OPTIMAL, GRAY)
+                new RunConfiguration(function2, MUTATION, FIVE_PERCENT_OPTIMAL, STANDARD, POPULATION_SIZE_2),
+                new RunConfiguration(function2, MUTATION, FIVE_PERCENT_OPTIMAL, GRAY, POPULATION_SIZE_2),
+                new RunConfiguration(function2, MUTATION, TEN_PERCENT_OPTIMAL, STANDARD, POPULATION_SIZE_2),
+                new RunConfiguration(function2, MUTATION, TEN_PERCENT_OPTIMAL, GRAY, POPULATION_SIZE_2)
         );
     }
 }
