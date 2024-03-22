@@ -26,36 +26,36 @@ public class RunConfigurationFactory {
                                             List<FitnessFunctionV2<?, ?>> functions,
                                             List<OperatorsApplicationType> operatorsApplicationTypes) {
         return populationSizes.stream()
-                .flatMap(populationSize -> createParameters(populationSize, functions, operatorsApplicationTypes))
+                .flatMap(populationSize -> createConfiguration(populationSize, functions, operatorsApplicationTypes))
                 .toList();
     }
 
-    private Stream<RunConfiguration> createParameters(int populationSize,
-                                                      List<FitnessFunctionV2<?, ?>> functions,
-                                                      List<OperatorsApplicationType> operatorsApplicationTypes) {
+    private Stream<RunConfiguration> createConfiguration(int populationSize,
+                                                         List<FitnessFunctionV2<?, ?>> functions,
+                                                         List<OperatorsApplicationType> operatorsApplicationTypes) {
         return functions.stream()
-                .flatMap(function -> createParameters(populationSize, function, operatorsApplicationTypes));
+                .flatMap(function -> createConfiguration(populationSize, function, operatorsApplicationTypes));
     }
 
-    private Stream<RunConfiguration> createParameters(int populationSize,
-                                                      FitnessFunctionV2<?, ?> function,
-                                                      List<OperatorsApplicationType> operatorsApplicationTypes) {
+    private Stream<RunConfiguration> createConfiguration(int populationSize,
+                                                         FitnessFunctionV2<?, ?> function,
+                                                         List<OperatorsApplicationType> operatorsApplicationTypes) {
         return operatorsApplicationTypes.stream()
-                .flatMap(operatorsType -> createParameters(populationSize, function, operatorsType));
+                .flatMap(operatorsType -> createConfiguration(populationSize, function, operatorsType));
     }
 
-    private Stream<RunConfiguration> createParameters(int populationSize,
-                                                      FitnessFunctionV2<?, ?> function,
-                                                      OperatorsApplicationType operatorsApplicationType) {
+    private Stream<RunConfiguration> createConfiguration(int populationSize,
+                                                         FitnessFunctionV2<?, ?> function,
+                                                         OperatorsApplicationType operatorsApplicationType) {
         return function.getSupportedPopulationConfigurations(operatorsApplicationType)
                 .stream()
-                .flatMap(populationConfig -> createParameters(populationSize, function, operatorsApplicationType, populationConfig));
+                .flatMap(populationConfig -> createConfiguration(populationSize, function, operatorsApplicationType, populationConfig));
     }
 
-    private Stream<RunConfiguration> createParameters(int populationSize,
-                                                      FitnessFunctionV2<?, ?> function,
-                                                      OperatorsApplicationType operatorsApplicationType,
-                                                      PopulationType populationConfig) {
+    private Stream<RunConfiguration> createConfiguration(int populationSize,
+                                                         FitnessFunctionV2<?, ?> function,
+                                                         OperatorsApplicationType operatorsApplicationType,
+                                                         PopulationType populationConfig) {
         return function.getSupportedEncodings()
                 .stream()
                 .map(encoding -> new RunConfiguration(populationSize, function, operatorsApplicationType, populationConfig, encoding));
