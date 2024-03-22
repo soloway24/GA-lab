@@ -10,10 +10,10 @@ public class PopulationPoolInitializer {
 
     private final PopulationInitializer populationInitializer;
 
-    public PopulationPool initializePopulationPool(PopulationPoolConfiguration populationPoolConfiguration) {
-        List<Population> populations = IntStream.range(0, populationPoolConfiguration.size())
-                .mapToObj(i -> populationInitializer.initializePopulation(populationPoolConfiguration.populationConfiguration()))
+    public PopulationPool initializePopulationPool(PopulationConfiguration populationConfiguration, int poolSize) {
+        List<Population> populations = IntStream.range(0, poolSize)
+                .mapToObj(i -> populationInitializer.initializePopulation(populationConfiguration))
                 .toList();
-        return new PopulationPool(populationPoolConfiguration, populations);
+        return new PopulationPool(populationConfiguration, populations);
     }
 }

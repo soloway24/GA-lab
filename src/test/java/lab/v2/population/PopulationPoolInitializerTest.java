@@ -25,17 +25,14 @@ class PopulationPoolInitializerTest {
     @InjectMocks
     private PopulationPoolInitializer poolInitializer;
 
-    private PopulationPoolConfiguration poolConfiguration;
-
     @BeforeEach
     public void init() {
-        poolConfiguration = new PopulationPoolConfiguration(populationConfiguration, POOL_SIZE);
         when(populationInitializer.initializePopulation(populationConfiguration)).thenReturn(population);
     }
 
     @Test
     public void whenInitializePopulationPoolThenSuccess() {
-        PopulationPool actualPool = poolInitializer.initializePopulationPool(poolConfiguration);
+        PopulationPool actualPool = poolInitializer.initializePopulationPool(populationConfiguration, POOL_SIZE);
         assertThat(actualPool.getSize(), equalTo(POOL_SIZE));
     }
 
