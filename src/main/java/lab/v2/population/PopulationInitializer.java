@@ -3,6 +3,7 @@ package lab.v2.population;
 import lab.model.Individual;
 import lab.parameters.Encoding;
 import lab.v2.function.FitnessFunctionV2;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
@@ -18,11 +19,10 @@ import static java.util.stream.Stream.concat;
 import static lab.model.Individual.createRandomIndividual;
 import static lab.v2.population.PopulationInitializationType.*;
 
+@RequiredArgsConstructor
 public class PopulationInitializer {
 
-    private static PopulationInitializer instance;
-
-    private final PopulationTypeValidator populationTypeValidator = PopulationTypeValidator.getInstance();
+    private final PopulationTypeValidator populationTypeValidator;
 
     private final Map<PopulationInitializationType, Function<PopulationConfiguration, Population>> initializationTypeToInitializer =
             Map.of(
@@ -30,14 +30,6 @@ public class PopulationInitializer {
                     OPTIMAL_QUANTITY, this::initializeRandomPopulationWithOptimalQuantity,
                     OPTIMAL_PERCENTAGE, this::initializeRandomPopulationWithOptimalPercentage
             );
-
-    private PopulationInitializer() {
-    }
-
-    public static PopulationInitializer getInstance() {
-        return ofNullable(instance)
-                .orElse(new PopulationInitializer());
-    }
 
     public Population initializePopulation(PopulationConfiguration populationConfig) {
         PopulationInitializationType initializationType = populationConfig.populationType().getInitializationType();
