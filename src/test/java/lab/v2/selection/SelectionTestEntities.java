@@ -29,4 +29,10 @@ public class SelectionTestEntities {
             INDIVIDUAL_3, 0.5,
             INDIVIDUAL_4, 0.2
     );
+    public static final Map<Individual, Double> INDIVIDUAL_TO_EXPECTED_QUANTITY = Map.of(
+            INDIVIDUAL_1, 0.2,
+            INDIVIDUAL_2, 1.0,
+            INDIVIDUAL_3, 2.0,
+            INDIVIDUAL_4, 0.8
+    );
 }
