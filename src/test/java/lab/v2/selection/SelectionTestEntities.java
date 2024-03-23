@@ -2,6 +2,7 @@ package lab.v2.selection;
 
 import lab.model.Individual;
 
+import java.util.List;
 import java.util.Map;
 
 public class SelectionTestEntities {
@@ -10,6 +11,8 @@ public class SelectionTestEntities {
     public static final Individual INDIVIDUAL_2 = new Individual("0000000010");
     public static final Individual INDIVIDUAL_3 = new Individual("0000000011");
     public static final Individual INDIVIDUAL_4 = new Individual("0000000100");
+    public static final double DEFAULT_SCALED_FITNESS = 0.0001;
+    public static final double POWER_SCALING_POWER = 1.1;
 
     public static final Map<Individual, Integer> INDIVIDUAL_TO_FITNESS_INT = Map.of(
             INDIVIDUAL_1, 2,
@@ -35,4 +38,13 @@ public class SelectionTestEntities {
             INDIVIDUAL_3, 2.0,
             INDIVIDUAL_4, 0.8
     );
+    public static final Map<Individual, Double> INDIVIDUAL_TO_SCALED_FITNESS = Map.of(
+            INDIVIDUAL_1, 2.1435469250725863d,
+            INDIVIDUAL_2, 12.589254117941675d,
+            INDIVIDUAL_3, 26.985656953471274d,
+            INDIVIDUAL_4, 9.849155306759332d
+    );
+
+    public static final List<Individual> PS_EXPECTED_SELECTED_INDIVIDUALS = List.of(INDIVIDUAL_2, INDIVIDUAL_3, INDIVIDUAL_3, INDIVIDUAL_4);
+    public static final List<Individual> PS_EXPECTED_SELECTED_INDIVIDUALS_DEFAULT = List.of(INDIVIDUAL_1);
 }

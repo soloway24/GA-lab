@@ -16,31 +16,31 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class PowerScalingRwsSelectorTest {
+class PowerScalingSusSelectorTest {
 
     @Mock
-    private RwsSelector<Double> rwsSelector;
+    private SusSelector<Double> susSelector;
 
-    private PowerScalingRwsSelector<Double> powerScalingRwsSelector;
+    private PowerScalingSusSelector<Double> powerScalingSusSelectorDouble;
 
     @BeforeEach
     public void init() {
-        powerScalingRwsSelector = new PowerScalingRwsSelector<>(rwsSelector, POWER_SCALING_POWER);
+        powerScalingSusSelectorDouble = new PowerScalingSusSelector<>(susSelector, POWER_SCALING_POWER);
     }
 
     @Test
     public void whenSelectWithDoubleFitnessThenSuccess() {
-        when(rwsSelector.select(INDIVIDUAL_TO_SCALED_FITNESS)).thenReturn(PS_EXPECTED_SELECTED_INDIVIDUALS);
+        when(susSelector.select(INDIVIDUAL_TO_SCALED_FITNESS)).thenReturn(PS_EXPECTED_SELECTED_INDIVIDUALS);
 
-        List<Individual> selected = powerScalingRwsSelector.select(INDIVIDUAL_TO_FITNESS_DOUBLE);
+        List<Individual> selected = powerScalingSusSelectorDouble.select(INDIVIDUAL_TO_FITNESS_DOUBLE);
         assertThat(selected, equalTo(PS_EXPECTED_SELECTED_INDIVIDUALS));
     }
 
     @Test
     public void whenSelectWithZeroDoubleFitnessThenSuccess() {
-        when(rwsSelector.select(Map.of(INDIVIDUAL_1, DEFAULT_SCALED_FITNESS))).thenReturn(PS_EXPECTED_SELECTED_INDIVIDUALS_DEFAULT);
+        when(susSelector.select(Map.of(INDIVIDUAL_1, DEFAULT_SCALED_FITNESS))).thenReturn(PS_EXPECTED_SELECTED_INDIVIDUALS_DEFAULT);
 
-        List<Individual> selected = powerScalingRwsSelector.select(Map.of(INDIVIDUAL_1, 0.0));
+        List<Individual> selected = powerScalingSusSelectorDouble.select(Map.of(INDIVIDUAL_1, 0.0));
         assertThat(selected, equalTo(PS_EXPECTED_SELECTED_INDIVIDUALS_DEFAULT));
     }
 }
