@@ -13,6 +13,8 @@ public class SelectionTestEntities {
     public static final Individual INDIVIDUAL_4 = new Individual("0000000100");
     public static final double DEFAULT_SCALED_FITNESS = 0.0001;
     public static final double POWER_SCALING_POWER = 1.1;
+    public static final double POWER_SCALING_POWER_START = 0.9;
+    public static final double POWER_SCALING_POWER_END = 1.1;
 
     public static final Map<Individual, Integer> INDIVIDUAL_TO_FITNESS_INT = Map.of(
             INDIVIDUAL_1, 2,
@@ -45,10 +47,10 @@ public class SelectionTestEntities {
             INDIVIDUAL_4, 9.849155306759332d
     );
     public static final Map<Individual, Double> INDIVIDUAL_TO_FITNESS_MED_G_AVG = Map.of(
-            INDIVIDUAL_1, 2.0,
-            INDIVIDUAL_2, 10.0,
-            INDIVIDUAL_3, 20.0,
-            INDIVIDUAL_4, 6.0
+            INDIVIDUAL_1, 1.0,
+            INDIVIDUAL_2, 5.0,
+            INDIVIDUAL_3, 4.0,
+            INDIVIDUAL_4, 4.0
     );
 
     public static final List<Individual> EXPECTED_SELECTED_INDIVIDUALS = List.of(INDIVIDUAL_2, INDIVIDUAL_3, INDIVIDUAL_3, INDIVIDUAL_4);

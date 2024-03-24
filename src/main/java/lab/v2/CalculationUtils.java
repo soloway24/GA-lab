@@ -21,9 +21,9 @@ public class CalculationUtils {
                 .toList();
         int size = sortedValues.size();
         if (size % 2 == 1) {
-            return sortedValues.get(size / 2 - 1).doubleValue();
+            return sortedValues.get(size / 2).doubleValue();
         }
-        return getAverage(sortedValues.get(size / 2), sortedValues.get(size / 2 + 1));
+        return getAverage(sortedValues.get(size / 2 - 1), sortedValues.get(size / 2));
     }
 
     private static <T extends Number> double getAverage(T first, T second) {
