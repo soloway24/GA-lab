@@ -1,18 +1,16 @@
 package lab.v2.selection;
 
 import lab.model.Individual;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
 
-public class PowerScalingSusSelector<T extends Number> extends PowerScalingSelector<T> {
+@RequiredArgsConstructor
+public class PowerScalingSusSelector<T extends Number> implements Selector<T> {
 
+    private final PowerScalingSelector<T> powerScalingSelector;
     private final SusSelector<Double> susSelector;
-
-    public PowerScalingSusSelector(SusSelector<Double> susSelector, double power) {
-        super(power);
-        this.susSelector = susSelector;
-    }
 
     @Override
     public String getName() {
@@ -20,8 +18,8 @@ public class PowerScalingSusSelector<T extends Number> extends PowerScalingSelec
     }
 
     @Override
-    protected List<Individual> selectFromBaseSelector(Map<Individual, Double> individualToFitness) {
-        return susSelector.select(individualToFitness);
+    public List<Individual> select(Map<Individual, T> individualToFitness) {
+        return powerScalingSelector.select(individualToFitness, susSelector::select);
     }
 
 }
