@@ -1,6 +1,8 @@
 package lab.v2.selection;
 
 import lab.model.Individual;
+import lab.v2.convertor.FitnessToProbabilityConvertor;
+import lab.v2.convertor.ProbabilityToExpectedQuantityConvertor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,22 +21,25 @@ import static org.mockito.Mockito.when;
 class SusSelectorTest {
 
     @Mock
-    private FitnessToPercentageConvertor<Integer> convertorInt;
+    private FitnessToProbabilityConvertor<Integer> fitnessToProbabilityConvertorInt;
     @Mock
-    private FitnessToPercentageConvertor<Double> convertorDouble;
+    private FitnessToProbabilityConvertor<Double> fitnessToProbabilityConvertorDouble;
+    @Mock
+    private ProbabilityToExpectedQuantityConvertor probabilityToExpectedQuantityConvertor;
 
     private SusSelector<Integer> susSelectorInt;
     private SusSelector<Double> susSelectorDouble;
 
     @BeforeEach
     public void init() {
-        susSelectorInt = new SusSelector<>(convertorInt);
-        susSelectorDouble = new SusSelector<>(convertorDouble);
+        susSelectorInt = new SusSelector<>(fitnessToProbabilityConvertorInt, probabilityToExpectedQuantityConvertor);
+        susSelectorDouble = new SusSelector<>(fitnessToProbabilityConvertorDouble, probabilityToExpectedQuantityConvertor);
     }
 
     @Test
     public void whenSelectWithIntFitnessThenSuccess() {
-        when(convertorInt.convertToSelectionPercentages(INDIVIDUAL_TO_FITNESS_INT)).thenReturn(INDIVIDUAL_TO_PERCENTAGE);
+        when(fitnessToProbabilityConvertorInt.convertToSelectionProbabilities(INDIVIDUAL_TO_FITNESS_INT)).thenReturn(INDIVIDUAL_TO_PROBABILITY);
+        when(probabilityToExpectedQuantityConvertor.convertToExpectedQuantities(INDIVIDUAL_TO_PROBABILITY)).thenReturn(INDIVIDUAL_TO_EXPECTED_QUANTITY);
 
         List<Individual> selected = susSelectorInt.select(INDIVIDUAL_TO_FITNESS_INT);
         assertThat(selected, hasSize(INDIVIDUAL_TO_FITNESS_INT.size()));
@@ -45,7 +50,8 @@ class SusSelectorTest {
 
     @Test
     public void whenSelectWithDoubleFitnessThenSuccess() {
-        when(convertorDouble.convertToSelectionPercentages(INDIVIDUAL_TO_FITNESS_DOUBLE)).thenReturn(INDIVIDUAL_TO_PERCENTAGE);
+        when(fitnessToProbabilityConvertorDouble.convertToSelectionProbabilities(INDIVIDUAL_TO_FITNESS_DOUBLE)).thenReturn(INDIVIDUAL_TO_PROBABILITY);
+        when(probabilityToExpectedQuantityConvertor.convertToExpectedQuantities(INDIVIDUAL_TO_PROBABILITY)).thenReturn(INDIVIDUAL_TO_EXPECTED_QUANTITY);
 
         List<Individual> selected = susSelectorDouble.select(INDIVIDUAL_TO_FITNESS_DOUBLE);
         assertThat(selected, hasSize(INDIVIDUAL_TO_FITNESS_DOUBLE.size()));

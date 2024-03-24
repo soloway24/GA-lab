@@ -26,7 +26,7 @@ public class SelectionTestEntities {
             INDIVIDUAL_3, 20.0,
             INDIVIDUAL_4, 8.0
     );
-    public static final Map<Individual, Double> INDIVIDUAL_TO_PERCENTAGE = Map.of(
+    public static final Map<Individual, Double> INDIVIDUAL_TO_PROBABILITY = Map.of(
             INDIVIDUAL_1, 0.05,
             INDIVIDUAL_2, 0.25,
             INDIVIDUAL_3, 0.5,
@@ -44,7 +44,13 @@ public class SelectionTestEntities {
             INDIVIDUAL_3, 26.985656953471274d,
             INDIVIDUAL_4, 9.849155306759332d
     );
+    public static final Map<Individual, Double> INDIVIDUAL_TO_FITNESS_MED_G_AVG = Map.of(
+            INDIVIDUAL_1, 2.0,
+            INDIVIDUAL_2, 10.0,
+            INDIVIDUAL_3, 20.0,
+            INDIVIDUAL_4, 6.0
+    );
 
-    public static final List<Individual> PS_EXPECTED_SELECTED_INDIVIDUALS = List.of(INDIVIDUAL_2, INDIVIDUAL_3, INDIVIDUAL_3, INDIVIDUAL_4);
-    public static final List<Individual> PS_EXPECTED_SELECTED_INDIVIDUALS_DEFAULT = List.of(INDIVIDUAL_1);
+    public static final List<Individual> EXPECTED_SELECTED_INDIVIDUALS = List.of(INDIVIDUAL_2, INDIVIDUAL_3, INDIVIDUAL_3, INDIVIDUAL_4);
+    public static final List<Individual> EXPECTED_SELECTED_INDIVIDUALS_DEFAULT = List.of(INDIVIDUAL_1);
 }

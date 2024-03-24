@@ -1,6 +1,7 @@
 package lab.v2.selection;
 
 import lab.model.Individual;
+import lab.v2.convertor.FitnessToProbabilityConvertor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,9 +20,9 @@ import static org.mockito.Mockito.when;
 class RwsSelectorTest {
 
     @Mock
-    private FitnessToPercentageConvertor<Integer> convertorInt;
+    private FitnessToProbabilityConvertor<Integer> convertorInt;
     @Mock
-    private FitnessToPercentageConvertor<Double> convertorDouble;
+    private FitnessToProbabilityConvertor<Double> convertorDouble;
 
     private RwsSelector<Integer> rwsSelectorInt;
     private RwsSelector<Double> rwsSelectorDouble;
@@ -34,7 +35,7 @@ class RwsSelectorTest {
 
     @Test
     public void whenSelectWithIntFitnessThenSuccess() {
-        when(convertorInt.convertToSelectionPercentages(INDIVIDUAL_TO_FITNESS_INT)).thenReturn(INDIVIDUAL_TO_PERCENTAGE);
+        when(convertorInt.convertToSelectionProbabilities(INDIVIDUAL_TO_FITNESS_INT)).thenReturn(INDIVIDUAL_TO_PROBABILITY);
 
         List<Individual> selected = rwsSelectorInt.select(INDIVIDUAL_TO_FITNESS_INT);
         assertThat(selected, hasSize(INDIVIDUAL_TO_FITNESS_INT.size()));
@@ -43,7 +44,7 @@ class RwsSelectorTest {
 
     @Test
     public void whenSelectWithDoubleFitnessThenSuccess() {
-        when(convertorDouble.convertToSelectionPercentages(INDIVIDUAL_TO_FITNESS_DOUBLE)).thenReturn(INDIVIDUAL_TO_PERCENTAGE);
+        when(convertorDouble.convertToSelectionProbabilities(INDIVIDUAL_TO_FITNESS_DOUBLE)).thenReturn(INDIVIDUAL_TO_PROBABILITY);
 
         List<Individual> selected = rwsSelectorDouble.select(INDIVIDUAL_TO_FITNESS_DOUBLE);
         assertThat(selected, hasSize(INDIVIDUAL_TO_FITNESS_DOUBLE.size()));

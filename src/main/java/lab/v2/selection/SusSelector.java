@@ -1,6 +1,8 @@
 package lab.v2.selection;
 
 import lab.model.Individual;
+import lab.v2.convertor.FitnessToProbabilityConvertor;
+import lab.v2.convertor.ProbabilityToExpectedQuantityConvertor;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
@@ -9,13 +11,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
-import static java.util.stream.Collectors.toUnmodifiableMap;
-
 @RequiredArgsConstructor
 public class SusSelector<T extends Number> implements Selector<T> {
 
     private static final int SPIN_STEP = 1;
-    private final FitnessToPercentageConvertor<T> fitnessToPercentageConvertor;
+    private final FitnessToProbabilityConvertor<T> fitnessToProbabilityConvertor;
+    private final ProbabilityToExpectedQuantityConvertor probabilityToExpectedQuantityConvertor;
     private final Random random = new Random();
 
     @Override
@@ -25,20 +26,17 @@ public class SusSelector<T extends Number> implements Selector<T> {
 
     @Override
     public List<Individual> select(Map<Individual, T> individualToFitness) {
-        Map<Individual, Double> individualToPercentage = fitnessToPercentageConvertor.convertToSelectionPercentages(individualToFitness);
-        return selectSUS(individualToPercentage);
+        Map<Individual, Double> individualToProbability = fitnessToProbabilityConvertor.convertToSelectionProbabilities(individualToFitness);
+        return selectSUS(individualToProbability);
     }
 
-    private List<Individual> selectSUS(Map<Individual, Double> individualToPercentage) {
-        Map<Individual, Double> individualToExpectedQuantity = getIndividualToExpectedQuantity(individualToPercentage);
+    private List<Individual> selectSUS(Map<Individual, Double> individualToProbability) {
+        Map<Individual, Double> individualToExpectedQuantity =
+                probabilityToExpectedQuantityConvertor.convertToExpectedQuantities(individualToProbability);
 
         return selectAll(individualToExpectedQuantity);
     }
 
-    private Map<Individual, Double> getIndividualToExpectedQuantity(Map<Individual, Double> individualToPercentage) {
-        return individualToPercentage.entrySet().stream()
-                .collect(toUnmodifiableMap(Entry::getKey, entry -> entry.getValue() * individualToPercentage.size()));
-    }
 
     private List<Individual> selectAll(Map<Individual, Double> individualToExpectedQuantity) {
         int populationSize = individualToExpectedQuantity.size();

@@ -1,6 +1,7 @@
 package lab.v2.selection;
 
 import lab.model.Individual;
+import lab.v2.convertor.FitnessToProbabilityConvertor;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class RwsSelector<T extends Number> implements Selector<T> {
 
-    private final FitnessToPercentageConvertor<T> fitnessToPercentageConvertor;
+    private final FitnessToProbabilityConvertor<T> fitnessToProbabilityConvertor;
     private final Random random = new Random();
 
     @Override
@@ -22,8 +23,8 @@ public class RwsSelector<T extends Number> implements Selector<T> {
 
     @Override
     public List<Individual> select(Map<Individual, T> individualToFitness) {
-        Map<Individual, Double> individualToPercentage = fitnessToPercentageConvertor.convertToSelectionPercentages(individualToFitness);
-        return selectRWS(individualToPercentage);
+        Map<Individual, Double> individualToProbability = fitnessToProbabilityConvertor.convertToSelectionProbabilities(individualToFitness);
+        return selectRWS(individualToProbability);
     }
 
     private List<Individual> selectRWS(Map<Individual, Double> individualToPercentage) {
