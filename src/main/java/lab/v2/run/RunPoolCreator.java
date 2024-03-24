@@ -1,6 +1,5 @@
 package lab.v2.run;
 
-import lab.v2.parameters.RunConfiguration;
 import lab.v2.population.PopulationConfiguration;
 import lab.v2.population.PopulationPool;
 import lab.v2.population.PopulationPoolInitializer;

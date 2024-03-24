@@ -1,7 +1,6 @@
 package lab.v2.run;
 
 import lab.v2.function.FitnessFunctionV2;
-import lab.v2.parameters.RunConfiguration;
 import lab.v2.population.Population;
 import lab.v2.population.PopulationConfiguration;
 import lab.v2.population.PopulationPool;

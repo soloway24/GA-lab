@@ -1,6 +1,8 @@
 package lab.v2.parameters;
 
 import lab.v2.function.FitnessFunctionV2;
+import lab.v2.run.RunConfiguration;
+import lab.v2.run.RunConfigurationFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
