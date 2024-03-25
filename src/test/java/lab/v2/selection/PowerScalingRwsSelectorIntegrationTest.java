@@ -17,12 +17,12 @@ import static org.hamcrest.Matchers.hasSize;
 @ExtendWith(MockitoExtension.class)
 class PowerScalingRwsSelectorIntegrationTest {
 
-    private final FitnessToProbabilityConvertor<Double> fitnessToProbabilityConvertor = new FitnessToProbabilityConvertor<>();
+    private final FitnessToProbabilityConvertor fitnessToProbabilityConvertor = new FitnessToProbabilityConvertor();
 
-    private final RwsSelector<Double> rwsSelector = new RwsSelector<>(fitnessToProbabilityConvertor);
-    private final ScalingSelector<Double> scalingSelector = new ScalingSelector<>();
-    private final PowerScalingSelector<Double> powerScalingSelector = new PowerScalingSelector<>(scalingSelector, POWER_SCALING_POWER);
-    private final PowerScalingRwsSelector<Double> powerScalingRwsSelector = new PowerScalingRwsSelector<>(powerScalingSelector, rwsSelector);
+    private final RwsSelector rwsSelector = new RwsSelector(fitnessToProbabilityConvertor);
+    private final ScalingSelector scalingSelector = new ScalingSelector();
+    private final PowerScalingSelector powerScalingSelector = new PowerScalingSelector(scalingSelector, POWER_SCALING_POWER);
+    private final PowerScalingRwsSelector powerScalingRwsSelector = new PowerScalingRwsSelector(powerScalingSelector, rwsSelector);
 
     @Test
     public void whenSelectWithDoubleFitnessThenSuccess() {

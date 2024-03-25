@@ -20,33 +20,28 @@ import static org.mockito.Mockito.when;
 class RwsSelectorTest {
 
     @Mock
-    private FitnessToProbabilityConvertor<Integer> convertorInt;
-    @Mock
-    private FitnessToProbabilityConvertor<Double> convertorDouble;
-
-    private RwsSelector<Integer> rwsSelectorInt;
-    private RwsSelector<Double> rwsSelectorDouble;
+    private FitnessToProbabilityConvertor convertor;
+    private RwsSelector rwsSelector;
 
     @BeforeEach
     public void init() {
-        rwsSelectorInt = new RwsSelector<>(convertorInt);
-        rwsSelectorDouble = new RwsSelector<>(convertorDouble);
+        rwsSelector = new RwsSelector(convertor);
     }
 
     @Test
     public void whenSelectWithIntFitnessThenSuccess() {
-        when(convertorInt.convertToSelectionProbabilities(INDIVIDUAL_TO_FITNESS_INT)).thenReturn(INDIVIDUAL_TO_PROBABILITY);
+        when(convertor.convertToSelectionProbabilities(INDIVIDUAL_TO_FITNESS_INT)).thenReturn(INDIVIDUAL_TO_PROBABILITY);
 
-        List<Individual> selected = rwsSelectorInt.select(INDIVIDUAL_TO_FITNESS_INT);
+        List<Individual> selected = rwsSelector.select(INDIVIDUAL_TO_FITNESS_INT);
         assertThat(selected, hasSize(INDIVIDUAL_TO_FITNESS_INT.size()));
         selected.forEach(individual -> assertThat(INDIVIDUAL_TO_FITNESS_INT.keySet(), hasItem(individual)));
     }
 
     @Test
     public void whenSelectWithDoubleFitnessThenSuccess() {
-        when(convertorDouble.convertToSelectionProbabilities(INDIVIDUAL_TO_FITNESS_DOUBLE)).thenReturn(INDIVIDUAL_TO_PROBABILITY);
+        when(convertor.convertToSelectionProbabilities(INDIVIDUAL_TO_FITNESS_DOUBLE)).thenReturn(INDIVIDUAL_TO_PROBABILITY);
 
-        List<Individual> selected = rwsSelectorDouble.select(INDIVIDUAL_TO_FITNESS_DOUBLE);
+        List<Individual> selected = rwsSelector.select(INDIVIDUAL_TO_FITNESS_DOUBLE);
         assertThat(selected, hasSize(INDIVIDUAL_TO_FITNESS_DOUBLE.size()));
         selected.forEach(individual -> assertThat(INDIVIDUAL_TO_FITNESS_DOUBLE.keySet(), hasItem(individual)));
     }

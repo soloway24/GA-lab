@@ -11,20 +11,20 @@ import static lab.v2.CalculationUtils.getDoubleValues;
 import static lab.v2.CalculationUtils.getValueSum;
 import static lab.v2.convertor.ValuesAdjuster.getAdjustedIndividualToValue;
 
-public class FitnessToProbabilityConvertor<T extends Number> {
+public class FitnessToProbabilityConvertor {
 
     private static final double VALID_PROBABILITY_SUM = 1;
     private static final double ALLOWED_ERROR = 0.00000000001;
     private static final String ERROR_PREFIX = "Fitness to probability calculation failed: ";
 
-    public Map<Individual, Double> convertToSelectionProbabilities(Map<Individual, T> individualToFitness) {
+    public Map<Individual, Double> convertToSelectionProbabilities(Map<Individual, ? extends Number> individualToFitness) {
         double fitnessSum = getValueSum(getDoubleValues(individualToFitness));
         verifyFitnessSum(fitnessSum, individualToFitness);
 
         return getIndividualToProbability(individualToFitness, fitnessSum);
     }
 
-    private Map<Individual, Double> getIndividualToProbability(Map<Individual, T> individualToFitness, double fitnessSum) {
+    private Map<Individual, Double> getIndividualToProbability(Map<Individual, ? extends Number> individualToFitness, double fitnessSum) {
         Map<Individual, Double> individualToProbability = individualToFitness.entrySet().stream()
                 .collect(toUnmodifiableMap(Entry::getKey, entry -> getProbability(entry, fitnessSum)));
 
@@ -34,7 +34,7 @@ public class FitnessToProbabilityConvertor<T extends Number> {
         return getAdjustedIndividualToValue(individualToProbability, probabilitySum, VALID_PROBABILITY_SUM);
     }
 
-    private double getProbability(Entry<Individual, T> individual, double fitnessSum) {
+    private double getProbability(Entry<Individual, ? extends Number> individual, double fitnessSum) {
         return individual.getValue().doubleValue() / fitnessSum;
     }
 
@@ -45,7 +45,7 @@ public class FitnessToProbabilityConvertor<T extends Number> {
         }
     }
 
-    private void verifyFitnessSum(double sum, Map<Individual, T> individualToFitness) {
+    private void verifyFitnessSum(double sum, Map<Individual, ? extends Number> individualToFitness) {
         if (sum <= 0) {
             throw new IllegalStateException(ERROR_PREFIX + " Fitness sum should be greater than zero ! " +
                     "Individuals with fitness = " + individualToFitness + ", sum = " + sum + " .");

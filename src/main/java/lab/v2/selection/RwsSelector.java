@@ -11,9 +11,9 @@ import java.util.Random;
 import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
-public class RwsSelector<T extends Number> implements Selector<T> {
+public class RwsSelector implements Selector {
 
-    private final FitnessToProbabilityConvertor<T> fitnessToProbabilityConvertor;
+    private final FitnessToProbabilityConvertor fitnessToProbabilityConvertor;
     private final Random random = new Random();
 
     @Override
@@ -22,7 +22,7 @@ public class RwsSelector<T extends Number> implements Selector<T> {
     }
 
     @Override
-    public List<Individual> select(Map<Individual, T> individualToFitness) {
+    public List<Individual> select(Map<Individual, ? extends Number> individualToFitness) {
         Map<Individual, Double> individualToProbability = fitnessToProbabilityConvertor.convertToSelectionProbabilities(individualToFitness);
         return selectRWS(individualToProbability);
     }

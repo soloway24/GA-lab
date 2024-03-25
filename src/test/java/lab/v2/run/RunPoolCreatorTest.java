@@ -1,10 +1,15 @@
 package lab.v2.run;
 
+import lab.v2.convertor.FitnessToProbabilityConvertor;
+import lab.v2.convertor.ProbabilityToExpectedQuantityConvertor;
 import lab.v2.function.FitnessFunctionV2;
 import lab.v2.population.Population;
 import lab.v2.population.PopulationConfiguration;
 import lab.v2.population.PopulationPool;
 import lab.v2.population.PopulationPoolInitializer;
+import lab.v2.selection.RwsSelector;
+import lab.v2.selection.Selector;
+import lab.v2.selection.SusSelector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +34,11 @@ class RunPoolCreatorTest {
     private static final int RUN_POOL_SIZE = 2;
     private static final int POPULATION_SIZE = 10;
 
+    private final FitnessToProbabilityConvertor fitnessToProbabilityConvertor = new FitnessToProbabilityConvertor();
+    private final ProbabilityToExpectedQuantityConvertor probabilityToExpectedQuantityConvertor = new ProbabilityToExpectedQuantityConvertor();
+    private final Selector rwsSelector = new RwsSelector(fitnessToProbabilityConvertor);
+    private final Selector susSelector = new SusSelector(fitnessToProbabilityConvertor, probabilityToExpectedQuantityConvertor);
+
     @Mock
     private FitnessFunctionV2<Integer, Integer> function1;
     @Mock
@@ -47,10 +57,10 @@ class RunPoolCreatorTest {
         PopulationConfiguration populationConfiguration = new PopulationConfiguration(function1, ONE_OPTIMAL,
                 STANDARD, POPULATION_SIZE);
         RunPoolConfiguration runPoolConfiguration1 = new RunPoolConfiguration(
-                new RunConfiguration(function1, CROSSOVER, ONE_OPTIMAL, STANDARD, POPULATION_SIZE), RUN_POOL_SIZE
+                new RunConfiguration(function1, rwsSelector, CROSSOVER, ONE_OPTIMAL, STANDARD, POPULATION_SIZE), RUN_POOL_SIZE
         );
         RunPoolConfiguration runPoolConfiguration2 = new RunPoolConfiguration(
-                new RunConfiguration(function1, MUTATION, ONE_OPTIMAL, STANDARD, POPULATION_SIZE), RUN_POOL_SIZE
+                new RunConfiguration(function1, susSelector, MUTATION, ONE_OPTIMAL, STANDARD, POPULATION_SIZE), RUN_POOL_SIZE
         );
         runPoolConfigurations = List.of(runPoolConfiguration1, runPoolConfiguration2);
         List<Population> populations = List.of(population1, population2);

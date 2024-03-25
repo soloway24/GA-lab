@@ -12,30 +12,29 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class FitnessToProbabilityConvertorTest {
 
-    private final FitnessToProbabilityConvertor<Integer> convertorInt = new FitnessToProbabilityConvertor<>();
-    private final FitnessToProbabilityConvertor<Double> convertorDouble = new FitnessToProbabilityConvertor<>();
+    private final FitnessToProbabilityConvertor convertor = new FitnessToProbabilityConvertor();
 
     @Test
     public void whenConvertIntFitnessThenSuccess() {
-        assertThat(convertorInt.convertToSelectionProbabilities(INDIVIDUAL_TO_FITNESS_INT).entrySet(),
+        assertThat(convertor.convertToSelectionProbabilities(INDIVIDUAL_TO_FITNESS_INT).entrySet(),
                 containsInAnyOrder(INDIVIDUAL_TO_PROBABILITY.entrySet().toArray()));
     }
 
     @Test
     public void whenConvertDoubleFitnessThenSuccess() {
-        assertThat(convertorDouble.convertToSelectionProbabilities(INDIVIDUAL_TO_FITNESS_DOUBLE).entrySet(),
+        assertThat(convertor.convertToSelectionProbabilities(INDIVIDUAL_TO_FITNESS_DOUBLE).entrySet(),
                 containsInAnyOrder(INDIVIDUAL_TO_PROBABILITY.entrySet().toArray()));
     }
 
     @Test
     public void whenConvertEmptyIndividualsThenFailure() {
         assertThrows(IllegalStateException.class,
-                () -> convertorDouble.convertToSelectionProbabilities(Map.of()));
+                () -> convertor.convertToSelectionProbabilities(Map.of()));
     }
 
     @Test
     public void whenConvertZeroFitnessSumThenFailure() {
         assertThrows(IllegalStateException.class,
-                () -> convertorDouble.convertToSelectionProbabilities(Map.of(INDIVIDUAL_1, 0.0)));
+                () -> convertor.convertToSelectionProbabilities(Map.of(INDIVIDUAL_1, 0.0)));
     }
 }

@@ -16,13 +16,13 @@ import static org.hamcrest.Matchers.*;
 @ExtendWith(MockitoExtension.class)
 class DynamicPowerScalingRwsSelectorIntegrationTest {
 
-    private final FitnessToProbabilityConvertor<Double> fitnessToProbabilityConvertor = new FitnessToProbabilityConvertor<>();
-    private final RwsSelector<Double> rwsSelector = new RwsSelector<>(fitnessToProbabilityConvertor);
-    private final ScalingSelector<Double> scalingSelector = new ScalingSelector<>();
-    private final DynamicPowerScalingSelector<Double> dynamicPowerScalingSelector =
-            new DynamicPowerScalingSelector<>(scalingSelector, POWER_SCALING_POWER_START, POWER_SCALING_POWER_END);
-    private final DynamicPowerScalingRwsSelector<Double> dynamicPowerScalingRwsSelector =
-            new DynamicPowerScalingRwsSelector<>(dynamicPowerScalingSelector, rwsSelector);
+    private final FitnessToProbabilityConvertor fitnessToProbabilityConvertor = new FitnessToProbabilityConvertor();
+    private final RwsSelector rwsSelector = new RwsSelector(fitnessToProbabilityConvertor);
+    private final ScalingSelector scalingSelector = new ScalingSelector();
+    private final DynamicPowerScalingSelector dynamicPowerScalingSelector =
+            new DynamicPowerScalingSelector(scalingSelector, POWER_SCALING_POWER_START, POWER_SCALING_POWER_END);
+    private final DynamicPowerScalingRwsSelector dynamicPowerScalingRwsSelector =
+            new DynamicPowerScalingRwsSelector(dynamicPowerScalingSelector, rwsSelector);
 
     @Test
     public void whenSelectWithMedianGreaterThanAverageThenSuccess() {

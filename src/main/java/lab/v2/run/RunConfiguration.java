@@ -4,8 +4,10 @@ import lab.parameters.Encoding;
 import lab.v2.function.FitnessFunctionV2;
 import lab.v2.parameters.OperatorsApplicationType;
 import lab.v2.population.PopulationType;
+import lab.v2.selection.Selector;
 
 public record RunConfiguration(FitnessFunctionV2<?, ?> function,
+                               Selector selector,
                                OperatorsApplicationType operatorsApplicationType,
                                PopulationType populationType,
                                Encoding encoding,

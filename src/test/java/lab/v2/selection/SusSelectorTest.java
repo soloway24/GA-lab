@@ -21,27 +21,23 @@ import static org.mockito.Mockito.when;
 class SusSelectorTest {
 
     @Mock
-    private FitnessToProbabilityConvertor<Integer> fitnessToProbabilityConvertorInt;
-    @Mock
-    private FitnessToProbabilityConvertor<Double> fitnessToProbabilityConvertorDouble;
+    private FitnessToProbabilityConvertor fitnessToProbabilityConvertor;
     @Mock
     private ProbabilityToExpectedQuantityConvertor probabilityToExpectedQuantityConvertor;
 
-    private SusSelector<Integer> susSelectorInt;
-    private SusSelector<Double> susSelectorDouble;
+    private SusSelector susSelector;
 
     @BeforeEach
     public void init() {
-        susSelectorInt = new SusSelector<>(fitnessToProbabilityConvertorInt, probabilityToExpectedQuantityConvertor);
-        susSelectorDouble = new SusSelector<>(fitnessToProbabilityConvertorDouble, probabilityToExpectedQuantityConvertor);
+        susSelector = new SusSelector(fitnessToProbabilityConvertor, probabilityToExpectedQuantityConvertor);
     }
 
     @Test
     public void whenSelectWithIntFitnessThenSuccess() {
-        when(fitnessToProbabilityConvertorInt.convertToSelectionProbabilities(INDIVIDUAL_TO_FITNESS_INT)).thenReturn(INDIVIDUAL_TO_PROBABILITY);
+        when(fitnessToProbabilityConvertor.convertToSelectionProbabilities(INDIVIDUAL_TO_FITNESS_INT)).thenReturn(INDIVIDUAL_TO_PROBABILITY);
         when(probabilityToExpectedQuantityConvertor.convertToExpectedQuantities(INDIVIDUAL_TO_PROBABILITY)).thenReturn(INDIVIDUAL_TO_EXPECTED_QUANTITY);
 
-        List<Individual> selected = susSelectorInt.select(INDIVIDUAL_TO_FITNESS_INT);
+        List<Individual> selected = susSelector.select(INDIVIDUAL_TO_FITNESS_INT);
         assertThat(selected, hasSize(INDIVIDUAL_TO_FITNESS_INT.size()));
         selected.forEach(individual -> assertThat(INDIVIDUAL_TO_FITNESS_INT.keySet(), hasItem(individual)));
 
@@ -50,10 +46,10 @@ class SusSelectorTest {
 
     @Test
     public void whenSelectWithDoubleFitnessThenSuccess() {
-        when(fitnessToProbabilityConvertorDouble.convertToSelectionProbabilities(INDIVIDUAL_TO_FITNESS_DOUBLE)).thenReturn(INDIVIDUAL_TO_PROBABILITY);
+        when(fitnessToProbabilityConvertor.convertToSelectionProbabilities(INDIVIDUAL_TO_FITNESS_DOUBLE)).thenReturn(INDIVIDUAL_TO_PROBABILITY);
         when(probabilityToExpectedQuantityConvertor.convertToExpectedQuantities(INDIVIDUAL_TO_PROBABILITY)).thenReturn(INDIVIDUAL_TO_EXPECTED_QUANTITY);
 
-        List<Individual> selected = susSelectorDouble.select(INDIVIDUAL_TO_FITNESS_DOUBLE);
+        List<Individual> selected = susSelector.select(INDIVIDUAL_TO_FITNESS_DOUBLE);
         assertThat(selected, hasSize(INDIVIDUAL_TO_FITNESS_DOUBLE.size()));
         selected.forEach(individual -> assertThat(INDIVIDUAL_TO_FITNESS_DOUBLE.keySet(), hasItem(individual)));
 

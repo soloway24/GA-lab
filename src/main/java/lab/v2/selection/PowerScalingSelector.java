@@ -11,17 +11,17 @@ import java.util.function.Function;
 import static java.lang.Math.pow;
 
 @RequiredArgsConstructor
-public class PowerScalingSelector<T extends Number> {
+public class PowerScalingSelector {
 
-    private final ScalingSelector<T> scalingSelector;
+    private final ScalingSelector scalingSelector;
     private final double power;
 
-    public List<Individual> select(Map<Individual, T> individualToFitness,
+    public List<Individual> select(Map<Individual, ? extends Number> individualToFitness,
                                    Function<Map<Individual, Double>, List<Individual>> selectionFunction) {
         return scalingSelector.select(individualToFitness, selectionFunction, getScalingFunction());
     }
 
-    private BiFunction<T, Map<Individual, T>, Double> getScalingFunction() {
-        return (T fitness, Map<Individual, T> individualToFitness) -> pow(fitness.doubleValue(), power);
+    private <T extends Number> BiFunction<T, Map<Individual, T>, Double> getScalingFunction() {
+        return (fitness, individualToFitness) -> pow(fitness.doubleValue(), power);
     }
 }

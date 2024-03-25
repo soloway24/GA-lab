@@ -12,10 +12,10 @@ import java.util.Map.Entry;
 import java.util.Random;
 
 @RequiredArgsConstructor
-public class SusSelector<T extends Number> implements Selector<T> {
+public class SusSelector implements Selector {
 
     private static final int SPIN_STEP = 1;
-    private final FitnessToProbabilityConvertor<T> fitnessToProbabilityConvertor;
+    private final FitnessToProbabilityConvertor fitnessToProbabilityConvertor;
     private final ProbabilityToExpectedQuantityConvertor probabilityToExpectedQuantityConvertor;
     private final Random random = new Random();
 
@@ -25,7 +25,7 @@ public class SusSelector<T extends Number> implements Selector<T> {
     }
 
     @Override
-    public List<Individual> select(Map<Individual, T> individualToFitness) {
+    public List<Individual> select(Map<Individual, ? extends Number> individualToFitness) {
         Map<Individual, Double> individualToProbability = fitnessToProbabilityConvertor.convertToSelectionProbabilities(individualToFitness);
         return selectSUS(individualToProbability);
     }

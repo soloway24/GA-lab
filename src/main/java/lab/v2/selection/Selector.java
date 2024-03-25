@@ -5,10 +5,10 @@ import lab.model.Individual;
 import java.util.List;
 import java.util.Map;
 
-public interface Selector<T extends Number> {
+public interface Selector {
 
     String getName();
 
-    List<Individual> select(Map<Individual, T> individualToFitness);
+    List<Individual> select(Map<Individual, ? extends Number> individualToFitness);
 
 }

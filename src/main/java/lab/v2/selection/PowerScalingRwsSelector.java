@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class PowerScalingRwsSelector<T extends Number> implements Selector<T> {
+public class PowerScalingRwsSelector implements Selector {
 
-    private final PowerScalingSelector<T> powerScalingSelector;
-    private final RwsSelector<Double> rwsSelector;
+    private final PowerScalingSelector powerScalingSelector;
+    private final RwsSelector rwsSelector;
 
     @Override
     public String getName() {
@@ -18,7 +18,7 @@ public class PowerScalingRwsSelector<T extends Number> implements Selector<T> {
     }
 
     @Override
-    public List<Individual> select(Map<Individual, T> individualToFitness) {
+    public List<Individual> select(Map<Individual, ? extends Number> individualToFitness) {
         return powerScalingSelector.select(individualToFitness, rwsSelector::select);
     }
 }
