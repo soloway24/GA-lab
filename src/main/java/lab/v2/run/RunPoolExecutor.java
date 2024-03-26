@@ -1,10 +1,13 @@
 package lab.v2.run;
 
-import lab.model.Individual;
+import lab.v2.ConvergenceIdentifier;
+import lab.v2.Individual;
 import lab.v2.encoding.DecoderV2;
 import lab.v2.function.FitnessFunctionV2;
+import lab.v2.operator.Operator;
 import lab.v2.population.Population;
 import lab.v2.selection.Selector;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
@@ -12,14 +15,16 @@ import java.util.Map;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 
+@RequiredArgsConstructor
 public class RunPoolExecutor {
 
     private static final int MAX_ITERATIONS = 10000000;
 
-    private final DecoderV2 decoder = DecoderV2.getInstance();
+    private final DecoderV2 decoder;
+    private final ConvergenceIdentifier convergenceIdentifier;
 
     public void executeRunPool(RunPool runPool) {
-        runPool.runs().forEach(this::executeRun);
+        runPool.runs().forEach(run -> System.out.println(executeRun(run)));
     }
 
     public Map<Individual, ? extends Number> executeRun(Run run) {
@@ -27,21 +32,23 @@ public class RunPoolExecutor {
         FitnessFunctionV2<?, ?> function = runConfiguration.function();
         Population population = run.population();
         Selector selector = runConfiguration.selector();
+        Operator operator = runConfiguration.operator();
 
         List<Individual> currentIndividuals = population.individuals();
         Map<Individual, ? extends Number> individualToFitness = null;
         int i = 0;
 
-        while (hasNotConverged(currentIndividuals) && i < MAX_ITERATIONS) {
+        while (hasNotConverged(currentIndividuals, operator) && i < MAX_ITERATIONS) {
             individualToFitness = getIndividualToFitness(currentIndividuals, function);
             currentIndividuals = selector.select(individualToFitness);
+            currentIndividuals = operator.apply(currentIndividuals);
             i++;
         }
         return individualToFitness;
     }
 
-    private boolean hasNotConverged(List<Individual> individuals) {
-        return true;
+    private boolean hasNotConverged(List<Individual> individuals, Operator operator) {
+        return !convergenceIdentifier.hasConverged(individuals, operator.getOperatorType());
     }
 
     private <ARG_T extends Number, RES_T extends Number> Map<Individual, RES_T> getIndividualToFitness(List<Individual> individuals,

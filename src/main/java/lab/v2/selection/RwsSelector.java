@@ -32,6 +32,7 @@ public class RwsSelector implements Selector {
 
         return IntStream.range(0, selectionSize)
                 .mapToObj(i -> selectOne(individualToPercentage))
+                .map(Individual::new)
                 .toList();
     }
 

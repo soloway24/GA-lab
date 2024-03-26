@@ -48,7 +48,7 @@ public class SusSelector implements Selector {
         for (Entry<Individual, Double> entry : individualToExpectedQuantity.entrySet()) {
             currentPercentage += entry.getValue();
             while (currentPercentage >= spin && selectedQuantity < populationSize) {
-                selected.add(entry.getKey());
+                selected.add(new Individual(entry.getKey()));
                 selectedQuantity++;
                 spin += SPIN_STEP;
             }

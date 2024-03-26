@@ -81,8 +81,8 @@ public class PowerFunction implements FitnessFunctionV2<Double, Double> {
 
     @Override
     public Optional<Individual> getOptimalIndividual(Encoding encoding) {
-        return ofNullable(ENCODING_TO_OPTIMAL.get(encoding));
-
+        return ofNullable(ENCODING_TO_OPTIMAL.get(encoding))
+                .map(Individual::new);
     }
 
     @Override

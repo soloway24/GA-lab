@@ -6,14 +6,20 @@ import lab.v2.operator.OperatorType;
 import lab.v2.population.PopulationType;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Optional.*;
 import static lab.parameters.Encoding.STANDARD;
-import static lab.v2.Individual.ALL_100_ZEROS_INDIVIDUAL;
 import static lab.v2.population.PopulationType.RANDOM;
 
 public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
+
+    private static final Individual OPTIMAL_STANDARD_INDIVIDUAL = new Individual("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", STANDARD);
+
+    private static final Map<Encoding, Individual> ENCODING_TO_OPTIMAL = Map.of(
+            STANDARD, OPTIMAL_STANDARD_INDIVIDUAL
+    );
 
     private static FConstAllFunction instance;
 
@@ -62,7 +68,8 @@ public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
 
     @Override
     public Optional<Individual> getOptimalIndividual(Encoding encoding) {
-        return of(ALL_100_ZEROS_INDIVIDUAL);
+        return ofNullable(ENCODING_TO_OPTIMAL.get(encoding))
+                .map(Individual::new);
     }
 
     @Override

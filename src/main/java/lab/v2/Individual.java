@@ -21,10 +21,14 @@ public class Individual {
         this.binaryCode = binaryCode;
     }
 
-
     public Individual(String binaryCode, Encoding encoding) {
         this.binaryCode = binaryCode;
         this.encoding = encoding;
+    }
+
+    public Individual(Individual individual) {
+        this.binaryCode = individual.getBinaryCode();
+        this.encoding = individual.getEncoding();
     }
 
     public static Individual createRandomIndividual(int length, Encoding encoding) {
@@ -33,5 +37,10 @@ public class Individual {
             sb.append(RANDOM.nextBoolean() ? "1" : "0");
         }
         return new Individual(sb.toString(), encoding);
+    }
+
+    @Override
+    public String toString() {
+        return binaryCode;
     }
 }
