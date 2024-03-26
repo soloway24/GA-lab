@@ -8,6 +8,8 @@ public interface Operator {
 
     String getName();
 
+    OperatorType getOperatorType();
+
     List<Individual> apply(List<Individual> individuals);
 
 }

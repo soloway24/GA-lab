@@ -3,6 +3,9 @@ package lab.v2.run;
 import lab.v2.convertor.FitnessToProbabilityConvertor;
 import lab.v2.convertor.ProbabilityToExpectedQuantityConvertor;
 import lab.v2.function.FitnessFunctionV2;
+import lab.v2.operator.NoneOperator;
+import lab.v2.operator.OnePointCrossoverOperator;
+import lab.v2.operator.Operator;
 import lab.v2.population.Population;
 import lab.v2.population.PopulationConfiguration;
 import lab.v2.population.PopulationPool;
@@ -38,6 +41,8 @@ class RunPoolCreatorTest {
     private final ProbabilityToExpectedQuantityConvertor probabilityToExpectedQuantityConvertor = new ProbabilityToExpectedQuantityConvertor();
     private final Selector rwsSelector = new RwsSelector(fitnessToProbabilityConvertor);
     private final Selector susSelector = new SusSelector(fitnessToProbabilityConvertor, probabilityToExpectedQuantityConvertor);
+    private final Operator noneOperator = new NoneOperator();
+    private final Operator onePointCrossover = new OnePointCrossoverOperator(1.0);
 
     @Mock
     private FitnessFunctionV2<Integer, Integer> function1;
@@ -57,10 +62,10 @@ class RunPoolCreatorTest {
         PopulationConfiguration populationConfiguration = new PopulationConfiguration(function1, ONE_OPTIMAL,
                 STANDARD, POPULATION_SIZE);
         RunPoolConfiguration runPoolConfiguration1 = new RunPoolConfiguration(
-                new RunConfiguration(function1, rwsSelector, CROSSOVER, ONE_OPTIMAL, STANDARD, POPULATION_SIZE), RUN_POOL_SIZE
+                new RunConfiguration(function1, rwsSelector, noneOperator, ONE_OPTIMAL, STANDARD, POPULATION_SIZE), RUN_POOL_SIZE
         );
         RunPoolConfiguration runPoolConfiguration2 = new RunPoolConfiguration(
-                new RunConfiguration(function1, susSelector, MUTATION, ONE_OPTIMAL, STANDARD, POPULATION_SIZE), RUN_POOL_SIZE
+                new RunConfiguration(function1, susSelector, onePointCrossover, ONE_OPTIMAL, STANDARD, POPULATION_SIZE), RUN_POOL_SIZE
         );
         runPoolConfigurations = List.of(runPoolConfiguration1, runPoolConfiguration2);
         List<Population> populations = List.of(population1, population2);
