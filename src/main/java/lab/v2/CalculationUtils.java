@@ -1,7 +1,5 @@
 package lab.v2;
 
-import lab.model.Individual;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

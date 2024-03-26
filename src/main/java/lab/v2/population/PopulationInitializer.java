@@ -1,7 +1,7 @@
 package lab.v2.population;
 
-import lab.model.Individual;
 import lab.parameters.Encoding;
+import lab.v2.Individual;
 import lab.v2.function.FitnessFunctionV2;
 import lombok.RequiredArgsConstructor;
 
@@ -16,7 +16,7 @@ import static java.util.List.copyOf;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.concat;
-import static lab.model.Individual.createRandomIndividual;
+import static lab.v2.Individual.createRandomIndividual;
 import static lab.v2.population.PopulationInitializationType.*;
 
 @RequiredArgsConstructor

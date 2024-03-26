@@ -1,6 +1,6 @@
 package lab.v2.selection;
 
-import lab.model.Individual;
+import lab.v2.Individual;
 import lab.v2.convertor.FitnessToProbabilityConvertor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

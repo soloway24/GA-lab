@@ -1,7 +1,7 @@
 package lab.v2.function;
 
-import lab.model.Individual;
 import lab.parameters.Encoding;
+import lab.v2.Individual;
 import lab.v2.operator.OperatorType;
 import lab.v2.population.PopulationType;
 
@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.Optional.*;
-import static lab.model.Individual.ALL_100_ZEROS_INDIVIDUAL;
 import static lab.parameters.Encoding.STANDARD;
+import static lab.v2.Individual.ALL_100_ZEROS_INDIVIDUAL;
 import static lab.v2.population.PopulationType.RANDOM;
 
 public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {

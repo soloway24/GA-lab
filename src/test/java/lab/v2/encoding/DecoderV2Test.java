@@ -1,7 +1,7 @@
 package lab.v2.encoding;
 
-import lab.model.Individual;
 import lab.parameters.Encoding;
+import lab.v2.Individual;
 import lab.v2.function.FitnessFunctionV2;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,8 +10,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
-import static lab.model.Individual.ALL_100_ZEROS_INDIVIDUAL;
 import static lab.utils.Constants.MAX_CHROMOSOME_LENGTH;
+import static lab.v2.Individual.ALL_100_ZEROS_INDIVIDUAL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;

@@ -1,9 +1,8 @@
 package lab.v2.operator;
 
-import lab.model.Individual;
+import lab.v2.Individual;
 
 import java.util.List;
-import java.util.Random;
 
 import static lab.v2.operator.OperatorType.CROSSOVER;
 

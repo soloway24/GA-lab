@@ -1,6 +1,5 @@
 package lab.v2;
 
-import lab.model.Individual;
 import lab.v2.operator.OperatorType;
 
 import java.util.ArrayList;

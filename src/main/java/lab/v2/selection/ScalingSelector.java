@@ -1,6 +1,6 @@
 package lab.v2.selection;
 
-import lab.model.Individual;
+import lab.v2.Individual;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;

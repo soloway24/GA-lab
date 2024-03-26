@@ -1,6 +1,5 @@
 package lab.v2;
 
-import lab.model.Individual;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

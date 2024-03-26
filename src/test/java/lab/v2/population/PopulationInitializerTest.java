@@ -1,6 +1,6 @@
 package lab.v2.population;
 
-import lab.model.Individual;
+import lab.v2.Individual;
 import lab.v2.function.FitnessFunctionV2;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

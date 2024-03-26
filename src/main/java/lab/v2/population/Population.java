@@ -1,6 +1,6 @@
 package lab.v2.population;
 
-import lab.model.Individual;
+import lab.v2.Individual;
 
 import java.util.List;
 

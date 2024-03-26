@@ -1,6 +1,6 @@
 package lab.v2.convertor;
 
-import lab.model.Individual;
+import lab.v2.Individual;
 
 import java.util.ArrayList;
 import java.util.List;

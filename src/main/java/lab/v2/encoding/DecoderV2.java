@@ -1,7 +1,7 @@
 package lab.v2.encoding;
 
-import lab.model.Individual;
 import lab.parameters.Encoding;
+import lab.v2.Individual;
 import lab.v2.function.FitnessFunctionV2;
 
 import java.util.Map;
