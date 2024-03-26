@@ -1,6 +1,6 @@
-package lab.v2.parameters;
+package lab.v2.operator;
 
-public enum OperatorsApplicationType {
+public enum OperatorType {
 
     NONE,
     CROSSOVER,

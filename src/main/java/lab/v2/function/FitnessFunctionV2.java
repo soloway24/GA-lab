@@ -2,13 +2,13 @@ package lab.v2.function;
 
 import lab.model.Individual;
 import lab.parameters.Encoding;
-import lab.v2.parameters.OperatorsApplicationType;
+import lab.v2.operator.OperatorType;
 import lab.v2.population.PopulationType;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface FitnessFunctionV2<ARG_T, RES_T extends Number> {
+public interface FitnessFunctionV2<ARG_T extends Number, RES_T extends Number> {
 
     String getName();
 
@@ -30,6 +30,6 @@ public interface FitnessFunctionV2<ARG_T, RES_T extends Number> {
 
     Optional<ARG_T> convertToX(long decimalValue);
 
-    List<PopulationType> getSupportedPopulationConfigurations(OperatorsApplicationType operatorsApplicationType);
+    List<PopulationType> getSupportedPopulationConfigurations(OperatorType operatorType);
 
 }

@@ -20,8 +20,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static lab.parameters.Encoding.STANDARD;
-import static lab.v2.parameters.OperatorsApplicationType.CROSSOVER;
-import static lab.v2.parameters.OperatorsApplicationType.MUTATION;
+import static lab.v2.operator.OperatorType.CROSSOVER;
+import static lab.v2.operator.OperatorType.MUTATION;
 import static lab.v2.population.PopulationType.ONE_OPTIMAL;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;

@@ -3,7 +3,7 @@ package lab.v2.run;
 import lab.v2.convertor.FitnessToProbabilityConvertor;
 import lab.v2.convertor.ProbabilityToExpectedQuantityConvertor;
 import lab.v2.function.FitnessFunctionV2;
-import lab.v2.parameters.OperatorsApplicationType;
+import lab.v2.operator.OperatorType;
 import lab.v2.selection.RwsSelector;
 import lab.v2.selection.Selector;
 import lab.v2.selection.SusSelector;
@@ -17,8 +17,8 @@ import java.util.List;
 
 import static lab.parameters.Encoding.GRAY;
 import static lab.parameters.Encoding.STANDARD;
-import static lab.v2.parameters.OperatorsApplicationType.CROSSOVER;
-import static lab.v2.parameters.OperatorsApplicationType.MUTATION;
+import static lab.v2.operator.OperatorType.CROSSOVER;
+import static lab.v2.operator.OperatorType.MUTATION;
 import static lab.v2.population.PopulationType.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -30,7 +30,7 @@ class RunConfigurationFactoryTest {
     private static final int POPULATION_SIZE_1 = 100;
     private static final int POPULATION_SIZE_2 = 200;
     private static final List<Integer> POPULATION_SIZES = List.of(POPULATION_SIZE_1, POPULATION_SIZE_2);
-    private static final List<OperatorsApplicationType> OPERATORS_APPLICATION_TYPES = List.of(CROSSOVER, MUTATION);
+    private static final List<OperatorType> OPERATORS_APPLICATION_TYPES = List.of(CROSSOVER, MUTATION);
 
     private final FitnessToProbabilityConvertor fitnessToProbabilityConvertor = new FitnessToProbabilityConvertor();
     private final ProbabilityToExpectedQuantityConvertor probabilityToExpectedQuantityConvertor = new ProbabilityToExpectedQuantityConvertor();

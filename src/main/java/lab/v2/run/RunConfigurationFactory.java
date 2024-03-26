@@ -1,7 +1,7 @@
 package lab.v2.run;
 
 import lab.v2.function.FitnessFunctionV2;
-import lab.v2.parameters.OperatorsApplicationType;
+import lab.v2.operator.OperatorType;
 import lab.v2.population.PopulationType;
 import lab.v2.selection.Selector;
 import lombok.Getter;
@@ -29,55 +29,55 @@ public class RunConfigurationFactory {
 
     public List<RunConfiguration> createAll(List<FitnessFunctionV2<?, ?>> functions,
                                             List<Selector> selectors,
-                                            List<OperatorsApplicationType> operatorsApplicationTypes,
+                                            List<OperatorType> operatorTypes,
                                             List<Integer> populationSizes) {
         return populationSizes.stream()
-                .flatMap(populationSize -> createConfiguration(functions, selectors, operatorsApplicationTypes, populationSize))
+                .flatMap(populationSize -> createConfiguration(functions, selectors, operatorTypes, populationSize))
                 .toList();
     }
 
     private Stream<RunConfiguration> createConfiguration(List<FitnessFunctionV2<?, ?>> functions,
                                                          List<Selector> selectors,
-                                                         List<OperatorsApplicationType> operatorsApplicationTypes,
+                                                         List<OperatorType> operatorTypes,
                                                          int populationSize) {
         return functions.stream()
-                .flatMap(function -> createConfiguration(function, selectors, operatorsApplicationTypes, populationSize));
+                .flatMap(function -> createConfiguration(function, selectors, operatorTypes, populationSize));
     }
 
     private Stream<RunConfiguration> createConfiguration(FitnessFunctionV2<?, ?> function,
                                                          List<Selector> selectors,
-                                                         List<OperatorsApplicationType> operatorsApplicationTypes,
+                                                         List<OperatorType> operatorTypes,
                                                          int populationSize) {
         return selectors.stream()
-                .flatMap(selector -> createConfiguration(function, selector, operatorsApplicationTypes, populationSize));
+                .flatMap(selector -> createConfiguration(function, selector, operatorTypes, populationSize));
     }
 
     private Stream<RunConfiguration> createConfiguration(FitnessFunctionV2<?, ?> function,
                                                          Selector selector,
-                                                         List<OperatorsApplicationType> operatorsApplicationTypes,
+                                                         List<OperatorType> operatorTypes,
                                                          int populationSize) {
-        return operatorsApplicationTypes.stream()
+        return operatorTypes.stream()
                 .flatMap(operatorsType -> createConfiguration(function, selector, operatorsType, populationSize));
     }
 
     private Stream<RunConfiguration> createConfiguration(FitnessFunctionV2<?, ?> function,
                                                          Selector selector,
-                                                         OperatorsApplicationType operatorsApplicationType,
+                                                         OperatorType operatorType,
                                                          int populationSize) {
-        return function.getSupportedPopulationConfigurations(operatorsApplicationType)
+        return function.getSupportedPopulationConfigurations(operatorType)
                 .stream()
-                .flatMap(populationConfig -> createConfiguration(function, selector, operatorsApplicationType,
+                .flatMap(populationConfig -> createConfiguration(function, selector, operatorType,
                         populationConfig, populationSize));
     }
 
     private Stream<RunConfiguration> createConfiguration(FitnessFunctionV2<?, ?> function,
                                                          Selector selector,
-                                                         OperatorsApplicationType operatorsApplicationType,
+                                                         OperatorType operatorType,
                                                          PopulationType populationType,
                                                          int populationSize) {
         return function.getSupportedEncodings()
                 .stream()
-                .map(encoding -> new RunConfiguration(function, selector, operatorsApplicationType, populationType,
+                .map(encoding -> new RunConfiguration(function, selector, operatorType, populationType,
                         encoding, populationSize));
     }
 }

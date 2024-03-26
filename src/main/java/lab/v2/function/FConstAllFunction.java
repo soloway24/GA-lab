@@ -2,7 +2,7 @@ package lab.v2.function;
 
 import lab.model.Individual;
 import lab.parameters.Encoding;
-import lab.v2.parameters.OperatorsApplicationType;
+import lab.v2.operator.OperatorType;
 import lab.v2.population.PopulationType;
 
 import java.util.List;
@@ -76,7 +76,7 @@ public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
     }
 
     @Override
-    public List<PopulationType> getSupportedPopulationConfigurations(OperatorsApplicationType operatorsApplicationType) {
+    public List<PopulationType> getSupportedPopulationConfigurations(OperatorType operatorType) {
         return List.of(RANDOM);
     }
 }

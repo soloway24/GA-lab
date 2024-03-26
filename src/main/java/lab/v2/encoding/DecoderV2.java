@@ -27,10 +27,13 @@ public class DecoderV2 {
 
     public static DecoderV2 getInstance() {
         return ofNullable(instance)
-                .orElse(new DecoderV2());
+                .orElseGet(() -> {
+                    instance = new DecoderV2();
+                    return instance;
+                });
     }
 
-    public <ARG_T> ARG_T decodeV2(Individual individual, FitnessFunctionV2<ARG_T, ?> fitnessFunction) {
+    public <ARG_T extends Number> ARG_T decodeV2(Individual individual, FitnessFunctionV2<ARG_T, ?> fitnessFunction) {
         long decimalValue = getDecimalValueV2(individual);
         return fitnessFunction.convertToX(decimalValue)
                 .orElseThrow(() -> new IllegalStateException("Provided function " + fitnessFunction.getName()
