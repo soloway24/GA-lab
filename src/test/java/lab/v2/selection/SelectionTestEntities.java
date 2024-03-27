@@ -2,6 +2,7 @@ package lab.v2.selection;
 
 import lab.v2.Individual;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -55,4 +56,10 @@ public class SelectionTestEntities {
 
     public static final List<Individual> EXPECTED_SELECTED_INDIVIDUALS = List.of(INDIVIDUAL_2, INDIVIDUAL_3, INDIVIDUAL_3, INDIVIDUAL_4);
     public static final List<Individual> EXPECTED_SELECTED_INDIVIDUALS_DEFAULT = List.of(INDIVIDUAL_1);
+
+    public static List<String> getBinaryCodes(Collection<Individual> individuals) {
+        return individuals.stream()
+                .map(Individual::getBinaryCode)
+                .toList();
+    }
 }

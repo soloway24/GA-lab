@@ -14,33 +14,20 @@ import static lab.utils.Constants.MAX_CHROMOSOME_LENGTH;
 
 public class DecoderV2 {
 
-    private static DecoderV2 instance;
-
     private static final Map<Encoding, Function<String, Long>> ENCODING_TO_DECODER =
             Map.of(
                     Encoding.STANDARD, DecoderV2::decodeStandardV2,
                     Encoding.GRAY, DecoderV2::decodeGrayV2
             );
 
-    private DecoderV2() {
-    }
-
-    public static DecoderV2 getInstance() {
-        return ofNullable(instance)
-                .orElseGet(() -> {
-                    instance = new DecoderV2();
-                    return instance;
-                });
-    }
-
-    public <ARG_T extends Number> ARG_T decodeV2(Individual individual, FitnessFunctionV2<ARG_T, ?> fitnessFunction) {
+    public static <ARG_T extends Number> ARG_T decodeV2(Individual individual, FitnessFunctionV2<ARG_T, ?> fitnessFunction) {
         long decimalValue = getDecimalValueV2(individual);
         return fitnessFunction.convertToX(decimalValue)
                 .orElseThrow(() -> new IllegalStateException("Provided function " + fitnessFunction.getName()
                         + " does not support decoding of individuals."));
     }
 
-    private long getDecimalValueV2(Individual individual) {
+    private static long getDecimalValueV2(Individual individual) {
         String binaryCode = individual.getBinaryCode();
         verifyBinaryCode(binaryCode);
 

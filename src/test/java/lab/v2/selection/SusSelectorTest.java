@@ -39,7 +39,11 @@ class SusSelectorTest {
 
         List<Individual> selected = susSelector.select(INDIVIDUAL_TO_FITNESS_INT);
         assertThat(selected, hasSize(INDIVIDUAL_TO_FITNESS_INT.size()));
-        selected.forEach(individual -> assertThat(INDIVIDUAL_TO_FITNESS_INT.keySet(), hasItem(individual)));
+
+        List<String> binaryCodes = getBinaryCodes(selected);
+        List<String> initialBinaryCodes = getBinaryCodes(INDIVIDUAL_TO_FITNESS_INT.keySet());
+
+        binaryCodes.forEach(individual -> assertThat(initialBinaryCodes, hasItem(individual)));
 
         INDIVIDUAL_TO_EXPECTED_QUANTITY.entrySet().forEach(entry -> assertContainsIndividualIfShouldBeSelected(selected, entry));
     }
@@ -51,7 +55,11 @@ class SusSelectorTest {
 
         List<Individual> selected = susSelector.select(INDIVIDUAL_TO_FITNESS_DOUBLE);
         assertThat(selected, hasSize(INDIVIDUAL_TO_FITNESS_DOUBLE.size()));
-        selected.forEach(individual -> assertThat(INDIVIDUAL_TO_FITNESS_DOUBLE.keySet(), hasItem(individual)));
+
+        List<String> binaryCodes = getBinaryCodes(selected);
+        List<String> initialBinaryCodes = getBinaryCodes(INDIVIDUAL_TO_FITNESS_DOUBLE.keySet());
+
+        binaryCodes.forEach(individual -> assertThat(initialBinaryCodes, hasItem(individual)));
 
         INDIVIDUAL_TO_EXPECTED_QUANTITY.entrySet().forEach(entry -> assertContainsIndividualIfShouldBeSelected(selected, entry));
     }
@@ -66,7 +74,7 @@ class SusSelectorTest {
 
     private int getSelectedQuantity(List<Individual> selected, Individual expected) {
         return selected.stream()
-                .filter(individual -> individual.equals(expected))
+                .filter(individual -> individual.getBinaryCode().equals(expected.getBinaryCode()))
                 .toList()
                 .size();
     }

@@ -28,7 +28,10 @@ public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
 
     public static FConstAllFunction getInstance() {
         return ofNullable(instance)
-                .orElse(new FConstAllFunction());
+                .orElseGet(() -> {
+                    instance = new FConstAllFunction();
+                    return instance;
+                });
     }
 
     @Override
@@ -73,7 +76,7 @@ public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
     }
 
     @Override
-    public Integer evaluate(Number x) {
+    public Integer evaluate(Individual individual) {
         return 100;
     }
 

@@ -8,8 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static lab.v2.selection.SelectionTestEntities.INDIVIDUAL_TO_FITNESS_DOUBLE;
-import static lab.v2.selection.SelectionTestEntities.POWER_SCALING_POWER;
+import static lab.v2.selection.SelectionTestEntities.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
@@ -28,6 +27,10 @@ class PowerScalingRwsSelectorIntegrationTest {
     public void whenSelectWithDoubleFitnessThenSuccess() {
         List<Individual> selected = powerScalingRwsSelector.select(INDIVIDUAL_TO_FITNESS_DOUBLE);
         assertThat(selected, hasSize(INDIVIDUAL_TO_FITNESS_DOUBLE.size()));
-        selected.forEach(individual -> assertThat(INDIVIDUAL_TO_FITNESS_DOUBLE.keySet(), hasItem(individual)));
+
+        List<String> binaryCodes = getBinaryCodes(selected);
+        List<String> initialBinaryCodes = getBinaryCodes(INDIVIDUAL_TO_FITNESS_DOUBLE.keySet());
+
+        binaryCodes.forEach(individual -> assertThat(initialBinaryCodes, hasItem(individual)));
     }
 }

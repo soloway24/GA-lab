@@ -15,6 +15,7 @@ import static java.util.Optional.ofNullable;
 import static lab.parameters.Encoding.GRAY;
 import static lab.parameters.Encoding.STANDARD;
 import static lab.utils.Constants.PRECISION_BASE;
+import static lab.v2.encoding.DecoderV2.decodeV2;
 import static lab.v2.operator.OperatorType.NONE;
 import static lab.v2.population.PopulationType.*;
 import static lab.v2.validators.EncodingSpaceValidator.validateEncodingSpace;
@@ -86,7 +87,8 @@ public class PowerFunction implements FitnessFunctionV2<Double, Double> {
     }
 
     @Override
-    public Double evaluate(Double x) {
+    public Double evaluate(Individual individual) {
+        Double x = decodeV2(individual, this);
         return pow(x, exponent);
     }
 

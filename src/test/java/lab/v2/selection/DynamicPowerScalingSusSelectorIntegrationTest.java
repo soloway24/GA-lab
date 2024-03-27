@@ -31,19 +31,28 @@ class DynamicPowerScalingSusSelectorIntegrationTest {
     public void whenSelectWithMedianGreaterThanAverageThenSuccess() {
         List<Individual> selected = dynamicPowerScalingSusSelector.select(INDIVIDUAL_TO_FITNESS_MED_G_AVG);
         assertThat(selected, hasSize(INDIVIDUAL_TO_FITNESS_MED_G_AVG.size()));
-        selected.forEach(individual -> assertThat(INDIVIDUAL_TO_FITNESS_MED_G_AVG.keySet(), hasItem(individual)));
+
+        List<String> binaryCodes = getBinaryCodes(selected);
+        List<String> initialBinaryCodes = getBinaryCodes(INDIVIDUAL_TO_FITNESS_MED_G_AVG.keySet());
+
+        binaryCodes.forEach(individual -> assertThat(initialBinaryCodes, hasItem(individual)));
     }
 
     @Test
     public void whenSelectWithMedianLessThanAverageThenSuccess() {
         List<Individual> selected = dynamicPowerScalingSusSelector.select(INDIVIDUAL_TO_FITNESS_DOUBLE);
         assertThat(selected, hasSize(INDIVIDUAL_TO_FITNESS_DOUBLE.size()));
-        selected.forEach(individual -> assertThat(INDIVIDUAL_TO_FITNESS_DOUBLE.keySet(), hasItem(individual)));
+
+        List<String> binaryCodes = getBinaryCodes(selected);
+        List<String> initialBinaryCodes = getBinaryCodes(INDIVIDUAL_TO_FITNESS_DOUBLE.keySet());
+
+        binaryCodes.forEach(individual -> assertThat(initialBinaryCodes, hasItem(individual)));
     }
 
     @Test
     public void whenSelectWithZeroFitnessSumThenSuccess() {
         List<Individual> selected = dynamicPowerScalingSusSelector.select(Map.of(INDIVIDUAL_1, 0.0));
-        assertThat(selected, contains(INDIVIDUAL_1));
+        List<String> binaryCodes = getBinaryCodes(selected);
+        assertThat(binaryCodes, contains(INDIVIDUAL_1.getBinaryCode()));
     }
 }

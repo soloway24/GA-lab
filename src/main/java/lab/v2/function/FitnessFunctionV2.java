@@ -26,7 +26,7 @@ public interface FitnessFunctionV2<ARG_T extends Number, RES_T extends Number> {
 
     Optional<Individual> getOptimalIndividual(Encoding encoding);
 
-    RES_T evaluate(ARG_T x);
+    RES_T evaluate(Individual individual);
 
     Optional<ARG_T> convertToX(long decimalValue);
 
