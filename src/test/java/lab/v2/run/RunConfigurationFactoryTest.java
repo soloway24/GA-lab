@@ -40,7 +40,6 @@ class RunConfigurationFactoryTest {
     private final Operator onePointCrossover = new OnePointCrossoverOperator(1.0);
     private final List<Operator> operators = List.of(noneOperator, onePointCrossover);
 
-
     private final RunConfigurationFactory runConfigurationFactory = RunConfigurationFactory.getInstance();
 
     @Mock

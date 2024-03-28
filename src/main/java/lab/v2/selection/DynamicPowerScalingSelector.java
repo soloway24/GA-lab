@@ -1,6 +1,7 @@
 package lab.v2.selection;
 
 import lab.v2.Individual;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Collection;
@@ -17,7 +18,9 @@ import static lab.v2.CalculationUtils.getMedian;
 public class DynamicPowerScalingSelector {
 
     private final ScalingSelector scalingSelector;
+    @Getter
     private final double startPower;
+    @Getter
     private final double endPower;
 
     public List<Individual> select(Map<Individual, ? extends Number> individualToFitness,

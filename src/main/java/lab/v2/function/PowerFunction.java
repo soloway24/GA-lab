@@ -47,7 +47,7 @@ public class PowerFunction implements FitnessFunctionV2<Double, Double> {
 
     @Override
     public String getName() {
-        return "Quadratic";
+        return "x^" + exponent;
     }
 
     @Override

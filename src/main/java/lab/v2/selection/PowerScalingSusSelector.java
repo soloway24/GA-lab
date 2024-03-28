@@ -14,7 +14,7 @@ public class PowerScalingSusSelector implements Selector {
 
     @Override
     public String getName() {
-        return "PS SUS";
+        return "PS SUS " + powerScalingSelector.getPower();
     }
 
     @Override

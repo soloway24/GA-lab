@@ -14,7 +14,7 @@ public class PowerScalingRwsSelector implements Selector {
 
     @Override
     public String getName() {
-        return "PS RWS";
+        return "PS RWS " + powerScalingSelector.getPower();
     }
 
     @Override

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toUnmodifiableMap;
@@ -21,11 +22,24 @@ public class RunPoolExecutor {
 
     private final ConvergenceIdentifier convergenceIdentifier;
 
-    public void executeRunPool(RunPool runPool) {
-        runPool.runs().forEach(run -> System.out.println(executeRun(run)));
+    public List<RunPoolStats> executeAllRunPools(List<RunPool> runPools) {
+        return runPools.stream()
+                .map(this::executeRunPool)
+                .toList();
     }
 
-    public Map<Individual, ? extends Number> executeRun(Run run) {
+    public RunPoolStats executeRunPool(RunPool runPool) {
+        System.out.println("Executing RunPool: " + runPool.runConfiguration());
+        List<RunStats> runPoolStats = IntStream.range(0, runPool.getSize())
+                .mapToObj(i -> {
+                    System.out.println("Run " + i);
+                    return executeRun(runPool.runs().get(i));
+                })
+                .toList();
+        return new RunPoolStats(runPool.runConfiguration(), runPoolStats);
+    }
+
+    public RunStats executeRun(Run run) {
         RunConfiguration runConfiguration = run.runConfiguration();
         FitnessFunctionV2<?, ?> function = runConfiguration.function();
         Population population = run.population();
@@ -40,9 +54,13 @@ public class RunPoolExecutor {
             individualToFitness = getIndividualToFitness(currentIndividuals, function);
             currentIndividuals = selector.select(individualToFitness);
             currentIndividuals = operator.apply(currentIndividuals);
+            if (i % 10000 == 0) {
+                System.out.println(i);
+            }
             i++;
         }
-        return getIndividualToFitness(currentIndividuals, function);
+        individualToFitness = getIndividualToFitness(currentIndividuals, function);
+        return new RunStats(individualToFitness);
     }
 
     private boolean hasNotConverged(List<Individual> individuals, Operator operator) {

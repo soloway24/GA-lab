@@ -1,6 +1,7 @@
 package lab.v2.selection;
 
 import lab.v2.Individual;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import static java.lang.Math.pow;
 public class PowerScalingSelector {
 
     private final ScalingSelector scalingSelector;
+    @Getter
     private final double power;
 
     public List<Individual> select(Map<Individual, ? extends Number> individualToFitness,

@@ -14,7 +14,10 @@ public class DynamicPowerScalingSusSelector implements Selector {
 
     @Override
     public String getName() {
-        return "PS SUS";
+        return "DPS SUS "
+                + dynamicPowerScalingSelector.getStartPower()
+                + " -> "
+                + dynamicPowerScalingSelector.getEndPower();
     }
 
     @Override

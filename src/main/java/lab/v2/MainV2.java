@@ -1,39 +1,114 @@
 package lab.v2;
 
-import lab.model.Individual;
+import lab.v2.convertor.FitnessToProbabilityConvertor;
+import lab.v2.convertor.ProbabilityToExpectedQuantityConvertor;
 import lab.v2.function.FConstAllFunction;
 import lab.v2.function.FitnessFunctionV2;
 import lab.v2.function.PowerFunction;
-import lab.v2.parameters.OperatorsApplicationType;
-import lab.v2.parameters.RunConfiguration;
-import lab.v2.parameters.RunConfigurationFactory;
+import lab.v2.operator.NoneOperator;
+import lab.v2.operator.Operator;
 import lab.v2.population.PopulationInitializer;
+import lab.v2.population.PopulationPoolInitializer;
+import lab.v2.population.PopulationTypeValidator;
+import lab.v2.run.*;
+import lab.v2.selection.*;
 
 import java.util.List;
-import java.util.Map;
-
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toUnmodifiableMap;
 
 public class MainV2 {
 
+    private final FitnessToProbabilityConvertor fitnessToProbabilityConvertor = new FitnessToProbabilityConvertor();
+    private final ProbabilityToExpectedQuantityConvertor probabilityToExpectedQuantityConvertor = new ProbabilityToExpectedQuantityConvertor();
+    private final RunConfigurationFactory runConfigurationFactory = RunConfigurationFactory.getInstance();
+    private final PopulationInitializer populationInitializer = new PopulationInitializer(PopulationTypeValidator.getInstance());
+    private final PopulationPoolInitializer populationPoolInitializer = new PopulationPoolInitializer(populationInitializer);
+    private final RunPoolCreator runPoolCreator = new RunPoolCreator(populationPoolInitializer);
+    private final ConvergenceIdentifier convergenceIdentifier = new ConvergenceIdentifier();
+    private final RunPoolExecutor runPoolExecutor = new RunPoolExecutor(convergenceIdentifier);
+    private final Exporter exporter = new Exporter();
+
     public static void main(String[] args) {
-        PowerFunction quadraticFunction = new PowerFunction(10, 0, 10.23, 2, 2);
-        FConstAllFunction constAllFunction = FConstAllFunction.getInstance();
+        MainV2 mainV2 = new MainV2();
+        mainV2.run();
+    }
 
-        List<Integer> populationSizes = List.of(100, 200);
-        List<FitnessFunctionV2<?, ?>> functions = List.of(constAllFunction, quadraticFunction);
-        List<OperatorsApplicationType> operatorsApplicationTypes = List.of(OperatorsApplicationType.values());
+    private void run() {
+        List<Integer> populationSizes = getPopulationSizes();
+        List<FitnessFunctionV2<?, ?>> functions = getFunctions();
+        List<Selector> selectors = getSelectors();
+        List<Operator> operators = getOperators();
+        int runPoolSize = getRunPoolSize();
+        List<RunPoolConfiguration> runPoolConfigurations = getRunPoolConfigurations(functions, selectors, operators,
+                populationSizes, runPoolSize);
+        List<RunPool> runPools = getRunPools(runPoolConfigurations);
+        List<RunPoolStats> allRunPoolStats = runPoolExecutor.executeAllRunPools(runPools);
+        exporter.exportAllRunPoolStats(allRunPoolStats);
+    }
 
-        RunConfigurationFactory runConfigurationFactory = RunConfigurationFactory.getInstance();
-        PopulationInitializer populationInitializer = PopulationInitializer.getInstance();
+    private List<Integer> getPopulationSizes() {
+        return List.of(100);
+    }
 
-        List<RunConfiguration> runConfigurations = runConfigurationFactory.createAll(populationSizes,
-                functions, operatorsApplicationTypes);
-        Map<RunConfiguration, List<Individual>> runToPopulation = runConfigurations.stream()
-                .collect(toUnmodifiableMap(identity(), populationInitializer::initializePopulation));
+    private List<FitnessFunctionV2<?, ?>> getFunctions() {
+        FitnessFunctionV2<?, ?> constAllFunction = FConstAllFunction.getInstance();
+        FitnessFunctionV2<?, ?> quadraticFunction = new PowerFunction(10, 0, 10.23, 2, 2);
 
-        System.out.println(runToPopulation);
+        return List.of(constAllFunction, quadraticFunction);
+    }
+
+    private List<Selector> getSelectors() {
+        RwsSelector rwsSelector = new RwsSelector(fitnessToProbabilityConvertor);
+        SusSelector susSelector = new SusSelector(fitnessToProbabilityConvertor, probabilityToExpectedQuantityConvertor);
+
+        ScalingSelector scalingSelector = new ScalingSelector();
+        PowerScalingSelector powerScalingSelector = new PowerScalingSelector(scalingSelector, 1.1);
+
+        PowerScalingRwsSelector powerScalingRwsSelector = new PowerScalingRwsSelector(powerScalingSelector, rwsSelector);
+        PowerScalingSusSelector powerScalingSusSelector = new PowerScalingSusSelector(powerScalingSelector, susSelector);
+
+        DynamicPowerScalingSelector dynamicPowerScalingSelector0p9to1p1 = new DynamicPowerScalingSelector(scalingSelector, 0.9, 1.1);
+        DynamicPowerScalingSelector dynamicPowerScalingSelector0p8to1p2 = new DynamicPowerScalingSelector(scalingSelector, 0.8, 1.2);
+
+        DynamicPowerScalingRwsSelector dynamicPowerScalingRwsSelector0p9to1p1 =
+                new DynamicPowerScalingRwsSelector(dynamicPowerScalingSelector0p9to1p1, rwsSelector);
+        DynamicPowerScalingRwsSelector dynamicPowerScalingRwsSelector0p8to1p2 =
+                new DynamicPowerScalingRwsSelector(dynamicPowerScalingSelector0p8to1p2, rwsSelector);
+
+        DynamicPowerScalingSusSelector dynamicPowerScalingSusSelector0p9to1p1 =
+                new DynamicPowerScalingSusSelector(dynamicPowerScalingSelector0p9to1p1, susSelector);
+        DynamicPowerScalingSusSelector dynamicPowerScalingSusSelector0p8to1p2 =
+                new DynamicPowerScalingSusSelector(dynamicPowerScalingSelector0p8to1p2, susSelector);
+
+        return List.of(
+                powerScalingRwsSelector,
+                powerScalingSusSelector,
+                dynamicPowerScalingRwsSelector0p9to1p1,
+                dynamicPowerScalingRwsSelector0p8to1p2,
+                dynamicPowerScalingSusSelector0p9to1p1,
+                dynamicPowerScalingSusSelector0p8to1p2
+        );
+    }
+
+    private List<Operator> getOperators() {
+        Operator noneOperator = new NoneOperator();
+
+        return List.of(noneOperator);
+    }
+
+    private int getRunPoolSize() {
+        return 100;
+    }
+
+    private List<RunPoolConfiguration> getRunPoolConfigurations(List<FitnessFunctionV2<?, ?>> functions,
+                                                                List<Selector> selectors,
+                                                                List<Operator> operators,
+                                                                List<Integer> populationSizes,
+                                                                int runPoolSize) {
+        return runConfigurationFactory.createPoolConfigurations(functions, selectors, operators, populationSizes, runPoolSize);
+    }
+
+    private List<RunPool> getRunPools(List<RunPoolConfiguration> runPoolConfigurations) {
+        return runPoolCreator.createAll(runPoolConfigurations);
     }
 
 //    public static void main(String[] args) {

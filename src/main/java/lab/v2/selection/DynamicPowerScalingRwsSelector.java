@@ -14,7 +14,10 @@ public class DynamicPowerScalingRwsSelector implements Selector {
 
     @Override
     public String getName() {
-        return "PS RWS";
+        return "DPS RWS "
+                + dynamicPowerScalingSelector.getStartPower()
+                + " -> "
+                + dynamicPowerScalingSelector.getEndPower();
     }
 
     @Override
