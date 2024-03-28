@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
+import static lab.v2.selection.SelectorType.SUS;
+
 @RequiredArgsConstructor
 public class SusSelector implements Selector {
 
@@ -18,6 +20,11 @@ public class SusSelector implements Selector {
     private final FitnessToProbabilityConvertor fitnessToProbabilityConvertor;
     private final ProbabilityToExpectedQuantityConvertor probabilityToExpectedQuantityConvertor;
     private final Random random = new Random();
+
+    @Override
+    public SelectorType getSelectorType() {
+        return SUS;
+    }
 
     @Override
     public String getName() {

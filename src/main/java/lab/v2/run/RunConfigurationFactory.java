@@ -4,6 +4,7 @@ import lab.v2.function.FitnessFunctionV2;
 import lab.v2.operator.Operator;
 import lab.v2.population.PopulationType;
 import lab.v2.selection.Selector;
+import lab.v2.selection.SelectorType;
 import lombok.Getter;
 
 import java.util.List;
@@ -90,6 +91,13 @@ public class RunConfigurationFactory {
         return function.getSupportedEncodings()
                 .stream()
                 .map(encoding -> new RunConfiguration(function, selector, operator, populationType,
-                        encoding, populationSize));
+                        encoding, populationSize))
+                .filter(this::isSupportedSelectorType);
+    }
+
+    private boolean isSupportedSelectorType(RunConfiguration runConfiguration) {
+        List<SelectorType> unsupportedSelectorTypes = runConfiguration.function().getUnsupportedSelectorTypes();
+        SelectorType selectorType = runConfiguration.selector().getSelectorType();
+        return !unsupportedSelectorTypes.contains(selectorType);
     }
 }

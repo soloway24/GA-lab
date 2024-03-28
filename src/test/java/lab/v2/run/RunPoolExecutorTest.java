@@ -83,10 +83,10 @@ class RunPoolExecutorTest {
         testFunction(fConstAllFunction, dynamicPowerScalingRwsSelector0p8to1p2, noneOperator, TEN_PERCENT_OPTIMAL, STANDARD);
     }
 
-    @Test
-    public void whenRunFconstAll22TheSuccess() {
-        testFunction(fConstAllFunction, susSelector, noneOperator, TEN_PERCENT_OPTIMAL, STANDARD);
-    }
+//    @Test()
+//    public void whenRunFconstAllWithSusTheSuccess() {
+//        testFunction(fConstAllFunction, susSelector, noneOperator, TEN_PERCENT_OPTIMAL, STANDARD);
+//    }
 
     private void testFunction(FitnessFunctionV2<?, ?> function,
                               Selector selector,

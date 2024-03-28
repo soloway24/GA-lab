@@ -7,6 +7,8 @@ import java.util.Map;
 
 public interface Selector {
 
+    SelectorType getSelectorType();
+
     String getName();
 
     List<Individual> select(Map<Individual, ? extends Number> individualToFitness);

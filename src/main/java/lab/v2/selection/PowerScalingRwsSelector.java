@@ -6,11 +6,18 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 import java.util.Map;
 
+import static lab.v2.selection.SelectorType.RWS;
+
 @RequiredArgsConstructor
 public class PowerScalingRwsSelector implements Selector {
 
     private final PowerScalingSelector powerScalingSelector;
     private final RwsSelector rwsSelector;
+
+    @Override
+    public SelectorType getSelectorType() {
+        return RWS;
+    }
 
     @Override
     public String getName() {

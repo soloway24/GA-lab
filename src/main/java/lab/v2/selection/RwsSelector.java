@@ -10,11 +10,19 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.stream.IntStream;
 
+import static lab.v2.selection.SelectorType.RWS;
+import static lab.v2.selection.SelectorType.SUS;
+
 @RequiredArgsConstructor
 public class RwsSelector implements Selector {
 
     private final FitnessToProbabilityConvertor fitnessToProbabilityConvertor;
     private final Random random = new Random();
+
+    @Override
+    public SelectorType getSelectorType() {
+        return RWS;
+    }
 
     @Override
     public String getName() {

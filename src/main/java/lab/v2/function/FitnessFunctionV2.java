@@ -4,6 +4,7 @@ import lab.parameters.Encoding;
 import lab.v2.Individual;
 import lab.v2.operator.OperatorType;
 import lab.v2.population.PopulationType;
+import lab.v2.selection.SelectorType;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,5 +32,9 @@ public interface FitnessFunctionV2<ARG_T extends Number, RES_T extends Number> {
     Optional<ARG_T> convertToX(long decimalValue);
 
     List<PopulationType> getSupportedPopulationConfigurations(OperatorType operatorType);
+
+    default List<SelectorType> getUnsupportedSelectorTypes() {
+        return List.of();
+    }
 
 }
