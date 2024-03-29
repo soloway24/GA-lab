@@ -15,6 +15,9 @@ import lab.v2.selection.*;
 import org.apache.commons.lang3.time.StopWatch;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
 
 public class MainV2 {
 
@@ -28,12 +31,12 @@ public class MainV2 {
     private final RunPoolExecutor runPoolExecutor = new RunPoolExecutor(convergenceIdentifier);
     private final Exporter exporter = new Exporter();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         MainV2 mainV2 = new MainV2();
         mainV2.run();
     }
 
-    private void run() {
+    private void run() throws InterruptedException {
         List<Integer> populationSizes = getPopulationSizes();
         List<FitnessFunctionV2<?, ?>> functions = getFunctions();
         List<Selector> selectors = getSelectors();
@@ -42,12 +45,19 @@ public class MainV2 {
         List<RunPoolConfiguration> runPoolConfigurations = getRunPoolConfigurations(functions, selectors, operators,
                 populationSizes, runPoolSize);
         List<RunPool> runPools = getRunPools(runPoolConfigurations);
+
+        ExecutorService executorService = new ForkJoinPool();
+
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        List<RunPoolStats> allRunPoolStats = runPoolExecutor.executeAllRunPools(runPools);
+        runPools.forEach(runPool -> executorService.submit(() -> {
+            RunPoolStats runPoolStats = runPoolExecutor.executeRunPool(runPool);
+            exporter.exportRunPoolStats(runPoolStats);
+        }));
+        executorService.shutdown();
+        executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
         stopWatch.stop();
-        System.out.println("Time Elapsed: " + stopWatch.getTime() / 60);
-        exporter.exportAllRunPoolStats(allRunPoolStats);
+        System.out.println("Time Elapsed: " + stopWatch.getTime() / 1000);
     }
 
     private List<Integer> getPopulationSizes() {
