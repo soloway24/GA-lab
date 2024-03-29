@@ -2,6 +2,7 @@ package lab.v2.function;
 
 import lab.parameters.Encoding;
 import lab.v2.Individual;
+import lab.v2.identifier.ConvergenceIdentifier;
 import lab.v2.operator.OperatorType;
 import lab.v2.population.PopulationType;
 import lab.v2.selection.SelectorType;
@@ -12,12 +13,14 @@ import java.util.Optional;
 
 import static java.util.Optional.*;
 import static lab.parameters.Encoding.STANDARD;
+import static lab.v2.identifier.ConvergenceIdentifier.areTheSameWithPercentage;
 import static lab.v2.operator.OperatorType.NONE;
 import static lab.v2.population.PopulationType.RANDOM;
 import static lab.v2.selection.SelectorType.SUS;
 
 public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
 
+    private static final double SAME_PERCENTAGE = 0.9;
     private static final Individual OPTIMAL_STANDARD_INDIVIDUAL = new Individual("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", STANDARD);
 
     private static final Map<Encoding, Individual> ENCODING_TO_OPTIMAL = Map.of(
@@ -91,6 +94,15 @@ public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
     @Override
     public List<PopulationType> getSupportedPopulationConfigurations(OperatorType operatorType) {
         return List.of(RANDOM);
+    }
+
+    @Override
+    public boolean isSuccessful(Map<Individual, Integer> individualToFitness, OperatorType operatorType, boolean hasConverged) {
+        if (operatorType == NONE) {
+            return hasConverged;
+        }
+
+        return hasConverged && areTheSameWithPercentage(individualToFitness.keySet(), SAME_PERCENTAGE);
     }
 
     @Override

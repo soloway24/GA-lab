@@ -1,7 +1,6 @@
 package lab.v2.identifier;
 
 import lab.v2.Individual;
-import lab.v2.identifier.ConvergenceIdentifier;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -10,8 +9,7 @@ import java.util.Map;
 import java.util.stream.IntStream;
 
 import static lab.parameters.Encoding.STANDARD;
-import static lab.v2.identifier.ConvergenceIdentifier.areAllTheSame;
-import static lab.v2.identifier.ConvergenceIdentifier.areTheSameWithPercentage;
+import static lab.v2.identifier.ConvergenceIdentifier.*;
 import static lab.v2.operator.OperatorType.CROSSOVER;
 import static lab.v2.operator.OperatorType.NONE;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -71,6 +69,11 @@ class ConvergenceIdentifierTest {
     }
 
     @Test
+    public void whenAreAllTheEqualToThenTrue() {
+        assertThat(areAllEqualTo(buildIndividuals(ALL_SAME_INDIVIDUALS), INDIVIDUAL_1), equalTo(true));
+    }
+
+    @Test
     public void when100SameAndAreTheSameWithPercentageThenTrue() {
         assertThat(areTheSameWithPercentage(buildIndividuals(ALL_SAME_INDIVIDUALS), SAME_PERCENTAGE), equalTo(true));
     }
@@ -83,6 +86,21 @@ class ConvergenceIdentifierTest {
     @Test
     public void when89SameAndAreTheSameWithPercentageThenFalse() {
         assertThat(areTheSameWithPercentage(buildIndividuals(SAME_89_INDIVIDUALS), SAME_PERCENTAGE), equalTo(false));
+    }
+
+    @Test
+    public void when100SameAndAreEqualToWithPercentageThenTrue() {
+        assertThat(areEqualToWithPercentage(buildIndividuals(ALL_SAME_INDIVIDUALS), INDIVIDUAL_1, SAME_PERCENTAGE), equalTo(true));
+    }
+
+    @Test
+    public void when90SameAndAreEqualToWithPercentageThenTrue() {
+        assertThat(areEqualToWithPercentage(buildIndividuals(SAME_90_INDIVIDUALS), INDIVIDUAL_1, SAME_PERCENTAGE), equalTo(true));
+    }
+
+    @Test
+    public void when890SameAndAreEqualToWithPercentageThenTrue() {
+        assertThat(areEqualToWithPercentage(buildIndividuals(SAME_89_INDIVIDUALS), INDIVIDUAL_1, SAME_PERCENTAGE), equalTo(false));
     }
 
     private List<Individual> buildIndividuals(Map<Individual, Integer> individualToQuantity) {

@@ -16,6 +16,7 @@ import static lab.parameters.Encoding.GRAY;
 import static lab.parameters.Encoding.STANDARD;
 import static lab.utils.Constants.PRECISION_BASE;
 import static lab.v2.encoding.DecoderV2.decodeV2;
+import static lab.v2.identifier.SuccessfulRunIdentifier.isSuccessfulRealFunction;
 import static lab.v2.operator.OperatorType.NONE;
 import static lab.v2.population.PopulationType.*;
 import static lab.v2.validators.EncodingSpaceValidator.validateEncodingSpace;
@@ -105,5 +106,10 @@ public class PowerFunction implements FitnessFunctionV2<Double, Double> {
         }
 
         return List.of(ZERO_OPTIMAL, ONE_OPTIMAL, FIVE_PERCENT_OPTIMAL, TEN_PERCENT_OPTIMAL);
+    }
+
+    @Override
+    public boolean isSuccessful(Map<Individual, Double> individualToFitness, OperatorType operatorType, boolean hasConverged) {
+        return isSuccessfulRealFunction(this, individualToFitness, hasConverged);
     }
 }

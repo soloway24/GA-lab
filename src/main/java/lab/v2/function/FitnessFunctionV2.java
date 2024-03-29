@@ -7,6 +7,7 @@ import lab.v2.population.PopulationType;
 import lab.v2.selection.SelectorType;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface FitnessFunctionV2<ARG_T extends Number, RES_T extends Number> {
@@ -32,6 +33,8 @@ public interface FitnessFunctionV2<ARG_T extends Number, RES_T extends Number> {
     Optional<ARG_T> convertToX(long decimalValue);
 
     List<PopulationType> getSupportedPopulationConfigurations(OperatorType operatorType);
+
+    boolean isSuccessful(Map<Individual, RES_T> individualToFitness, OperatorType operatorType, boolean hasConverged);
 
     default List<SelectorType> getUnsupportedSelectorTypes(OperatorType operatorType) {
         return List.of();

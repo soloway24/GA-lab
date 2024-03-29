@@ -3,10 +3,7 @@ package lab.v2.identifier;
 import lab.v2.Individual;
 import lab.v2.operator.OperatorType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.counting;
@@ -16,7 +13,6 @@ import static lab.v2.operator.OperatorType.NONE;
 public class ConvergenceIdentifier {
 
     private static final double HOMOGENOUS_PERCENTAGE = 0.99;
-    private static final double ALL_THE_SAME_PERCENTAGE = 1;
 
     public boolean hasConverged(List<Individual> individuals, OperatorType operatorType) {
         if (operatorType == NONE) {
@@ -25,11 +21,7 @@ public class ConvergenceIdentifier {
         return isHomogenous(individuals, HOMOGENOUS_PERCENTAGE);
     }
 
-    public static boolean areAllTheSame(List<Individual> individuals) {
-        return areTheSameWithPercentage(individuals, ALL_THE_SAME_PERCENTAGE);
-    }
-
-    public static boolean areTheSameWithPercentage(List<Individual> individuals, double samePercentage) {
+    public static boolean areTheSameWithPercentage(Collection<Individual> individuals, double samePercentage) {
         long maxQuantity = individuals.stream()
                 .collect(groupingBy(Individual::getBinaryCode, counting()))
                 .values()
@@ -37,6 +29,31 @@ public class ConvergenceIdentifier {
                 .max(Long::compareTo)
                 .orElse(0L);
         return (double) maxQuantity / individuals.size() >= samePercentage;
+    }
+
+    public static boolean areEqualToWithPercentage(Collection<Individual> individuals, Individual compared, double equalPercentage) {
+        int equalQuantity = getEqualQuantity(individuals, compared);
+        return (double) equalQuantity / individuals.size() >= equalPercentage;
+    }
+
+    public static boolean areAllTheSame(Collection<Individual> individuals) {
+        if (individuals.isEmpty()) {
+            throw new IllegalStateException("Trying to decide areAllTheSame for an empty list if individuals.");
+        }
+        Individual first = individuals.iterator().next();
+        return areAllEqualTo(individuals, first);
+    }
+
+    public static boolean areAllEqualTo(Collection<Individual> individuals, Individual compared) {
+        int equalQuantity = getEqualQuantity(individuals, compared);
+        return equalQuantity == individuals.size();
+    }
+
+    private static int getEqualQuantity(Collection<Individual> individuals, Individual compared) {
+        return individuals.stream()
+                .filter(individual -> individual.getBinaryCode().equals(compared.getBinaryCode()))
+                .toList()
+                .size();
     }
 
     private boolean isHomogenous(List<Individual> individuals, double minPercentage) {
