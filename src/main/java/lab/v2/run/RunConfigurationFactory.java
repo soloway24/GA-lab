@@ -96,7 +96,8 @@ public class RunConfigurationFactory {
     }
 
     private boolean isSupportedSelectorType(RunConfiguration runConfiguration) {
-        List<SelectorType> unsupportedSelectorTypes = runConfiguration.function().getUnsupportedSelectorTypes();
+        List<SelectorType> unsupportedSelectorTypes = runConfiguration.function()
+                .getUnsupportedSelectorTypes(runConfiguration.operator().getOperatorType());
         SelectorType selectorType = runConfiguration.selector().getSelectorType();
         return !unsupportedSelectorTypes.contains(selectorType);
     }

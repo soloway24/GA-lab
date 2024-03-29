@@ -12,6 +12,7 @@ import java.util.Optional;
 
 import static java.util.Optional.*;
 import static lab.parameters.Encoding.STANDARD;
+import static lab.v2.operator.OperatorType.NONE;
 import static lab.v2.population.PopulationType.RANDOM;
 import static lab.v2.selection.SelectorType.SUS;
 
@@ -93,7 +94,9 @@ public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
     }
 
     @Override
-    public List<SelectorType> getUnsupportedSelectorTypes() {
-        return List.of(SUS);
+    public List<SelectorType> getUnsupportedSelectorTypes(OperatorType operatorType) {
+        return operatorType == NONE
+                ? List.of(SUS)
+                : List.of();
     }
 }

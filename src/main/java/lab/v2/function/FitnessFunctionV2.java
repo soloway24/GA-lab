@@ -33,7 +33,7 @@ public interface FitnessFunctionV2<ARG_T extends Number, RES_T extends Number> {
 
     List<PopulationType> getSupportedPopulationConfigurations(OperatorType operatorType);
 
-    default List<SelectorType> getUnsupportedSelectorTypes() {
+    default List<SelectorType> getUnsupportedSelectorTypes(OperatorType operatorType) {
         return List.of();
     }
 

@@ -19,6 +19,7 @@ import java.util.List;
 
 import static lab.parameters.Encoding.GRAY;
 import static lab.parameters.Encoding.STANDARD;
+import static lab.v2.operator.OperatorType.NONE;
 import static lab.v2.population.PopulationType.*;
 import static lab.v2.selection.SelectorType.SUS;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -54,7 +55,7 @@ class RunConfigurationFactoryTest {
         when(function1.getSupportedEncodings()).thenReturn(List.of(STANDARD, GRAY));
         when(function2.getSupportedEncodings()).thenReturn(List.of(STANDARD, GRAY));
 
-        when(function1.getUnsupportedSelectorTypes()).thenReturn(List.of(SUS));
+        when(function1.getUnsupportedSelectorTypes(NONE)).thenReturn(List.of(SUS));
 
         when(function1.getSupportedPopulationConfigurations(noneOperator.getOperatorType())).thenReturn(List.of(ZERO_OPTIMAL, ONE_OPTIMAL));
         when(function1.getSupportedPopulationConfigurations(onePointCrossover.getOperatorType())).thenReturn(List.of(ZERO_OPTIMAL, ONE_OPTIMAL));
@@ -115,6 +116,11 @@ class RunConfigurationFactoryTest {
                 new RunConfiguration(function2, rwsSelector, onePointCrossover, TEN_PERCENT_OPTIMAL, GRAY, POPULATION_SIZE_2),
 
 
+                new RunConfiguration(function1, susSelector, onePointCrossover, ZERO_OPTIMAL, STANDARD, POPULATION_SIZE_1),
+                new RunConfiguration(function1, susSelector, onePointCrossover, ZERO_OPTIMAL, GRAY, POPULATION_SIZE_1),
+                new RunConfiguration(function1, susSelector, onePointCrossover, ONE_OPTIMAL, STANDARD, POPULATION_SIZE_1),
+                new RunConfiguration(function1, susSelector, onePointCrossover, ONE_OPTIMAL, GRAY, POPULATION_SIZE_1),
+
                 new RunConfiguration(function2, susSelector, noneOperator, FIVE_PERCENT_OPTIMAL, STANDARD, POPULATION_SIZE_1),
                 new RunConfiguration(function2, susSelector, noneOperator, FIVE_PERCENT_OPTIMAL, GRAY, POPULATION_SIZE_1),
                 new RunConfiguration(function2, susSelector, noneOperator, TEN_PERCENT_OPTIMAL, STANDARD, POPULATION_SIZE_1),
@@ -125,6 +131,11 @@ class RunConfigurationFactoryTest {
                 new RunConfiguration(function2, susSelector, onePointCrossover, TEN_PERCENT_OPTIMAL, STANDARD, POPULATION_SIZE_1),
                 new RunConfiguration(function2, susSelector, onePointCrossover, TEN_PERCENT_OPTIMAL, GRAY, POPULATION_SIZE_1),
 
+
+                new RunConfiguration(function1, susSelector, onePointCrossover, ZERO_OPTIMAL, STANDARD, POPULATION_SIZE_2),
+                new RunConfiguration(function1, susSelector, onePointCrossover, ZERO_OPTIMAL, GRAY, POPULATION_SIZE_2),
+                new RunConfiguration(function1, susSelector, onePointCrossover, ONE_OPTIMAL, STANDARD, POPULATION_SIZE_2),
+                new RunConfiguration(function1, susSelector, onePointCrossover, ONE_OPTIMAL, GRAY, POPULATION_SIZE_2),
 
                 new RunConfiguration(function2, susSelector, noneOperator, FIVE_PERCENT_OPTIMAL, STANDARD, POPULATION_SIZE_2),
                 new RunConfiguration(function2, susSelector, noneOperator, FIVE_PERCENT_OPTIMAL, GRAY, POPULATION_SIZE_2),
