@@ -1,5 +1,6 @@
-package lab.v2;
+package lab.v2.identifier;
 
+import lab.v2.Individual;
 import lab.v2.operator.OperatorType;
 
 import java.util.ArrayList;
@@ -8,11 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
 import static lab.v2.operator.OperatorType.NONE;
 
 public class ConvergenceIdentifier {
 
     private static final double HOMOGENOUS_PERCENTAGE = 0.99;
+    private static final double ALL_THE_SAME_PERCENTAGE = 1;
 
     public boolean hasConverged(List<Individual> individuals, OperatorType operatorType) {
         if (operatorType == NONE) {
@@ -21,13 +25,18 @@ public class ConvergenceIdentifier {
         return isHomogenous(individuals, HOMOGENOUS_PERCENTAGE);
     }
 
-    private boolean areAllTheSame(List<Individual> individuals) {
-        Individual first = individuals.get(0);
-        int sameQuantity = individuals.stream()
-                .filter(individual -> individual.getBinaryCode().equals(first.getBinaryCode()))
-                .toList()
-                .size();
-        return sameQuantity == individuals.size();
+    public static boolean areAllTheSame(List<Individual> individuals) {
+        return areTheSameWithPercentage(individuals, ALL_THE_SAME_PERCENTAGE);
+    }
+
+    public static boolean areTheSameWithPercentage(List<Individual> individuals, double samePercentage) {
+        long maxQuantity = individuals.stream()
+                .collect(groupingBy(Individual::getBinaryCode, counting()))
+                .values()
+                .stream()
+                .max(Long::compareTo)
+                .orElse(0L);
+        return (double) maxQuantity / individuals.size() >= samePercentage;
     }
 
     private boolean isHomogenous(List<Individual> individuals, double minPercentage) {

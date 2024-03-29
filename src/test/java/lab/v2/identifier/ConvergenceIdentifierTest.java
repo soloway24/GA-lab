@@ -1,5 +1,7 @@
-package lab.v2;
+package lab.v2.identifier;
 
+import lab.v2.Individual;
+import lab.v2.identifier.ConvergenceIdentifier;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -8,12 +10,16 @@ import java.util.Map;
 import java.util.stream.IntStream;
 
 import static lab.parameters.Encoding.STANDARD;
+import static lab.v2.identifier.ConvergenceIdentifier.areAllTheSame;
+import static lab.v2.identifier.ConvergenceIdentifier.areTheSameWithPercentage;
 import static lab.v2.operator.OperatorType.CROSSOVER;
 import static lab.v2.operator.OperatorType.NONE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 class ConvergenceIdentifierTest {
+
+    private static final double SAME_PERCENTAGE = 0.9;
 
     private static final Individual INDIVIDUAL_1 = new Individual("0000000000", STANDARD);
     private static final Individual INDIVIDUAL_2 = new Individual("1000000000", STANDARD);
@@ -27,6 +33,14 @@ class ConvergenceIdentifierTest {
     private static final Map<Individual, Integer> NOT_HOMOGENOUS_INDIVIDUALS = Map.of(
             INDIVIDUAL_1, 98,
             INDIVIDUAL_2, 2
+    );
+    private static final Map<Individual, Integer> SAME_90_INDIVIDUALS = Map.of(
+            INDIVIDUAL_1, 90,
+            INDIVIDUAL_2, 10
+    );
+    private static final Map<Individual, Integer> SAME_89_INDIVIDUALS = Map.of(
+            INDIVIDUAL_1, 89,
+            INDIVIDUAL_2, 11
     );
 
     private final ConvergenceIdentifier convergenceIdentifier = new ConvergenceIdentifier();
@@ -49,6 +63,26 @@ class ConvergenceIdentifierTest {
     @Test
     public void whenSomeOperatorThenNotConverged() {
         assertThat(convergenceIdentifier.hasConverged(buildIndividuals(NOT_HOMOGENOUS_INDIVIDUALS), CROSSOVER), equalTo(false));
+    }
+
+    @Test
+    public void whenAreAllTheSameThenTrue() {
+        assertThat(areAllTheSame(buildIndividuals(ALL_SAME_INDIVIDUALS)), equalTo(true));
+    }
+
+    @Test
+    public void when100SameAndAreTheSameWithPercentageThenTrue() {
+        assertThat(areTheSameWithPercentage(buildIndividuals(ALL_SAME_INDIVIDUALS), SAME_PERCENTAGE), equalTo(true));
+    }
+
+    @Test
+    public void when90SameAndAreTheSameWithPercentageThenTrue() {
+        assertThat(areTheSameWithPercentage(buildIndividuals(SAME_90_INDIVIDUALS), SAME_PERCENTAGE), equalTo(true));
+    }
+
+    @Test
+    public void when89SameAndAreTheSameWithPercentageThenFalse() {
+        assertThat(areTheSameWithPercentage(buildIndividuals(SAME_89_INDIVIDUALS), SAME_PERCENTAGE), equalTo(false));
     }
 
     private List<Individual> buildIndividuals(Map<Individual, Integer> individualToQuantity) {

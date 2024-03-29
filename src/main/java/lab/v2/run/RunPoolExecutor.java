@@ -1,8 +1,8 @@
 package lab.v2.run;
 
-import lab.v2.ConvergenceIdentifier;
 import lab.v2.Individual;
 import lab.v2.function.FitnessFunctionV2;
+import lab.v2.identifier.ConvergenceIdentifier;
 import lab.v2.operator.Operator;
 import lab.v2.population.Population;
 import lab.v2.selection.Selector;
@@ -57,6 +57,9 @@ public class RunPoolExecutor {
             i++;
         }
         individualToFitness = getIndividualToFitness(currentIndividuals, function);
+        boolean hasConverged = convergenceIdentifier.hasConverged(currentIndividuals, operator.getOperatorType());
+
+
         return new RunStats(individualToFitness);
     }
 

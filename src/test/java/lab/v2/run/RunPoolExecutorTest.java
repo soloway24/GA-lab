@@ -1,7 +1,7 @@
 package lab.v2.run;
 
 import lab.parameters.Encoding;
-import lab.v2.ConvergenceIdentifier;
+import lab.v2.identifier.ConvergenceIdentifier;
 import lab.v2.convertor.FitnessToProbabilityConvertor;
 import lab.v2.convertor.ProbabilityToExpectedQuantityConvertor;
 import lab.v2.function.FConstAllFunction;

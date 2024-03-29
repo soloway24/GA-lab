@@ -5,6 +5,7 @@ import lab.v2.convertor.ProbabilityToExpectedQuantityConvertor;
 import lab.v2.function.FConstAllFunction;
 import lab.v2.function.FitnessFunctionV2;
 import lab.v2.function.PowerFunction;
+import lab.v2.identifier.ConvergenceIdentifier;
 import lab.v2.operator.NoneOperator;
 import lab.v2.operator.Operator;
 import lab.v2.population.PopulationInitializer;
