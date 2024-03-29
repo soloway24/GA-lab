@@ -6,7 +6,7 @@ import lab.v2.operator.Operator;
 import lab.v2.population.PopulationType;
 import lab.v2.selection.Selector;
 
-public record RunConfiguration(FitnessFunctionV2<?, ?> function,
+public record RunConfiguration(FitnessFunctionV2<?, ? extends Number> function,
                                Selector selector,
                                Operator operator,
                                PopulationType populationType,

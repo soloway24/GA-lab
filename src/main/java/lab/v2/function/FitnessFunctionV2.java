@@ -34,7 +34,7 @@ public interface FitnessFunctionV2<ARG_T extends Number, RES_T extends Number> {
 
     List<PopulationType> getSupportedPopulationConfigurations(OperatorType operatorType);
 
-    boolean isSuccessful(Map<Individual, RES_T> individualToFitness, OperatorType operatorType, boolean hasConverged);
+    boolean isSuccessful(Map<Individual, ? extends Number> individualToFitness, OperatorType operatorType, boolean hasConverged);
 
     default List<SelectorType> getUnsupportedSelectorTypes(OperatorType operatorType) {
         return List.of();

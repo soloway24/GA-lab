@@ -41,7 +41,7 @@ public class RunPoolExecutor {
 
     public RunStats executeRun(Run run) {
         RunConfiguration runConfiguration = run.runConfiguration();
-        FitnessFunctionV2<?, ?> function = runConfiguration.function();
+        FitnessFunctionV2<?, ? extends Number> function = runConfiguration.function();
         Population population = run.population();
         Selector selector = runConfiguration.selector();
         Operator operator = runConfiguration.operator();
@@ -58,9 +58,9 @@ public class RunPoolExecutor {
         }
         individualToFitness = getIndividualToFitness(currentIndividuals, function);
         boolean hasConverged = convergenceIdentifier.hasConverged(currentIndividuals, operator.getOperatorType());
+        boolean isSuccessful = function.isSuccessful(individualToFitness, operator.getOperatorType(), hasConverged);
 
-
-        return new RunStats(individualToFitness);
+        return new RunStats(individualToFitness, isSuccessful);
     }
 
     private boolean hasNotConverged(List<Individual> individuals, Operator operator) {

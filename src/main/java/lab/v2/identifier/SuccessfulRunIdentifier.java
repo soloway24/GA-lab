@@ -13,9 +13,9 @@ import static lab.v2.encoding.DecoderV2.decodeV2;
 
 public class SuccessfulRunIdentifier {
 
-    public static <ARG_T extends Number, RES_T extends Number> boolean isSuccessfulRealFunction(FitnessFunctionV2<ARG_T, RES_T> function,
-                                                                                                Map<Individual, RES_T> individualToFitness,
-                                                                                                boolean hasConverged) {
+    public static boolean isSuccessfulRealFunction(FitnessFunctionV2<? extends Number, ? extends Number> function,
+                                                   Map<Individual, ? extends Number> individualToFitness,
+                                                   boolean hasConverged) {
         if (!hasConverged) {
             return false;
         }

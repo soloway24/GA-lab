@@ -57,7 +57,7 @@ public class Exporter {
 
     private void writeOneRunStats(FileWriter fileWriter, RunStats runStats, int index) {
         try {
-            fileWriter.write("Run " + index + ": " + runStats.finalPopulation().toString() + "\n");
+            fileWriter.write("Run " + index + ": " + runStats.toString() + "\n");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

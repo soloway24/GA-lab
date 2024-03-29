@@ -1,12 +1,12 @@
 package lab.v2.run;
 
 import lab.parameters.Encoding;
-import lab.v2.identifier.ConvergenceIdentifier;
 import lab.v2.convertor.FitnessToProbabilityConvertor;
 import lab.v2.convertor.ProbabilityToExpectedQuantityConvertor;
 import lab.v2.function.FConstAllFunction;
 import lab.v2.function.FitnessFunctionV2;
 import lab.v2.function.PowerFunction;
+import lab.v2.identifier.ConvergenceIdentifier;
 import lab.v2.operator.NoneOperator;
 import lab.v2.operator.Operator;
 import lab.v2.population.*;
@@ -15,6 +15,8 @@ import org.junit.jupiter.api.Test;
 
 import static lab.parameters.Encoding.STANDARD;
 import static lab.v2.population.PopulationType.TEN_PERCENT_OPTIMAL;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 class RunPoolExecutorTest {
 
@@ -104,6 +106,9 @@ class RunPoolExecutorTest {
         Run run = new Run(runConfiguration, population);
 
         System.out.println("Population = " + population);
-        System.out.println("Result = " + runPoolExecutor.executeRun(run));
+        RunStats runStats = runPoolExecutor.executeRun(run);
+        System.out.println("Result = " + runStats);
+
+        assertThat(runStats.isSuccessful(), equalTo(true));
     }
 }

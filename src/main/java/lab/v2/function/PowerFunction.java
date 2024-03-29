@@ -109,7 +109,7 @@ public class PowerFunction implements FitnessFunctionV2<Double, Double> {
     }
 
     @Override
-    public boolean isSuccessful(Map<Individual, Double> individualToFitness, OperatorType operatorType, boolean hasConverged) {
+    public boolean isSuccessful(Map<Individual, ? extends Number> individualToFitness, OperatorType operatorType, boolean hasConverged) {
         return isSuccessfulRealFunction(this, individualToFitness, hasConverged);
     }
 }

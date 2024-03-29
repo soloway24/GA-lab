@@ -2,7 +2,6 @@ package lab.v2.function;
 
 import lab.parameters.Encoding;
 import lab.v2.Individual;
-import lab.v2.identifier.ConvergenceIdentifier;
 import lab.v2.operator.OperatorType;
 import lab.v2.population.PopulationType;
 import lab.v2.selection.SelectorType;
@@ -97,7 +96,7 @@ public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
     }
 
     @Override
-    public boolean isSuccessful(Map<Individual, Integer> individualToFitness, OperatorType operatorType, boolean hasConverged) {
+    public boolean isSuccessful(Map<Individual, ? extends Number> individualToFitness, OperatorType operatorType, boolean hasConverged) {
         if (operatorType == NONE) {
             return hasConverged;
         }
