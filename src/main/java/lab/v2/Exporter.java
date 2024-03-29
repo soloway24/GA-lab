@@ -26,8 +26,23 @@ public class Exporter {
     public void exportRunPoolStats(RunPoolStats runPoolStats) {
         String fileName = getFileName(runPoolStats.runConfiguration());
         String filePath = STATS_PATH + fileName;
+
+        createStatsDirectory();
         File file = new File(filePath);
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         writeToFile(file, runPoolStats);
+    }
+
+    private void createStatsDirectory() {
+        File statsDirectory = new File(STATS_PATH);
+        if (statsDirectory.exists() && statsDirectory.isDirectory()) {
+            return;
+        }
+        statsDirectory.mkdir();
     }
 
     private void writeToFile(File file, RunPoolStats runPoolStats) {
@@ -42,7 +57,7 @@ public class Exporter {
 
     private void writeOneRunStats(FileWriter fileWriter, RunStats runStats, int index) {
         try {
-            fileWriter.write("Run " + index + ": " + runStats.finalPopulation().toString());
+            fileWriter.write("Run " + index + ": " + runStats.finalPopulation().toString() + "\n");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -59,6 +74,6 @@ public class Exporter {
                 selectorName + "_" +
                 operatorName + "_" +
                 populationType + "_" +
-                encoding + "_";
+                encoding;
     }
 }

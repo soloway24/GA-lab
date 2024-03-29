@@ -54,9 +54,6 @@ public class RunPoolExecutor {
             individualToFitness = getIndividualToFitness(currentIndividuals, function);
             currentIndividuals = selector.select(individualToFitness);
             currentIndividuals = operator.apply(currentIndividuals);
-            if (i % 10000 == 0) {
-                System.out.println(i);
-            }
             i++;
         }
         individualToFitness = getIndividualToFitness(currentIndividuals, function);

@@ -12,6 +12,7 @@ import lab.v2.population.PopulationPoolInitializer;
 import lab.v2.population.PopulationTypeValidator;
 import lab.v2.run.*;
 import lab.v2.selection.*;
+import org.apache.commons.lang3.time.StopWatch;
 
 import java.util.List;
 
@@ -41,7 +42,11 @@ public class MainV2 {
         List<RunPoolConfiguration> runPoolConfigurations = getRunPoolConfigurations(functions, selectors, operators,
                 populationSizes, runPoolSize);
         List<RunPool> runPools = getRunPools(runPoolConfigurations);
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         List<RunPoolStats> allRunPoolStats = runPoolExecutor.executeAllRunPools(runPools);
+        stopWatch.stop();
+        System.out.println("Time Elapsed: " + stopWatch.getTime() / 60);
         exporter.exportAllRunPoolStats(allRunPoolStats);
     }
 
