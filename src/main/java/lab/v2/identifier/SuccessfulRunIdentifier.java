@@ -36,7 +36,7 @@ public class SuccessfulRunIdentifier {
                 && actualXSigma <= ALLOWED_X_SIGMA;
     }
 
-    private static <RES_T extends Number> Individual getBestIndividual(Map<Individual, RES_T> individualToFitness) {
+    public static <RES_T extends Number> Individual getBestIndividual(Map<Individual, RES_T> individualToFitness) {
         return individualToFitness.entrySet().stream()
                 .map(entry -> entry(entry.getKey(), entry.getValue().doubleValue()))
                 .max(Entry.comparingByValue())

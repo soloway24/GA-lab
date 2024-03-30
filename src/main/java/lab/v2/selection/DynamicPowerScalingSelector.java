@@ -11,8 +11,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static java.lang.Math.pow;
-import static lab.v2.CalculationUtils.getAverage;
-import static lab.v2.CalculationUtils.getMedian;
+import static lab.v2.util.CalculationUtils.getAverage;
+import static lab.v2.util.CalculationUtils.getMedian;
 
 @RequiredArgsConstructor
 public class DynamicPowerScalingSelector {

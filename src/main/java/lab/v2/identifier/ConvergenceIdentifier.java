@@ -49,7 +49,7 @@ public class ConvergenceIdentifier {
         return equalQuantity == individuals.size();
     }
 
-    private static int getEqualQuantity(Collection<Individual> individuals, Individual compared) {
+    public static int getEqualQuantity(Collection<Individual> individuals, Individual compared) {
         return individuals.stream()
                 .filter(individual -> individual.getBinaryCode().equals(compared.getBinaryCode()))
                 .toList()

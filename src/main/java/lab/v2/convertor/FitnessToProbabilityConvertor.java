@@ -7,8 +7,8 @@ import java.util.Map.Entry;
 
 import static java.lang.Math.abs;
 import static java.util.stream.Collectors.toUnmodifiableMap;
-import static lab.v2.CalculationUtils.getDoubleValues;
-import static lab.v2.CalculationUtils.getValueSum;
+import static lab.v2.util.CalculationUtils.getDoubleValues;
+import static lab.v2.util.CalculationUtils.getValueSum;
 import static lab.v2.convertor.ValuesAdjuster.getAdjustedIndividualToValue;
 
 public class FitnessToProbabilityConvertor {

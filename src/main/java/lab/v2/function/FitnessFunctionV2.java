@@ -40,4 +40,8 @@ public interface FitnessFunctionV2<ARG_T extends Number, RES_T extends Number> {
         return List.of();
     }
 
+    default boolean isConstant() {
+        return false;
+    }
+
 }

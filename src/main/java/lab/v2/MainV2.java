@@ -51,6 +51,8 @@ public class MainV2 {
 
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
+//        List<RunPoolStats> runPoolStats = runPoolExecutor.executeAllRunPools(runPools);
+//        runPoolStats.forEach(exporter::exportRunPoolStats);
         runPools.forEach(runPool -> executorService.submit(() -> {
             RunPoolStats runPoolStats = runPoolExecutor.executeRunPool(runPool);
             exporter.exportRunPoolStats(runPoolStats);
@@ -96,6 +98,8 @@ public class MainV2 {
                 new DynamicPowerScalingSusSelector(dynamicPowerScalingSelector0p8to1p2, susSelector);
 
         return List.of(
+                rwsSelector,
+                susSelector,
                 powerScalingRwsSelector,
                 powerScalingSusSelector,
                 dynamicPowerScalingRwsSelector0p9to1p1,

@@ -109,6 +109,6 @@ class RunPoolExecutorTest {
         RunStats runStats = runPoolExecutor.executeRun(run);
         System.out.println("Result = " + runStats);
 
-        assertThat(runStats.isSuccessful(), equalTo(true));
+        assertThat(runStats.isSuc(), equalTo(true));
     }
 }

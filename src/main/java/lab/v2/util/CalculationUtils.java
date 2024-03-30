@@ -1,10 +1,19 @@
-package lab.v2;
+package lab.v2.util;
+
+import lab.v2.Individual;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toUnmodifiableSet;
 
 public class CalculationUtils {
+
+    public static <T extends Number> double getAverageFitness(Map<Individual, T> individualToFitness) {
+        return getAverage(individualToFitness.values());
+    }
 
     public static <T extends Number> double getAverage(Collection<T> values) {
         return values.stream()
@@ -39,5 +48,25 @@ public class CalculationUtils {
                 .reduce(Double::sum)
                 .orElseThrow(() -> new IllegalStateException("Provided values list is empty! Values = "
                         + values + " ."));
+    }
+
+    public static double getReproductionRate(Collection<Individual> before, Collection<Individual> after) {
+        Set<String> uniqueBefore = getUniqueBinaryCodes(before);
+        Set<String> uniqueAfter = getUniqueBinaryCodes(after);
+
+        if (uniqueAfter.size() == 0) {
+            throw new IllegalStateException("Cannot get RR for the empty parent pool. Population before: " + before + " .");
+        }
+        return (double) uniqueAfter.size() / uniqueBefore.size();
+    }
+
+    public static double getLostOfDiversity(double reproductionRate) {
+        return 1 - reproductionRate;
+    }
+
+    public static Set<String> getUniqueBinaryCodes(Collection<Individual> individuals) {
+        return individuals.stream()
+                .map(Individual::getBinaryCode)
+                .collect(toUnmodifiableSet());
     }
 }
