@@ -17,6 +17,21 @@ public record RunPoolStats(RunConfiguration runConfiguration,
                            double avgNI,
                            double sigmaNI,
 
+                           double minRRMin,
+                           int niMinRRMin,
+                           double maxRRMax,
+                           int niMaxRRMax,
+                           double avgRRMin,
+                           double avgRRMax,
+                           double avgRRAvg,
+                           double minTetaMin,
+                           int niMinTetaMin,
+                           double maxTetaMax,
+                           int niMaxTetaMax,
+                           double avgTetaMin,
+                           double avgTetaMax,
+                           double avgTetaAvg,
+
 
                            // all functions except FConstAll
                            // non-successful but converged runs
@@ -64,12 +79,31 @@ public record RunPoolStats(RunConfiguration runConfiguration,
         IntStream.range(0, runPoolStats.size())
                 .forEach(i -> sb.append("Run ").append(i + 1).append(": ").append(runPoolStats.get(i)).append("\n"));
 
+        // all functions
+        // successful runs
         sb.append("suc = ").append(suc).append(", ");
         sb.append("minNI = ").append(minNI).append(", ");
         sb.append("avgNI = ").append(avgNI).append(", ");
         sb.append("sigmaNI = ").append(sigmaNI).append(", ");
         sb.append("maxNI = ").append(maxNI).append(", ");
 
+        sb.append("minRRMin = ").append(minRRMin).append(", ");
+        sb.append("niMinRRMin = ").append(niMinRRMin).append(", ");
+        sb.append("maxRRMax = ").append(maxRRMax).append(", ");
+        sb.append("niMaxRRMax = ").append(niMaxRRMax).append(", ");
+        sb.append("avgRRMin = ").append(avgRRMin).append(", ");
+        sb.append("avgRRMax = ").append(avgRRMax).append(", ");
+        sb.append("avgRRAvg = ").append(avgRRAvg).append(", ");
+        sb.append("minTetaMin = ").append(minTetaMin).append(", ");
+        sb.append("niMinTetaMin = ").append(niMinTetaMin).append(", ");
+        sb.append("maxTetaMax = ").append(maxTetaMax).append(", ");
+        sb.append("niMaxTetaMax = ").append(niMaxTetaMax).append(", ");
+        sb.append("avgTetaMin = ").append(avgTetaMin).append(", ");
+        sb.append("avgTetaMax = ").append(avgTetaMax).append(", ");
+        sb.append("avgTetaAvg = ").append(avgTetaAvg).append(", ");
+
+        // all functions except FConstAll
+        // non-successful but converged runs
         sb.append("nonSuc = ").append(nonSuc).append(", ");
         sb.append("nonMinNI = ").append(nonMinNI).append(", ");
         sb.append("nonMaxNI = ").append(nonMaxNI).append(", ");
@@ -79,6 +113,7 @@ public record RunPoolStats(RunConfiguration runConfiguration,
         sb.append("nonAvgFFound = ").append(nonAvgFFound).append(", ");
         sb.append("nonSigmaFFound = ").append(nonSigmaFFound).append(", ");
 
+        // successful runs
         sb.append("minSMin = ").append(minSMin).append(", ");
         sb.append("niSMin = ").append(niSMin).append(", ");
         sb.append("maxSMax = ").append(maxSMax).append(", ");
@@ -91,6 +126,7 @@ public record RunPoolStats(RunConfiguration runConfiguration,
         sb.append("avgSStart = ").append(avgSStart).append(", ");
         sb.append("sigmaSStart = ").append(sigmaSStart).append(", ");
 
+        // all runs
         sb.append("niWithLoose = ").append(niWithLoose).append(", ");
         sb.append("avgNILoose = ").append(avgNILoose).append(", ");
         sb.append("sigmaNILoose = ").append(sigmaNILoose).append(", ");
@@ -100,6 +136,7 @@ public record RunPoolStats(RunConfiguration runConfiguration,
         sb.append("sigmaOptSavedNILoose = ").append(sigmaOptSavedNILoose).append(", ");
         sb.append("avgMaxOptSavedNILoose = ").append(avgMaxOptSavedNILoose).append(", ");
         sb.append("sigmaMaxOptSavedNILoose = ").append(sigmaMaxOptSavedNILoose);
+
 
         sb.append("]");
 

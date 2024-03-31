@@ -24,6 +24,21 @@ public class RunPoolStatsCreator {
         double avgNI = 0;
         double sigmaNI = 0;
 
+        double minRRMin = 0;
+        int niMinRRMin = 0;
+        double maxRRMax = 0;
+        int niMaxRRMax = 0;
+        double avgRRMin = 0;
+        double avgRRMax = 0;
+        double avgRRAvg = 0;
+        double minTetaMin = 0;
+        int niMinTetaMin = 0;
+        double maxTetaMax = 0;
+        int niMaxTetaMax = 0;
+        double avgTetaMin = 0;
+        double avgTetaMax = 0;
+        double avgTetaAvg = 0;
+
         List<RunStats> sucRunStats = getSucRunStats(allRunStats);
 
         if (!sucRunStats.isEmpty()) {
@@ -34,6 +49,35 @@ public class RunPoolStatsCreator {
             maxNI = getMaxInt(sucNIs);
             avgNI = getAverage(sucNIs);
             sigmaNI = getStandardDeviation(sucNIs, avgNI);
+
+
+            List<Pair<Double, Integer>> rrMinIterations = getMetricValueToIteration(sucRunStats, RunStats::rrMin, RunStats::niRrMin);
+            Pair<Double, Integer> minRRMinIteration = getMinValueToIteration(rrMinIterations);
+            minRRMin = minRRMinIteration.getKey();
+            niMinRRMin = minRRMinIteration.getValue();
+
+            List<Pair<Double, Integer>> rrMaxIterations = getMetricValueToIteration(sucRunStats, RunStats::rrMax, RunStats::niRrMax);
+            Pair<Double, Integer> maxRRMaxIteration = getMaxValueToIteration(rrMaxIterations);
+            maxRRMax = maxRRMaxIteration.getKey();
+            niMaxRRMax = maxRRMaxIteration.getValue();
+
+            avgRRMin = getAverage(getDoubleValues(sucRunStats, RunStats::rrMin));
+            avgRRMax = getAverage(getDoubleValues(sucRunStats, RunStats::rrMax));
+            avgRRAvg = getAverage(getDoubleValues(sucRunStats, RunStats::rrAvg));
+
+            List<Pair<Double, Integer>> tetaMinIterations = getMetricValueToIteration(sucRunStats, RunStats::tetaMin, RunStats::niTetaMin);
+            Pair<Double, Integer> minTetaMinIteration = getMinValueToIteration(tetaMinIterations);
+            minTetaMin = minTetaMinIteration.getKey();
+            niMinTetaMin = minTetaMinIteration.getValue();
+
+            List<Pair<Double, Integer>> tetaMaxIterations = getMetricValueToIteration(sucRunStats, RunStats::tetaMax, RunStats::niTetaMax);
+            Pair<Double, Integer> maxTetaMaxIteration = getMaxValueToIteration(tetaMaxIterations);
+            maxTetaMax = maxTetaMaxIteration.getKey();
+            niMaxTetaMax = maxTetaMaxIteration.getValue();
+
+            avgTetaMin = getAverage(getDoubleValues(sucRunStats, RunStats::tetaMin));
+            avgTetaMax = getAverage(getDoubleValues(sucRunStats, RunStats::tetaMax));
+            avgTetaAvg = getAverage(getDoubleValues(sucRunStats, RunStats::tetaAvg));
         }
 
 
@@ -89,12 +133,12 @@ public class RunPoolStatsCreator {
             }
 
             // successful runs
-            List<Pair<Double, Integer>> sMinIterations = getSMinToIteration(sucRunStats);
+            List<Pair<Double, Integer>> sMinIterations = getMetricValueToIteration(sucRunStats, RunStats::sMin, RunStats::niSMin);
             Pair<Double, Integer> minSMinIteration = getMinValueToIteration(sMinIterations);
             minSMin = minSMinIteration.getKey();
             niSMin = minSMinIteration.getValue();
 
-            List<Pair<Double, Integer>> sMaxIterations = getSMaxToIteration(sucRunStats);
+            List<Pair<Double, Integer>> sMaxIterations = getMetricValueToIteration(sucRunStats, RunStats::sMax, RunStats::niSMax);
             Pair<Double, Integer> maxSMaxIteration = getMaxValueToIteration(sMaxIterations);
             maxSMax = maxSMaxIteration.getKey();
             niSMax = maxSMaxIteration.getValue();
@@ -146,6 +190,21 @@ public class RunPoolStatsCreator {
                 .withAvgNI(avgNI)
                 .withSigmaNI(sigmaNI)
 
+                .withMinRRMin(minRRMin)
+                .withNiMinRRMin(niMinRRMin)
+                .withMaxRRMax(maxRRMax)
+                .withNiMaxRRMax(niMaxRRMax)
+                .withAvgRRMin(avgRRMin)
+                .withAvgRRMax(avgRRMax)
+                .withAvgRRAvg(avgRRAvg)
+                .withMinTetaMin(minTetaMin)
+                .withNiMinTetaMin(niMinTetaMin)
+                .withMaxTetaMax(maxTetaMax)
+                .withNiMaxTetaMax(niMaxTetaMax)
+                .withAvgTetaMin(avgTetaMin)
+                .withAvgTetaMax(avgTetaMax)
+                .withAvgTetaAvg(avgTetaAvg)
+
                 // all functions except FConstAll
                 // non-successful but converged runs
                 .withNonSuc(nonSuc)
@@ -157,7 +216,7 @@ public class RunPoolStatsCreator {
                 .withNonAvgFFound(nonAvgFFound)
                 .withNonSigmaFFound(nonSigmaFFound)
 
-                // suc runs
+                // successful runs
                 .withMinSMin(minSMin)
                 .withNiSMin(niSMin)
                 .withMaxSMax(maxSMax)
@@ -184,15 +243,11 @@ public class RunPoolStatsCreator {
                 .build();
     }
 
-    private List<Pair<Double, Integer>> getSMinToIteration(List<RunStats> sucRunStats) {
+    private List<Pair<Double, Integer>> getMetricValueToIteration(List<RunStats> sucRunStats,
+                                                                  Function<RunStats, Double> metricValueFunction,
+                                                                  Function<RunStats, Integer> iterationFunction) {
         return sucRunStats.stream()
-                .map(runStats -> Pair.create(runStats.sMin(), runStats.niSMin()))
-                .toList();
-    }
-
-    private List<Pair<Double, Integer>> getSMaxToIteration(List<RunStats> sucRunStats) {
-        return sucRunStats.stream()
-                .map(runStats -> Pair.create(runStats.sMax(), runStats.niSMax()))
+                .map(runStats -> Pair.create(metricValueFunction.apply(runStats), iterationFunction.apply(runStats)))
                 .toList();
     }
 
