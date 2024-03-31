@@ -12,12 +12,12 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static java.util.Collections.shuffle;
-import static java.util.List.copyOf;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.concat;
 import static lab.v2.Individual.createRandomIndividual;
 import static lab.v2.population.PopulationInitializationType.*;
+import static lab.v2.util.CalculationUtils.getIndexedIndividuals;
 
 @RequiredArgsConstructor
 public class PopulationInitializer {
@@ -82,7 +82,7 @@ public class PopulationInitializer {
         List<Individual> wholePopulation = concat(optimalIndividuals, restPopulation)
                 .collect(toList());
         shuffle(wholePopulation);
-        List<Individual> individuals = copyOf(wholePopulation);
+        List<Individual> individuals = getIndexedIndividuals(wholePopulation);
         return new Population(populationConfig, individuals);
     }
 

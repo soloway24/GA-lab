@@ -5,9 +5,7 @@ import lab.v2.Individual;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import static java.util.stream.Collectors.toUnmodifiableSet;
+import java.util.stream.IntStream;
 
 public class CalculationUtils {
 
@@ -42,6 +40,7 @@ public class CalculationUtils {
                 .min(Integer::compareTo)
                 .orElseThrow(() -> new IllegalArgumentException("Cannot get min value of an empty collection."));
     }
+
     public static Integer getMaxInt(Collection<Integer> values) {
         return values.stream()
                 .max(Integer::compareTo)
@@ -73,23 +72,13 @@ public class CalculationUtils {
                         + values + " ."));
     }
 
-    public static double getReproductionRate(Collection<Individual> before, Collection<Individual> after) {
-        Set<String> uniqueBefore = getUniqueBinaryCodes(before);
-        Set<String> uniqueAfter = getUniqueBinaryCodes(after);
-
-        if (uniqueAfter.size() == 0) {
-            throw new IllegalStateException("Cannot get RR for the empty parent pool. Population before: " + before + " .");
-        }
-        return (double) uniqueAfter.size() / uniqueBefore.size();
+    public static List<Individual> getIndexedIndividuals(List<Individual> individuals) {
+        return IntStream.range(0, individuals.size())
+                .mapToObj(i -> getIndividualWithIndex(individuals.get(i), i + 1))
+                .toList();
     }
 
-    public static double getLostOfDiversity(double reproductionRate) {
-        return 1 - reproductionRate;
-    }
-
-    public static Set<String> getUniqueBinaryCodes(Collection<Individual> individuals) {
-        return individuals.stream()
-                .map(Individual::getBinaryCode)
-                .collect(toUnmodifiableSet());
+    private static Individual getIndividualWithIndex(Individual individual, int index) {
+        return new Individual(index, individual.getBinaryCode(), individual.getEncoding());
     }
 }

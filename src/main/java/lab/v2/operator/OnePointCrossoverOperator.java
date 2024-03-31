@@ -5,6 +5,7 @@ import lab.v2.Individual;
 import java.util.List;
 
 import static lab.v2.operator.OperatorType.CROSSOVER;
+import static lab.v2.util.CalculationUtils.getIndexedIndividuals;
 
 public class OnePointCrossoverOperator implements Operator {
 
@@ -26,7 +27,7 @@ public class OnePointCrossoverOperator implements Operator {
 
     @Override
     public List<Individual> apply(List<Individual> individuals) {
-        return individuals;
+        return getIndexedIndividuals(individuals);
     }
 
 }

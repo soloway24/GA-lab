@@ -14,6 +14,7 @@ public class Individual {
 
     private static final Random RANDOM = new Random();
 
+    private Integer index;
     private String binaryCode;
     private Encoding encoding;
 
@@ -26,7 +27,14 @@ public class Individual {
         this.encoding = encoding;
     }
 
+    public Individual(int index, String binaryCode, Encoding encoding) {
+        this.index = index;
+        this.binaryCode = binaryCode;
+        this.encoding = encoding;
+    }
+
     public Individual(Individual individual) {
+        this.index = individual.getIndex();
         this.binaryCode = individual.getBinaryCode();
         this.encoding = individual.getEncoding();
     }
@@ -41,6 +49,6 @@ public class Individual {
 
     @Override
     public String toString() {
-        return binaryCode;
+        return index + ": " + binaryCode;
     }
 }

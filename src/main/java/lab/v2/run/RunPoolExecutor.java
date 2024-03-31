@@ -22,7 +22,8 @@ import static java.util.stream.Collectors.toUnmodifiableMap;
 import static lab.v2.identifier.ConvergenceIdentifier.getEqualQuantity;
 import static lab.v2.identifier.SuccessfulRunIdentifier.getBestIndividual;
 import static lab.v2.selection.SelectorType.SUS;
-import static lab.v2.util.CalculationUtils.*;
+import static lab.v2.util.CalculationUtils.getAverage;
+import static lab.v2.util.CalculationUtils.getAverageFitness;
 import static lab.v2.util.MetricUtils.*;
 
 @RequiredArgsConstructor
@@ -121,7 +122,7 @@ public class RunPoolExecutor {
 
 
             // metrics for all functions
-            currentRR = getReproductionRate(currentIndividuals, offsprings);
+            currentRR = getReproductionRate(currentIndividuals, parentPool);
             currentTeta = getLostOfDiversity(currentRR);
             iterationToRR.put(i + 1, currentRR);
             iterationToTeta.put(i + 1, currentTeta);
