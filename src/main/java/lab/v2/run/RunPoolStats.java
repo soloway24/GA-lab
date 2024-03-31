@@ -32,6 +32,12 @@ public record RunPoolStats(RunConfiguration runConfiguration,
                            double avgTetaMax,
                            double avgTetaAvg,
 
+                           double sigmaRRMin,
+                           double sigmaRRMax,
+                           double sigmaRRAvg,
+                           double sigmaTetaMin,
+                           double sigmaTetaMax,
+                           double sigmaTetaAvg,
 
                            // all functions except FConstAll
                            // non-successful but converged runs
@@ -101,6 +107,14 @@ public record RunPoolStats(RunConfiguration runConfiguration,
         sb.append("avgTetaMin = ").append(avgTetaMin).append(", ");
         sb.append("avgTetaMax = ").append(avgTetaMax).append(", ");
         sb.append("avgTetaAvg = ").append(avgTetaAvg).append(", ");
+
+        sb.append("sigmaRRMin = ").append(sigmaRRMin).append(", ");
+        sb.append("sigmaRRMax = ").append(sigmaRRMax).append(", ");
+        sb.append("sigmaRRAvg = ").append(sigmaRRAvg).append(", ");
+        sb.append("sigmaTetaMin = ").append(sigmaTetaMin).append(", ");
+        sb.append("sigmaTetaMax = ").append(sigmaTetaMax).append(", ");
+        sb.append("sigmaTetaAvg = ").append(sigmaTetaAvg).append(", ");
+
 
         // all functions except FConstAll
         // non-successful but converged runs

@@ -39,6 +39,14 @@ public class RunPoolStatsCreator {
         double avgTetaMax = 0;
         double avgTetaAvg = 0;
 
+        double sigmaRRMin = 0;
+        double sigmaRRMax = 0;
+        double sigmaRRAvg = 0;
+        double sigmaTetaMin = 0;
+        double sigmaTetaMax = 0;
+        double sigmaTetaAvg = 0;
+
+
         List<RunStats> sucRunStats = getSucRunStats(allRunStats);
 
         if (!sucRunStats.isEmpty()) {
@@ -78,6 +86,14 @@ public class RunPoolStatsCreator {
             avgTetaMin = getAverage(getDoubleValues(sucRunStats, RunStats::tetaMin));
             avgTetaMax = getAverage(getDoubleValues(sucRunStats, RunStats::tetaMax));
             avgTetaAvg = getAverage(getDoubleValues(sucRunStats, RunStats::tetaAvg));
+
+            sigmaRRMin = getStandardDeviation(getDoubleValues(sucRunStats, RunStats::rrMin), avgRRMin);
+            sigmaRRMax = getStandardDeviation(getDoubleValues(sucRunStats, RunStats::rrMax), avgRRMax);
+            sigmaRRAvg = getStandardDeviation(getDoubleValues(sucRunStats, RunStats::rrAvg), avgRRAvg);
+
+            sigmaTetaMin = getStandardDeviation(getDoubleValues(sucRunStats, RunStats::tetaMin), avgTetaMin);
+            sigmaTetaMax = getStandardDeviation(getDoubleValues(sucRunStats, RunStats::tetaMax), avgTetaMax);
+            sigmaTetaAvg = getStandardDeviation(getDoubleValues(sucRunStats, RunStats::tetaAvg), avgTetaAvg);
         }
 
 
@@ -112,7 +128,6 @@ public class RunPoolStatsCreator {
         double sigmaOptSavedNILoose = 0;
         double avgMaxOptSavedNILoose = 0;
         double sigmaMaxOptSavedNILoose = 0;
-
 
         if (!runConfiguration.function().isConstant()) {
 
@@ -204,6 +219,13 @@ public class RunPoolStatsCreator {
                 .withAvgTetaMin(avgTetaMin)
                 .withAvgTetaMax(avgTetaMax)
                 .withAvgTetaAvg(avgTetaAvg)
+
+                .withSigmaRRMin(sigmaRRMin)
+                .withSigmaRRMax(sigmaRRMax)
+                .withSigmaRRAvg(sigmaRRAvg)
+                .withSigmaTetaMin(sigmaTetaMin)
+                .withSigmaTetaMax(sigmaTetaMax)
+                .withSigmaTetaAvg(sigmaTetaAvg)
 
                 // all functions except FConstAll
                 // non-successful but converged runs
