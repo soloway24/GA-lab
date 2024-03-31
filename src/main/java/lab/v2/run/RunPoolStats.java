@@ -54,6 +54,16 @@ public record RunPoolStats(RunConfiguration runConfiguration,
                            double avgTetaFin,
                            double sigmaTetaFin,
 
+                           int minUniqueXStart,
+                           int maxUniqueXStart,
+                           double avgUniqueXStart,
+                           double sigmaUniqueXStart,
+
+                           int minUniqueXFin,
+                           int maxUniqueXFin,
+                           double avgUniqueXFin,
+                           double sigmaUniqueXFin,
+
                            // all functions except FConstAll
                            // non-successful but converged runs
                            double nonSuc,
@@ -143,6 +153,14 @@ public record RunPoolStats(RunConfiguration runConfiguration,
         sb.append("avgTetaFin = ").append(avgTetaFin).append(", ");
         sb.append("sigmaTetaFin = ").append(sigmaTetaFin).append(", ");
 
+        sb.append("minUniqueXStart = ").append(minUniqueXStart).append(", ");
+        sb.append("maxUniqueXStart = ").append(maxUniqueXStart).append(", ");
+        sb.append("avgUniqueXStart = ").append(avgUniqueXStart).append(", ");
+        sb.append("sigmaUniqueXStart = ").append(sigmaUniqueXStart).append(", ");
+        sb.append("minUniqueXFin = ").append(minUniqueXFin).append(", ");
+        sb.append("maxUniqueXFin = ").append(maxUniqueXFin).append(", ");
+        sb.append("avgUniqueXFin = ").append(avgUniqueXFin).append(", ");
+        sb.append("sigmaUniqueXFin = ").append(sigmaUniqueXFin).append(", ");
 
         // all functions except FConstAll
         // non-successful but converged runs

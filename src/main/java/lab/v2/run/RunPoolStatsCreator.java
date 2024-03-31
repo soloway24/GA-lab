@@ -62,6 +62,16 @@ public class RunPoolStatsCreator {
         double avgTetaFin = 0;
         double sigmaTetaFin = 0;
 
+        int minUniqueXStart = 0;
+        int maxUniqueXStart = 0;
+        double avgUniqueXStart = 0;
+        double sigmaUniqueXStart = 0;
+
+        int minUniqueXFin = 0;
+        int maxUniqueXFin = 0;
+        double avgUniqueXFin = 0;
+        double sigmaUniqueXFin = 0;
+
 
         List<RunStats> sucRunStats = getSucRunStats(allRunStats);
 
@@ -130,6 +140,18 @@ public class RunPoolStatsCreator {
             List<Double> tetaFins = getDoubleValues(sucRunStats, RunStats::tetaFin);
             avgTetaFin = getAverage(tetaFins);
             sigmaTetaFin = getStandardDeviation(tetaFins, avgTetaFin);
+
+            List<Integer> uniqueXStarts = getIntValues(sucRunStats, RunStats::uniqueXStart);
+            minUniqueXStart = getMinInt(uniqueXStarts);
+            maxUniqueXStart = getMaxInt(uniqueXStarts);
+            avgUniqueXStart = getAverage(uniqueXStarts);
+            sigmaUniqueXStart = getStandardDeviation(uniqueXStarts, avgUniqueXStart);
+
+            List<Integer> uniqueXFins = getIntValues(sucRunStats, RunStats::uniqueXFin);
+            minUniqueXFin = getMinInt(uniqueXFins);
+            maxUniqueXFin = getMaxInt(uniqueXFins);
+            avgUniqueXFin = getAverage(uniqueXFins);
+            sigmaUniqueXFin = getStandardDeviation(uniqueXFins, avgUniqueXFin);
         }
 
 
@@ -277,6 +299,16 @@ public class RunPoolStatsCreator {
                 .withSigmaRRFin(sigmaRRFin)
                 .withAvgTetaFin(avgTetaFin)
                 .withSigmaTetaFin(sigmaTetaFin)
+
+                .withMinUniqueXStart(minUniqueXStart)
+                .withMaxUniqueXStart(maxUniqueXStart)
+                .withAvgUniqueXStart(avgUniqueXStart)
+                .withSigmaUniqueXStart(sigmaUniqueXStart)
+
+                .withMinUniqueXFin(minUniqueXFin)
+                .withMaxUniqueXFin(maxUniqueXFin)
+                .withAvgUniqueXFin(avgUniqueXFin)
+                .withSigmaUniqueXFin(sigmaUniqueXFin)
 
 
                 // all functions except FConstAll
