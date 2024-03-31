@@ -39,6 +39,21 @@ public record RunPoolStats(RunConfiguration runConfiguration,
                            double sigmaTetaMax,
                            double sigmaTetaAvg,
 
+                           double minRRStart,
+                           double maxRRStart,
+                           double avgRRStart,
+                           double sigmaRRStart,
+
+                           double minTetaStart,
+                           double maxTetaStart,
+                           double avgTetaStart,
+                           double sigmaTetaStart,
+
+                           double avgRRFin,
+                           double sigmaRRFin,
+                           double avgTetaFin,
+                           double sigmaTetaFin,
+
                            // all functions except FConstAll
                            // non-successful but converged runs
                            double nonSuc,
@@ -114,6 +129,19 @@ public record RunPoolStats(RunConfiguration runConfiguration,
         sb.append("sigmaTetaMin = ").append(sigmaTetaMin).append(", ");
         sb.append("sigmaTetaMax = ").append(sigmaTetaMax).append(", ");
         sb.append("sigmaTetaAvg = ").append(sigmaTetaAvg).append(", ");
+
+        sb.append("minRRStart = ").append(minRRStart).append(", ");
+        sb.append("maxRRStart = ").append(maxRRStart).append(", ");
+        sb.append("avgRRStart = ").append(avgRRStart).append(", ");
+        sb.append("sigmaRRStart = ").append(sigmaRRStart).append(", ");
+        sb.append("minTetaStart = ").append(minTetaStart).append(", ");
+        sb.append("maxTetaStart = ").append(maxTetaStart).append(", ");
+        sb.append("avgTetaStart = ").append(avgTetaStart).append(", ");
+        sb.append("sigmaTetaStart = ").append(sigmaTetaStart).append(", ");
+        sb.append("avgRRFin = ").append(avgRRFin).append(", ");
+        sb.append("sigmaRRFin = ").append(sigmaRRFin).append(", ");
+        sb.append("avgTetaFin = ").append(avgTetaFin).append(", ");
+        sb.append("sigmaTetaFin = ").append(sigmaTetaFin).append(", ");
 
 
         // all functions except FConstAll

@@ -31,6 +31,7 @@ public class RunPoolStatsCreator {
         double avgRRMin = 0;
         double avgRRMax = 0;
         double avgRRAvg = 0;
+
         double minTetaMin = 0;
         int niMinTetaMin = 0;
         double maxTetaMax = 0;
@@ -45,6 +46,21 @@ public class RunPoolStatsCreator {
         double sigmaTetaMin = 0;
         double sigmaTetaMax = 0;
         double sigmaTetaAvg = 0;
+
+        double minRRStart = 0;
+        double maxRRStart = 0;
+        double avgRRStart = 0;
+        double sigmaRRStart = 0;
+
+        double minTetaStart = 0;
+        double maxTetaStart = 0;
+        double avgTetaStart = 0;
+        double sigmaTetaStart = 0;
+
+        double avgRRFin = 0;
+        double sigmaRRFin = 0;
+        double avgTetaFin = 0;
+        double sigmaTetaFin = 0;
 
 
         List<RunStats> sucRunStats = getSucRunStats(allRunStats);
@@ -94,6 +110,26 @@ public class RunPoolStatsCreator {
             sigmaTetaMin = getStandardDeviation(getDoubleValues(sucRunStats, RunStats::tetaMin), avgTetaMin);
             sigmaTetaMax = getStandardDeviation(getDoubleValues(sucRunStats, RunStats::tetaMax), avgTetaMax);
             sigmaTetaAvg = getStandardDeviation(getDoubleValues(sucRunStats, RunStats::tetaAvg), avgTetaAvg);
+
+            List<Double> rrStarts = getDoubleValues(sucRunStats, RunStats::rrStart);
+            minRRStart = getMinDouble(rrStarts);
+            maxRRStart = getMaxDouble(rrStarts);
+            avgRRStart = getAverage(rrStarts);
+            sigmaRRStart = getStandardDeviation(rrStarts, avgRRStart);
+
+            List<Double> tetaStarts = getDoubleValues(sucRunStats, RunStats::tetaStart);
+            minTetaStart = getMinDouble(tetaStarts);
+            maxTetaStart = getMaxDouble(tetaStarts);
+            avgTetaStart = getAverage(tetaStarts);
+            sigmaTetaStart = getStandardDeviation(tetaStarts, avgTetaStart);
+
+            List<Double> rrFins = getDoubleValues(sucRunStats, RunStats::rrFin);
+            avgRRFin = getAverage(rrFins);
+            sigmaRRFin = getStandardDeviation(rrFins, avgRRFin);
+
+            List<Double> tetaFins = getDoubleValues(sucRunStats, RunStats::tetaFin);
+            avgTetaFin = getAverage(tetaFins);
+            sigmaTetaFin = getStandardDeviation(tetaFins, avgTetaFin);
         }
 
 
@@ -226,6 +262,22 @@ public class RunPoolStatsCreator {
                 .withSigmaTetaMin(sigmaTetaMin)
                 .withSigmaTetaMax(sigmaTetaMax)
                 .withSigmaTetaAvg(sigmaTetaAvg)
+
+                .withMinRRStart(minRRStart)
+                .withMaxRRStart(maxRRStart)
+                .withAvgRRStart(avgRRStart)
+                .withSigmaRRStart(sigmaRRStart)
+
+                .withMinTetaStart(minTetaStart)
+                .withMaxTetaStart(maxTetaStart)
+                .withAvgTetaStart(avgTetaStart)
+                .withSigmaTetaStart(sigmaTetaStart)
+
+                .withAvgRRFin(avgRRFin)
+                .withSigmaRRFin(sigmaRRFin)
+                .withAvgTetaFin(avgTetaFin)
+                .withSigmaTetaFin(sigmaTetaFin)
+
 
                 // all functions except FConstAll
                 // non-successful but converged runs
