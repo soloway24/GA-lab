@@ -48,20 +48,31 @@ public class MainV2 {
                 populationSizes, runPoolSize);
         List<RunPool> runPools = getRunPools(runPoolConfigurations);
 
-        ExecutorService executorService = new ForkJoinPool();
 
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-//        List<RunPoolStats> runPoolStats = runPoolExecutor.executeAllRunPools(runPools);
-//        runPoolStats.forEach(exporter::exportRunPoolStats);
+
+//        executeAll(runPools);
+        executeAllParallel(runPools);
+
+        stopWatch.stop();
+        System.out.println("Time Elapsed: " + stopWatch.getTime() / 1000.0);
+    }
+
+    private void executeAll(List<RunPool> runPools) {
+        List<RunPoolStats> runPoolStats = runPoolExecutor.executeAllRunPools(runPools);
+        runPoolStats.forEach(exporter::exportRunPoolStats);
+    }
+
+    private void executeAllParallel(List<RunPool> runPools) throws InterruptedException {
+        ExecutorService executorService = new ForkJoinPool();
         runPools.forEach(runPool -> executorService.submit(() -> {
-            RunPoolStats runPoolStats = runPoolExecutor.executeRunPool(runPool);
+//            RunPoolStats runPoolStats = runPoolExecutor.executeRunPool(runPool);
+            RunPoolStats runPoolStats = runPoolExecutor.executeRunPoolParallel(runPool);
             exporter.exportRunPoolStats(runPoolStats);
         }));
         executorService.shutdown();
         executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-        stopWatch.stop();
-        System.out.println("Time Elapsed: " + stopWatch.getTime() / 1000);
     }
 
     private List<Integer> getPopulationSizes() {
@@ -72,7 +83,9 @@ public class MainV2 {
         FitnessFunctionV2<?, ?> constAllFunction = FConstAllFunction.getInstance();
         FitnessFunctionV2<?, ?> quadraticFunction = new PowerFunction(10, 0, 10.23, 2, 2);
 
-        return List.of(quadraticFunction);
+        return List.of(constAllFunction);
+//        return List.of(quadraticFunction);
+//        return List.of(constAllFunction, quadraticFunction);
     }
 
     private List<Selector> getSelectors() {

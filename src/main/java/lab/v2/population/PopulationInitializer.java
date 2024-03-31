@@ -47,7 +47,8 @@ public class PopulationInitializer {
         List<Individual> individuals = createRandomIndividuals(populationConfig.function().getChromosomeLength(),
                 populationConfig.encoding(), populationConfig.populationSize())
                 .toList();
-        return new Population(populationConfig, individuals);
+        List<Individual> indexedIndividuals = getIndexedIndividuals(individuals);
+        return new Population(populationConfig, indexedIndividuals);
     }
 
     private Population initializeRandomPopulationWithOptimalQuantity(PopulationConfiguration populationConfig) {

@@ -37,20 +37,24 @@ public class RunPoolExecutor {
 
     public List<RunPoolStats> executeAllRunPools(List<RunPool> runPools) {
         return runPools.stream()
-                .map(this::executeRunPool)
+//                .map(this::executeRunPool)
+                .map(this::executeRunPoolParallel)
                 .toList();
     }
 
     public RunPoolStats executeRunPool(RunPool runPool) {
         System.out.println("Executing RunPool: " + runPool.runConfiguration());
+        List<RunStats> allRunStats = executeAndGetAllRunStats(runPool);
+        return runPoolStatsCreator.create(allRunStats, runPool.runConfiguration());
+    }
+
+    public RunPoolStats executeRunPoolParallel(RunPool runPool) {
+        System.out.println("Executing RunPool: " + runPool.runConfiguration());
+
         ExecutorService executorService = new ForkJoinPool();
-        List<Future<RunStats>> futures = IntStream.range(0, runPool.getSize())
-                .mapToObj(i -> executorService.submit(() -> {
-                    System.out.println("Run " + i);
-                    return executeRun(runPool.runs().get(i));
-                }))
-                .toList();
+        List<Future<RunStats>> futures = executeParallelAndGetAllRunStats(runPool, executorService);
         List<RunStats> allRunStats = new ArrayList<>();
+
         for (Future<RunStats> runStatsFuture : futures) {
             RunStats runStats;
             try {
@@ -60,18 +64,13 @@ public class RunPoolExecutor {
             }
             allRunStats.add(runStats);
         }
+
         executorService.shutdown();
         try {
             executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-//        List<RunStats> runPoolStats = IntStream.range(0, runPool.getSize())
-//                .mapToObj(i -> {
-//                    System.out.println("Run " + i);
-//                    return executeRun(runPool.runs().get(i));
-//                })
-//                .toList();
         return runPoolStatsCreator.create(allRunStats, runPool.runConfiguration());
     }
 
@@ -260,6 +259,24 @@ public class RunPoolExecutor {
                 .withNiSMax(niSMax)
 
                 .build();
+    }
+
+    private List<RunStats> executeAndGetAllRunStats(RunPool runPool) {
+        return IntStream.range(0, runPool.getSize())
+                .mapToObj(i -> {
+                    System.out.println("Run " + i);
+                    return executeRun(runPool.runs().get(i));
+                })
+                .toList();
+    }
+
+    private List<Future<RunStats>> executeParallelAndGetAllRunStats(RunPool runPool, ExecutorService executorService) {
+        return IntStream.range(0, runPool.getSize())
+                .mapToObj(i -> executorService.submit(() -> {
+                    System.out.println("Run " + i);
+                    return executeRun(runPool.runs().get(i));
+                }))
+                .toList();
     }
 
     private int getMaxIterations(FitnessFunctionV2<?, ? extends Number> function, Selector selector) {

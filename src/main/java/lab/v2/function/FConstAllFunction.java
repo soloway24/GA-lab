@@ -4,6 +4,7 @@ import lab.parameters.Encoding;
 import lab.v2.Individual;
 import lab.v2.operator.OperatorType;
 import lab.v2.population.PopulationType;
+import lab.v2.selection.SelectorType;
 
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import static lab.parameters.Encoding.STANDARD;
 import static lab.v2.identifier.ConvergenceIdentifier.areTheSameWithPercentage;
 import static lab.v2.operator.OperatorType.NONE;
 import static lab.v2.population.PopulationType.RANDOM;
+import static lab.v2.selection.SelectorType.SUS;
 
 public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
 
@@ -106,4 +108,11 @@ public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
     public boolean isConstant() {
         return true;
     }
+
+//    @Override
+//    public List<SelectorType> getUnsupportedSelectorTypes(OperatorType operatorType) {
+//        return operatorType == NONE
+//                ? List.of(SUS)
+//                : List.of();
+//    }
 }
