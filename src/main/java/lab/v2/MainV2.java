@@ -29,7 +29,8 @@ public class MainV2 {
     private final PopulationPoolInitializer populationPoolInitializer = new PopulationPoolInitializer(populationInitializer);
     private final RunPoolCreator runPoolCreator = new RunPoolCreator(populationPoolInitializer);
     private final ConvergenceIdentifier convergenceIdentifier = new ConvergenceIdentifier();
-    private final RunPoolExecutor runPoolExecutor = new RunPoolExecutor(convergenceIdentifier);
+    private final RunPoolStatsCreator runPoolStatsCreator = new RunPoolStatsCreator();
+    private final RunPoolExecutor runPoolExecutor = new RunPoolExecutor(convergenceIdentifier, runPoolStatsCreator);
     private final Exporter exporter = new Exporter();
 
     public static void main(String[] args) throws InterruptedException {
@@ -71,7 +72,7 @@ public class MainV2 {
         FitnessFunctionV2<?, ?> constAllFunction = FConstAllFunction.getInstance();
         FitnessFunctionV2<?, ?> quadraticFunction = new PowerFunction(10, 0, 10.23, 2, 2);
 
-        return List.of(constAllFunction, quadraticFunction);
+        return List.of(quadraticFunction);
     }
 
     private List<Selector> getSelectors() {

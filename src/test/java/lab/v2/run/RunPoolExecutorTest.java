@@ -13,6 +13,8 @@ import lab.v2.population.*;
 import lab.v2.selection.*;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static lab.parameters.Encoding.STANDARD;
 import static lab.v2.population.PopulationType.TEN_PERCENT_OPTIMAL;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -22,7 +24,8 @@ class RunPoolExecutorTest {
 
     private static final int POPULATION_SIZE = 100;
     private final ConvergenceIdentifier convergenceIdentifier = new ConvergenceIdentifier();
-    private final RunPoolExecutor runPoolExecutor = new RunPoolExecutor(convergenceIdentifier);
+    private final RunPoolStatsCreator runPoolStatsCreator = new RunPoolStatsCreator();
+    private final RunPoolExecutor runPoolExecutor = new RunPoolExecutor(convergenceIdentifier, runPoolStatsCreator);
 
     // functions
     private final FitnessFunctionV2<Double, Double> quadraticFunction = new PowerFunction(
@@ -110,5 +113,8 @@ class RunPoolExecutorTest {
         System.out.println("Result = " + runStats);
 
         assertThat(runStats.isSuc(), equalTo(true));
+
+        RunPoolStats runPoolStats = runPoolStatsCreator.create(List.of(runStats), runConfiguration);
+        System.out.println("runPoolStats = " + runPoolStats);
     }
 }

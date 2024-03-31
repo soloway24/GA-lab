@@ -32,9 +32,7 @@ public class RunPoolExecutor {
     private static final int CONST_SUS_MAX_ITERATIONS = 10000;
 
     private final ConvergenceIdentifier convergenceIdentifier;
-
-    double sStart, sFin, sAvg, sMin, sMax;
-    int niSMin, niSMax;
+    private final RunPoolStatsCreator runPoolStatsCreator;
 
     public List<RunPoolStats> executeAllRunPools(List<RunPool> runPools) {
         return runPools.stream()
@@ -53,7 +51,7 @@ public class RunPoolExecutor {
                 .toList();
         List<RunStats> allRunStats = new ArrayList<>();
         for (Future<RunStats> runStatsFuture : futures) {
-            RunStats runStats = null;
+            RunStats runStats;
             try {
                 runStats = runStatsFuture.get();
             } catch (Exception e) {
@@ -73,7 +71,7 @@ public class RunPoolExecutor {
 //                    return executeRun(runPool.runs().get(i));
 //                })
 //                .toList();
-        return new RunPoolStats(runPool.runConfiguration(), allRunStats);
+        return runPoolStatsCreator.create(allRunStats, runPool.runConfiguration());
     }
 
     public RunStats executeRun(Run run) {
@@ -163,7 +161,7 @@ public class RunPoolExecutor {
         individualToFitness = getIndividualToFitness(currentIndividuals, function);
 
         // metrics for all functions
-        int ni = i + 1;
+        int ni = i;
         boolean hasConverged = convergenceIdentifier.hasConverged(currentIndividuals, operator.getOperatorType());
         boolean isSuc = function.isSuccessful(individualToFitness, operator.getOperatorType(), hasConverged);
 
@@ -171,22 +169,22 @@ public class RunPoolExecutor {
         double rrFin = currentRR;
         double rrAvg = getAverage(iterationToRR.values());
 
-        Map.Entry<Integer, Double> minIterationRR = getMinIteratedValue(iterationToRR);
-        Map.Entry<Integer, Double> maxIterationRR = getMaxIteratedValue(iterationToRR);
-        double rrMin = minIterationRR.getValue();
+        Map.Entry<Integer, ? extends Number> minIterationRR = getMinIteratedValue(iterationToRR);
+        Map.Entry<Integer, ? extends Number> maxIterationRR = getMaxIteratedValue(iterationToRR);
+        double rrMin = minIterationRR.getValue().doubleValue();
         int niRrMin = minIterationRR.getKey();
-        double rrMax = maxIterationRR.getValue();
+        double rrMax = maxIterationRR.getValue().doubleValue();
         int niRrMax = maxIterationRR.getKey();
 
         double tetaStart = iterationToTeta.get(1);
         double tetaFin = currentTeta;
         double tetaAvg = getAverage(iterationToTeta.values());
 
-        Map.Entry<Integer, Double> minIterationTeta = getMinIteratedValue(iterationToTeta);
-        Map.Entry<Integer, Double> maxIterationTeta = getMaxIteratedValue(iterationToTeta);
-        double tetaMin = minIterationTeta.getValue();
+        Map.Entry<Integer, ? extends Number> minIterationTeta = getMinIteratedValue(iterationToTeta);
+        Map.Entry<Integer, ? extends Number> maxIterationTeta = getMaxIteratedValue(iterationToTeta);
+        double tetaMin = minIterationTeta.getValue().doubleValue();
         int niTetaMin = minIterationTeta.getKey();
-        double tetaMax = maxIterationTeta.getValue();
+        double tetaMax = maxIterationTeta.getValue().doubleValue();
         int niTetaMax = maxIterationTeta.getKey();
 
         int uniqueXFin = getUniqueBinaryCodes(currentIndividuals).size();
@@ -200,16 +198,18 @@ public class RunPoolExecutor {
         double fFound = individualToFitness.get(best).doubleValue();
         double fAvg = getAverageFitness(individualToFitness);
 
+        double sStart = 0, sFin = 0, sAvg = 0, sMin = 0, sMax = 0;
+        int niSMin = 0, niSMax = 0;
 
         if (!function.isConstant()) {
             sStart = iterationToS.get(1);
             sFin = currentS;
             sAvg = getAverage(iterationToS.values());
-            Map.Entry<Integer, Double> minIterationS = getMinIteratedValue(iterationToS);
-            Map.Entry<Integer, Double> maxIterationS = getMaxIteratedValue(iterationToS);
-            sMin = minIterationS.getValue();
+            Map.Entry<Integer, ? extends Number> minIterationS = getMinIteratedValue(iterationToS);
+            Map.Entry<Integer, ? extends Number> maxIterationS = getMaxIteratedValue(iterationToS);
+            sMin = minIterationS.getValue().doubleValue();
             niSMin = minIterationS.getKey();
-            sMax = maxIterationS.getValue();
+            sMax = maxIterationS.getValue().doubleValue();
             niSMax = maxIterationS.getKey();
         }
 

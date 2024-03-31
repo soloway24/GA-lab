@@ -46,10 +46,11 @@ public class Exporter {
     }
 
     private void writeToFile(File file, RunPoolStats runPoolStats) {
-        List<RunStats> allRunStats = runPoolStats.runPoolStats();
+//        List<RunStats> allRunStats = runPoolStats.runPoolStats();
         try (FileWriter writer = new FileWriter(file)) {
-            IntStream.range(0, allRunStats.size())
-                    .forEach(i -> writeOneRunStats(writer, allRunStats.get(i), i));
+//            IntStream.range(0, allRunStats.size())
+//                    .forEach(i -> writeOneRunStats(writer, allRunStats.get(i), i));
+            writer.write(runPoolStats.toString());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
