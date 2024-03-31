@@ -9,6 +9,7 @@ import java.util.stream.IntStream;
 public record RunPoolStats(RunConfiguration runConfiguration,
                            List<RunStats> runPoolStats,
 
+                           // all functions
                            // successful runs
                            double suc,
                            int minNI,
@@ -16,6 +17,7 @@ public record RunPoolStats(RunConfiguration runConfiguration,
                            double avgNI,
                            double sigmaNI,
 
+                           // all functions except FConstAll
                            // non-successful but converged runs
                            double nonSuc,
                            int nonMinNI,
@@ -24,7 +26,20 @@ public record RunPoolStats(RunConfiguration runConfiguration,
                            double nonSigmaNI,
                            double nonMaxFFound,
                            double nonAvgFFound,
-                           double nonSigmaFFound
+                           double nonSigmaFFound,
+
+                           // successful runs
+                           double minSMin,
+                           int niSMin,
+                           double maxSMax,
+                           int niSMax,
+                           double avgSMin,
+                           double avgSMax,
+                           double avgSAvg,
+                           double minSStart,
+                           double maxSStart,
+                           double avgSStart,
+                           double sigmaSStart
 ) {
 
     @Override
@@ -50,7 +65,20 @@ public record RunPoolStats(RunConfiguration runConfiguration,
         sb.append("nonSigmaNI = ").append(nonSigmaNI).append(", ");
         sb.append("nonMaxFFound = ").append(nonMaxFFound).append(", ");
         sb.append("nonAvgFFound = ").append(nonAvgFFound).append(", ");
-        sb.append("nonSigmaFFound = ").append(nonSigmaFFound);
+        sb.append("nonSigmaFFound = ").append(nonSigmaFFound).append(", ");
+
+        sb.append("minSMin = ").append(minSMin).append(", ");
+        sb.append("niSMin = ").append(niSMin).append(", ");
+        sb.append("maxSMax = ").append(maxSMax).append(", ");
+        sb.append("niSMax = ").append(niSMax).append(", ");
+        sb.append("avgSMin = ").append(avgSMin).append(", ");
+        sb.append("avgSMax = ").append(avgSMax).append(", ");
+        sb.append("avgSAvg = ").append(avgSAvg).append(", ");
+        sb.append("minSStart = ").append(minSStart).append(", ");
+        sb.append("maxSStart = ").append(maxSStart).append(", ");
+        sb.append("avgSStart = ").append(avgSStart).append(", ");
+        sb.append("sigmaSStart = ").append(sigmaSStart);
+
         sb.append("]");
 
         return sb.toString();
