@@ -59,6 +59,17 @@ public class RunPoolStatsCreator {
         double avgSStart = 0;
         double sigmaSStart = 0;
 
+        int niWithLoose = 0;
+        double avgNILoose = 0;
+        double sigmaNILoose = 0;
+        double avgNumLoose = 0;
+        double sigmaNumLoose = 0;
+        double avgOptSavedNILoose = 0;
+        double sigmaOptSavedNILoose = 0;
+        double avgMaxOptSavedNILoose = 0;
+        double sigmaMaxOptSavedNILoose = 0;
+
+
         if (!runConfiguration.function().isConstant()) {
 
             // non-successful but converged runs
@@ -96,6 +107,30 @@ public class RunPoolStatsCreator {
             maxSStart = getMaxDouble(sStarts);
             avgSStart = getAverage(sStarts);
             sigmaSStart = getStandardDeviation(sStarts, avgSStart);
+
+            // all runs
+            List<RunStats> runsStatsWithLoose = allRunStats.stream()
+                    .filter(runStats -> runStats.numLoose() > 0)
+                    .toList();
+            niWithLoose = runsStatsWithLoose.size();
+
+            if (niWithLoose > 0) {
+                List<Integer> niLooses = getIntValues(runsStatsWithLoose, RunStats::niLoose);
+                avgNILoose = getAverage(niLooses);
+                sigmaNILoose = getStandardDeviation(niLooses, avgNILoose);
+
+                List<Integer> numLooses = getIntValues(runsStatsWithLoose, RunStats::numLoose);
+                avgNumLoose = getAverage(numLooses);
+                sigmaNumLoose = getStandardDeviation(numLooses, avgNumLoose);
+
+                List<Integer> optSavedNILooses = getIntValues(runsStatsWithLoose, RunStats::optSavedNILoose);
+                avgOptSavedNILoose = getAverage(optSavedNILooses);
+                sigmaOptSavedNILoose = getStandardDeviation(optSavedNILooses, avgOptSavedNILoose);
+
+                List<Integer> maxOptSavedNILooses = getIntValues(runsStatsWithLoose, RunStats::maxOptSavedNILoose);
+                avgMaxOptSavedNILoose = getAverage(maxOptSavedNILooses);
+                sigmaMaxOptSavedNILoose = getStandardDeviation(maxOptSavedNILooses, avgMaxOptSavedNILoose);
+            }
         }
 
 
@@ -134,6 +169,17 @@ public class RunPoolStatsCreator {
                 .withMaxSStart(maxSStart)
                 .withAvgSStart(avgSStart)
                 .withSigmaSStart(sigmaSStart)
+
+                // all runs
+                .withNiWithLoose(niWithLoose)
+                .withAvgNILoose(avgNILoose)
+                .withSigmaNILoose(sigmaNILoose)
+                .withAvgNumLoose(avgNumLoose)
+                .withSigmaNumLoose(sigmaNumLoose)
+                .withAvgOptSavedNILoose(avgOptSavedNILoose)
+                .withSigmaOptSavedNILoose(sigmaOptSavedNILoose)
+                .withAvgMaxOptSavedNILoose(avgMaxOptSavedNILoose)
+                .withSigmaMaxOptSavedNILoose(sigmaMaxOptSavedNILoose)
 
                 .build();
     }

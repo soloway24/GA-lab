@@ -17,6 +17,7 @@ public record RunPoolStats(RunConfiguration runConfiguration,
                            double avgNI,
                            double sigmaNI,
 
+
                            // all functions except FConstAll
                            // non-successful but converged runs
                            double nonSuc,
@@ -39,7 +40,18 @@ public record RunPoolStats(RunConfiguration runConfiguration,
                            double minSStart,
                            double maxSStart,
                            double avgSStart,
-                           double sigmaSStart
+                           double sigmaSStart,
+
+                           // all runs
+                           int niWithLoose,
+                           double avgNILoose,
+                           double sigmaNILoose,
+                           double avgNumLoose,
+                           double sigmaNumLoose,
+                           double avgOptSavedNILoose,
+                           double sigmaOptSavedNILoose,
+                           double avgMaxOptSavedNILoose,
+                           double sigmaMaxOptSavedNILoose
 ) {
 
     @Override
@@ -77,7 +89,17 @@ public record RunPoolStats(RunConfiguration runConfiguration,
         sb.append("minSStart = ").append(minSStart).append(", ");
         sb.append("maxSStart = ").append(maxSStart).append(", ");
         sb.append("avgSStart = ").append(avgSStart).append(", ");
-        sb.append("sigmaSStart = ").append(sigmaSStart);
+        sb.append("sigmaSStart = ").append(sigmaSStart).append(", ");
+
+        sb.append("niWithLoose = ").append(niWithLoose).append(", ");
+        sb.append("avgNILoose = ").append(avgNILoose).append(", ");
+        sb.append("sigmaNILoose = ").append(sigmaNILoose).append(", ");
+        sb.append("avgNumLoose = ").append(avgNumLoose).append(", ");
+        sb.append("sigmaNumLoose = ").append(sigmaNumLoose).append(", ");
+        sb.append("avgOptSavedNILoose = ").append(avgOptSavedNILoose).append(", ");
+        sb.append("sigmaOptSavedNILoose = ").append(sigmaOptSavedNILoose).append(", ");
+        sb.append("avgMaxOptSavedNILoose = ").append(avgMaxOptSavedNILoose).append(", ");
+        sb.append("sigmaMaxOptSavedNILoose = ").append(sigmaMaxOptSavedNILoose);
 
         sb.append("]");
 
