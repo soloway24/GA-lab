@@ -84,8 +84,8 @@ public class MainV2 {
         FitnessFunctionV2<?, ?> constAllFunction = FConstAllFunction.getInstance();
         FitnessFunctionV2<?, ?> quadraticFunction = new PowerFunction(10, 0, 10.23, 2, 2);
 
-        return List.of(constAllFunction);
-//        return List.of(quadraticFunction);
+//        return List.of(constAllFunction);
+        return List.of(quadraticFunction);
 //        return List.of(constAllFunction, quadraticFunction);
     }
 
