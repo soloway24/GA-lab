@@ -109,10 +109,10 @@ public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
         return true;
     }
 
-//    @Override
-//    public List<SelectorType> getUnsupportedSelectorTypes(OperatorType operatorType) {
-//        return operatorType == NONE
-//                ? List.of(SUS)
-//                : List.of();
-//    }
+    @Override
+    public List<SelectorType> getUnsupportedSelectorTypes(OperatorType operatorType) {
+        return operatorType == NONE
+                ? List.of(SUS)
+                : List.of();
+    }
 }

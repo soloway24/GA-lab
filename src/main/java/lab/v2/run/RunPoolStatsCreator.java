@@ -253,7 +253,7 @@ public class RunPoolStatsCreator {
 
         return RunPoolStats.builder()
                 .withRunConfiguration(runConfiguration)
-                .withRunPoolStats(allRunStats)
+                .withAllRunStats(allRunStats)
 
                 // all functions
                 // successful runs

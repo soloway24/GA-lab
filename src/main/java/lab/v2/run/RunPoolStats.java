@@ -7,7 +7,7 @@ import java.util.stream.IntStream;
 
 @Builder(setterPrefix = "with")
 public record RunPoolStats(RunConfiguration runConfiguration,
-                           List<RunStats> runPoolStats,
+                           List<RunStats> allRunStats,
 
                            // all functions
                            // successful runs
@@ -107,8 +107,8 @@ public record RunPoolStats(RunConfiguration runConfiguration,
         sb.append("runConfiguration=").append(runConfiguration).append("\n");
         sb.append("runStats=").append("\n");
 
-        IntStream.range(0, runPoolStats.size())
-                .forEach(i -> sb.append("Run ").append(i + 1).append(": ").append(runPoolStats.get(i)).append("\n"));
+        IntStream.range(0, allRunStats.size())
+                .forEach(i -> sb.append("Run ").append(i + 1).append(": ").append(allRunStats.get(i)).append("\n"));
 
         // all functions
         // successful runs

@@ -9,7 +9,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.stream.IntStream;
 
 public class Exporter {
 
@@ -17,7 +16,8 @@ public class Exporter {
             .normalize().toString()
             .replace("\\", "/")
             + "/stats_v2/";
-
+    private static final String TABLES_PATH = STATS_PATH + "tables/";
+    private static final String PLOTS_PATH = STATS_PATH + "plots/";
 
     public void exportAllRunPoolStats(List<RunPoolStats> allRunPoolStats) {
         allRunPoolStats.forEach(this::exportRunPoolStats);
@@ -70,8 +70,10 @@ public class Exporter {
         String operatorName = runConfiguration.operator().getName();
         String populationType = runConfiguration.populationType().name();
         String encoding = runConfiguration.encoding().name();
+        int populationSize = runConfiguration.populationSize();
 
-        return functionName + "_" +
+        return populationSize + "/" +
+                functionName + "_" +
                 selectorName + "_" +
                 operatorName + "_" +
                 populationType + "_" +
