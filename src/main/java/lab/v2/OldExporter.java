@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class Exporter {
+public class OldExporter {
 
     private static final String STATS_PATH = Paths.get(".").toAbsolutePath()
             .normalize().toString()

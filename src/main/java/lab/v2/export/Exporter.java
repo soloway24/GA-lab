@@ -1,5 +1,7 @@
 package lab.v2.export;
 
+import com.github.sh0nk.matplotlib4j.Plot;
+import com.github.sh0nk.matplotlib4j.PythonExecutionException;
 import lab.parameters.Encoding;
 import lab.v2.function.FitnessFunctionV2;
 import lab.v2.operator.Operator;
@@ -21,7 +23,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class Export {
+public class Exporter {
 
     private static final int COLUMN_NUMBER = 81;
     private static final String STATS_PATH = Paths.get(".")
@@ -49,12 +51,9 @@ public class Export {
                 encoding;
     }
 
-    public void exportRunPoolStats(RunPoolStats runPoolStats) {
+    public void exportSingleRunPoolStats(RunPoolStats runPoolStats) {
         RunConfiguration runConfiguration = runPoolStats.runConfiguration();
         FitnessFunctionV2<?, ? extends Number> function = runConfiguration.function();
-        Selector selector = runConfiguration.selector();
-        Operator operator = runConfiguration.operator();
-        Encoding encoding = runConfiguration.encoding();
         List<RunStats> allRunStats = runPoolStats.allRunStats();
 
         String filename = getFileName(runConfiguration);
@@ -63,14 +62,6 @@ public class Export {
         Sheet sheet = workbook.createSheet("Stats");
 
         String tablePath = TABLES_PATH + runConfiguration.populationSize() + "/" + filename + ".xlsx";
-        String allStatsTablePath = TABLES_PATH + runConfiguration.populationSize() + "/" + ALL_STATS_TABLE_NAME;
-        Workbook allStatsWorkbook = getAllConfigsWorkbook(allStatsTablePath);
-//        String plotExportPath = PLOTS_PATH + filename;
-//
-//        File theDir1 = new File(plotExportPath);
-//        if (!theDir1.exists()) {
-//            theDir1.mkdirs();
-//        }
 
         createRunHeaderRow(sheet);
         IntStream.range(0, allRunStats.size())
@@ -83,135 +74,119 @@ public class Export {
         IntStream.range(0, COLUMN_NUMBER)
                 .forEach(sheet::autoSizeColumn);
 
+        saveWorkbook(workbook, tablePath);
+    }
+
+    public void exportAllRunPools(List<RunPoolStats> allRunPoolStats) {
+        RunConfiguration runConfiguration = allRunPoolStats.get(0).runConfiguration();
+
+        String allStatsTablePath = TABLES_PATH + runConfiguration.populationSize() + "/" + ALL_STATS_TABLE_NAME;
+        Workbook allStatsWorkbook = getAllConfigsWorkbook(allStatsTablePath);
         Sheet allStatsSheet = allStatsWorkbook.getSheetAt(0);
         int runPoolRowIndex = getFirstNullRowIndex(allStatsSheet);
-        createRunPoolRow(allStatsSheet, runPoolRowIndex, runPoolRowIndex, runPoolStats);
+
+        IntStream.range(0, allRunPoolStats.size())
+                .forEach(i -> createRunPoolRow(allStatsSheet, runPoolRowIndex + i, runPoolRowIndex + i, allRunPoolStats.get(i)));
+
         IntStream.range(0, COLUMN_NUMBER)
                 .forEach(allStatsSheet::autoSizeColumn);
-//        for (int i = 0; i < 5 && i < allRunStats.size(); i++) {
-//            List<Long> x = allRunStats.get(i).stats.stream().mapToLong(entry -> entry.NI).boxed().toList();
-//            List<Double> RR = allRunStats.get(i).stats.stream().mapToDouble(entry -> entry.RR).boxed().toList();
-//            List<Double> TETA = allRunStats.get(i).stats.stream().mapToDouble(entry -> entry.TETA).boxed().toList();
-//
-//            drawPlot(x, RR, plotExportPath + "/" + (i + 1) + "/", "RR");
-//            drawPlot(x, TETA, plotExportPath + "/" + (i + 1) + "/", "TETA");
-//            drawPlot(x, RR, TETA, plotExportPath + "/" + (i + 1) + "/", "RR_TETA");
-//
-//            if (allRunStats.get(0).getFitnessFunction() != FitnessFunction.F_ALL_CONST) {
-//                List<Double> F_avg = allRunStats.get(i).stats.stream().mapToDouble(entry -> entry.F_avg).boxed().toList();
-//                List<Double> F_found = allRunStats.get(i).stats.stream().mapToDouble(entry -> entry.F_found).boxed().toList();
-//                List<Double> Intensity = allRunStats.get(i).stats.stream().mapToDouble(entry -> entry.Intensity).boxed().toList();
-//                List<Double> Diversity = allRunStats.get(i).stats.stream().mapToDouble(entry -> entry.Diversity).boxed().toList();
-//                List<Double> GR = allRunStats.get(i).stats.stream().mapToDouble(entry -> entry.GR).boxed().toList();
-//                List<Double> Sigma = allRunStats.get(i).stats.stream().mapToDouble(entry -> entry.Sigma).boxed().toList();
-//                List<Double> BestPercent = allRunStats.get(i).stats.stream().mapToDouble(entry -> entry.BestPercent).boxed().toList();
-//
-//                drawPlot(x, F_avg, plotExportPath + "/" + (i + 1) + "/", "F_avg");
-//                drawPlot(x, F_found, plotExportPath + "/" + (i + 1) + "/", "F_found");
-//                drawPlot(x, Intensity, plotExportPath + "/" + (i + 1) + "/", "Intensity");
-//                drawPlot(x, Diversity, plotExportPath + "/" + (i + 1) + "/", "Diversity");
-//                drawPlot(x, GR, plotExportPath + "/" + (i + 1) + "/", "GR");
-//                drawPlot(x, Sigma, plotExportPath + "/" + (i + 1) + "/", "Sigma");
-//                drawPlot(x, BestPercent, plotExportPath + "/" + (i + 1) + "/", "Percentage_of_best_individuals");
-//                drawPlot(x, Intensity, Diversity, plotExportPath + "/" + (i + 1) + "/", "Intensity_Diversity");
-//            }
-//
-//            for (int j = 0; j < 5 && j < allRunStats.get(i).stats.size(); j++) {
-//                drawHistograms(plotExportPath + "/" + (i + 1) + "/" + j + "/", allRunStats.get(i).stats.get(j));
-//            }
-//
-//            int index = allRunStats.get(i).stats.size() - 1;
-//            drawHistograms(plotExportPath + "/" + (i + 1) + "/final/", allRunStats.get(i).stats.get(index));
-//        }
 
-        saveWorkbook(workbook, tablePath);
         saveWorkbook(allStatsWorkbook, allStatsTablePath);
     }
 
-//    private static void drawHistograms(String exportPath, RunStatsData data) {
-//        File theDir1 = new File(exportPath);
-//        if (!theDir1.exists()) {
-//            theDir1.mkdirs();
-//        }
-//
-//        drawHistogram(data.ones, exportPath, "count_ones", 0, GeneticUtils.FITNESS_FUNCTION.getLength());
-//        if (GeneticUtils.FITNESS_FUNCTION == FitnessFunction.QUAD || GeneticUtils.FITNESS_FUNCTION == FitnessFunction.QUAD_SYM) {
-//            drawHistogram(data.fitness, exportPath, "fitness", GeneticUtils.FITNESS_FUNCTION.getMin(), GeneticUtils.FITNESS_FUNCTION.getMax());
-//            drawHistogram(data.phenotypes, exportPath, "phenotypes", GeneticUtils.FITNESS_FUNCTION.getMinX(), GeneticUtils.FITNESS_FUNCTION.getMaxX());
-//        }
-//    }
 
-//    private static void drawPlot(List<Long> x, List<Double> y, String out, String filename) {
-//        try {
-//
-//            File theDir1 = new File(out);
-//            if (!theDir1.exists()) {
-//                theDir1.mkdirs();
-//            }
-//
-//            Plot plt = Plot.create();
-//            plt.plot().add(x, y);
-//            plt.title(filename);
-//            plt.savefig(out + filename + ".png");
-//            plt.executeSilently();
-//        } catch (IOException | PythonExecutionException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    public void exportPlots(List<RunStats> allRunStats, RunConfiguration runConfiguration) {
+        String plotFilepath = getPlotFilepath(runConfiguration);
+        String plotExportPath = PLOTS_PATH + plotFilepath;
 
-//    private static void drawPlot(List<Long> x, List<Double> y, List<Double> y1, String out, String filename) {
-//        try {
-//            File theDir1 = new File(out);
-//            if (!theDir1.exists()) {
-//                theDir1.mkdirs();
-//            }
-//
-//            Plot plt = Plot.create();
-//            plt.plot().add(x, y).color("red");
-//            plt.plot().add(x, y1).color("blue");
-//
-//            plt.title(filename);
-//            plt.savefig(out + filename + ".png");
-//            plt.executeSilently();
-//        } catch (IOException | PythonExecutionException e) {
-//            e.printStackTrace();
-//        }
-//    }
+        File theDir1 = new File(plotExportPath);
+        if (!theDir1.exists()) {
+            theDir1.mkdirs();
+        }
+
+        for (int i = 0; i < 5 && i < allRunStats.size(); i++) {
+            List<Integer> xIterations = IntStream.rangeClosed(1, allRunStats.get(i).ni())
+                    .boxed().toList();
+            List<Integer> xPopulations = IntStream.rangeClosed(1, allRunStats.get(i).ni() + 1)
+                    .boxed().toList();
+
+            List<Double> rrs = allRunStats.get(i).rrs();
+            List<Double> tetas = allRunStats.get(i).tetas();
+            drawPlot(xIterations, rrs, tetas, plotExportPath + "/" + (i + 1) + "/", "rrs and tetas");
 
 
-//    private static List<Double> bins(double min, double max, float step) {
-//        List<Double> res = new ArrayList<>();
-//        for (double i = min - 1; i <= max + 1; i += step) {
-//            res.add(i);
-//        }
-//        return res;
-//    }
+            if (!runConfiguration.function().isConstant()) {
+                List<Double> avgFs = allRunStats.get(i).avgFs();
+                List<Double> maxFs = allRunStats.get(i).maxFs();
+                List<Double> sigmaFs = allRunStats.get(i).sigmaFs();
+                List<Double> optimalRatios = allRunStats.get(i).optimalRatios();
+                List<Double> bestRatios = allRunStats.get(i).bestRatios();
+                List<Double> ss = allRunStats.get(i).ss();
+                List<Integer> uniques = allRunStats.get(i).uniques();
 
-//    private static void drawHistogram(List<? extends Number> x, String out, String filename, double minX, double maxX) {
-//
-//        if (x == null)
-//            return;
-//
-//        File theDir = new File(out);
-//        if (!theDir.exists()) {
-//            theDir.mkdirs();
-//        }
-//
-//        try {
-//            Plot plt = Plot.create();
-//            plt.hist().add(x).orientation(HistBuilder.Orientation.vertical).bins(bins(minX, maxX, 1));
-//            plt.title(filename);
-//            plt.ylim(0, N);
-//
-//            double dist = (maxX - minX) / 10.f;
-//            plt.xlim(minX - dist, maxX + dist);
-//            plt.savefig(out + filename + ".png");
-//
-//            plt.executeSilently();
-//        } catch (IOException | PythonExecutionException e) {
-//            e.printStackTrace();
-//        }
-//    }
+                drawPlot(xPopulations, avgFs, plotExportPath + "/" + (i + 1) + "/", "avgFs");
+                drawPlot(xPopulations, maxFs, plotExportPath + "/" + (i + 1) + "/", "maxFs");
+                drawPlot(xPopulations, sigmaFs, plotExportPath + "/" + (i + 1) + "/", "sigmaFs");
+                drawPlot(xPopulations, optimalRatios, plotExportPath + "/" + (i + 1) + "/", "optimalRatios");
+                drawPlot(xPopulations, bestRatios, plotExportPath + "/" + (i + 1) + "/", "bestRatios");
+                drawPlot(xIterations, ss, plotExportPath + "/" + (i + 1) + "/", "differences");
+                drawPlot(xPopulations, uniques, plotExportPath + "/" + (i + 1) + "/", "uniques");
+            }
+        }
+    }
+
+    private String getPlotFilepath(RunConfiguration runConfiguration) {
+        String functionName = runConfiguration.function().getName();
+        String selectorName = runConfiguration.selector().getName();
+        String operatorName = runConfiguration.operator().getName();
+        String populationType = runConfiguration.populationType().name();
+        String encoding = runConfiguration.encoding().name();
+        int populationSize = runConfiguration.populationSize();
+
+        return functionName + "/" +
+                populationSize + "/" +
+                selectorName + "/" +
+                operatorName + "/" +
+                populationType + "/" +
+                encoding + "/";
+    }
+
+    private static void drawPlot(List<? extends Number> x, List<? extends Number> y, String out, String filename) {
+        try {
+
+            File theDir1 = new File(out);
+            if (!theDir1.exists()) {
+                theDir1.mkdirs();
+            }
+
+            Plot plt = Plot.create();
+            plt.plot().add(x, y);
+            plt.title(filename);
+            plt.savefig(out + filename + ".png");
+            plt.executeSilently();
+        } catch (IOException | PythonExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void drawPlot(List<Integer> x, List<Double> y, List<Double> y1, String out, String filename) {
+        try {
+            File theDir1 = new File(out);
+            if (!theDir1.exists()) {
+                theDir1.mkdirs();
+            }
+
+            Plot plt = Plot.create();
+            plt.plot().add(x, y).color("orange");
+            plt.plot().add(x, y1).color("blue");
+
+            plt.title(filename);
+            plt.savefig(out + filename + ".png");
+            plt.executeSilently();
+        } catch (IOException | PythonExecutionException e) {
+            e.printStackTrace();
+        }
+    }
 
     private int getFirstNullRowIndex(Sheet sheet) {
         int index = 0;

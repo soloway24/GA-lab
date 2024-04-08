@@ -38,7 +38,7 @@ public class MetricUtils {
         return parentPoolFAvg - currentFAvg;
     }
 
-    public static double getStandardDeviation(List<? extends Number> values, double avgValue) {
+    public static double getStandardDeviation(Collection<? extends Number> values, double avgValue) {
         double[] toEvaluate = values.stream()
                 .mapToDouble(Number::doubleValue)
                 .toArray();

@@ -3,6 +3,7 @@ package lab.v2.run;
 import lab.v2.Individual;
 import lombok.Builder;
 
+import java.util.List;
 import java.util.Map;
 
 @Builder(setterPrefix = "with")
@@ -48,6 +49,16 @@ public record RunStats(Map<Individual, ? extends Number> finalPopulation,
                        double sMin,
                        int niSMin,
                        double sMax,
-                       int niSMax
+                       int niSMax,
+
+                       List<Double> avgFs,
+                       List<Double> maxFs,
+                       List<Double> sigmaFs,
+                       List<Double> optimalRatios,
+                       List<Double> bestRatios,
+                       List<Double> ss,
+                       List<Double> rrs,
+                       List<Double> tetas,
+                       List<Integer> uniques
                        ) {
 }

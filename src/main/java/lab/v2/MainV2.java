@@ -2,7 +2,7 @@ package lab.v2;
 
 import lab.v2.convertor.FitnessToProbabilityConvertor;
 import lab.v2.convertor.ProbabilityToExpectedQuantityConvertor;
-import lab.v2.export.Export;
+import lab.v2.export.Exporter;
 import lab.v2.function.FConstAllFunction;
 import lab.v2.function.FitnessFunctionV2;
 import lab.v2.function.PowerFunction;
@@ -32,7 +32,7 @@ public class MainV2 {
     private final ConvergenceIdentifier convergenceIdentifier = new ConvergenceIdentifier();
     private final RunPoolStatsCreator runPoolStatsCreator = new RunPoolStatsCreator();
     private final RunPoolExecutor runPoolExecutor = new RunPoolExecutor(convergenceIdentifier, runPoolStatsCreator);
-    private final Export export = new Export();
+    private final Exporter exporter = new Exporter();
 
     public static void main(String[] args) throws InterruptedException {
         MainV2 mainV2 = new MainV2();
@@ -60,9 +60,25 @@ public class MainV2 {
         System.out.println("Time Elapsed: " + stopWatch.getTime() / 1000.0);
     }
 
-    private void executeAll(List<RunPool> runPools) {
+    private void executeAll(List<RunPool> runPools) throws InterruptedException {
         List<RunPoolStats> runPoolStats = runPoolExecutor.executeAllRunPools(runPools);
-        runPoolStats.forEach(export::exportRunPoolStats);
+        ExecutorService executorService = new ForkJoinPool();
+
+        System.out.println("EXPORTING SINGLE RUN POOLS -----------------");
+        runPoolStats.forEach(stats -> executorService.submit(() -> {
+            exporter.exportSingleRunPoolStats(stats);
+        }));
+
+        System.out.println("EXPORTING SINGLE RUN POOL PLOTS -----------------");
+        runPoolStats.forEach(stats -> executorService.submit(() -> {
+            exporter.exportPlots(stats.allRunStats(), stats.runConfiguration());
+        }));
+
+        executorService.shutdown();
+        executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+
+        System.out.println("EXPORTING ALL RUN POOLS -----------------");
+        exporter.exportAllRunPools(runPoolStats);
     }
 
     private void executeAllParallel(List<RunPool> runPools) throws InterruptedException {
@@ -70,7 +86,7 @@ public class MainV2 {
         runPools.forEach(runPool -> executorService.submit(() -> {
 //            RunPoolStats runPoolStats = runPoolExecutor.executeRunPool(runPool);
             RunPoolStats runPoolStats = runPoolExecutor.executeRunPoolParallel(runPool);
-            export.exportRunPoolStats(runPoolStats);
+            exporter.exportSingleRunPoolStats(runPoolStats);
         }));
         executorService.shutdown();
         executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
@@ -85,8 +101,8 @@ public class MainV2 {
         FitnessFunctionV2<?, ?> quadraticFunction = new PowerFunction(10, 0, 10.23, 2, 2);
 
 //        return List.of(constAllFunction);
-        return List.of(quadraticFunction);
-//        return List.of(constAllFunction, quadraticFunction);
+//        return List.of(quadraticFunction);
+        return List.of(constAllFunction, quadraticFunction);
     }
 
     private List<Selector> getSelectors() {

@@ -18,6 +18,7 @@ import java.util.stream.IntStream;
 
 import static java.lang.Math.max;
 import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 import static lab.v2.identifier.ConvergenceIdentifier.getEqualQuantity;
 import static lab.v2.identifier.SuccessfulRunIdentifier.getBestIndividual;
@@ -114,10 +115,34 @@ public class RunPoolExecutor {
 
         int maxIterations = getMaxIterations(function, selector);
 
+        Map<Integer, Double> avgFs = new HashMap<>();
+        Map<Integer, Double> maxFs = new HashMap<>();
+        Map<Integer, Double> sigmaFs = new HashMap<>();
+        Map<Integer, Integer> uniques = new HashMap<>();
+        List<Double> optimalRatios = new LinkedList<>();
+        List<Double> bestRatios = new LinkedList<>();
+
         while (hasNotConverged(currentIndividuals, operator) && i < maxIterations) {
             individualToFitness = getIndividualToFitness(currentIndividuals, function);
             parentPool = selector.select(individualToFitness);
             offsprings = operator.apply(parentPool);
+
+            double avgF = getAverageFitness(individualToFitness);
+            avgFs.put(i, avgF);
+            Individual best = getBestIndividual(individualToFitness);
+            double maxF = individualToFitness.get(best).doubleValue();
+            maxFs.put(i, maxF);
+            double sigmaF = getStandardDeviation(individualToFitness.values(), avgF);
+            sigmaFs.put(i, sigmaF);
+            int unique = getUniqueBinaryCodes(currentIndividuals).size();
+            uniques.put(i, unique);
+
+            int optimalQ = getEqualQuantity(currentIndividuals, optimal);
+            double optimalRatio = (double) optimalQ / currentIndividuals.size();
+            optimalRatios.add(optimalRatio);
+            int bestQ = getEqualQuantity(currentIndividuals, best);
+            double bestRatio = (double) bestQ / currentIndividuals.size();
+            bestRatios.add(bestRatio);
 
 
             // metrics for all functions
@@ -188,7 +213,7 @@ public class RunPoolExecutor {
         int niTetaMax = maxIterationTeta.getKey();
 
         int uniqueXFin = getUniqueBinaryCodes(currentIndividuals).size();
-
+        uniques.put(ni, uniqueXFin);
 
         // metrics for all functions except FConstAll
         if (numLoose == 0) {
@@ -197,6 +222,18 @@ public class RunPoolExecutor {
         Individual best = getBestIndividual(individualToFitness);
         double fFound = individualToFitness.get(best).doubleValue();
         double fAvg = getAverageFitness(individualToFitness);
+        maxFs.put(ni, fFound);
+        avgFs.put(ni, fAvg);
+
+        int optimalQ = getEqualQuantity(currentIndividuals, optimal);
+        double optimalRatio = (double) optimalQ / currentIndividuals.size();
+        optimalRatios.add(optimalRatio);
+        int bestQ = getEqualQuantity(currentIndividuals, best);
+        double bestRatio = (double) bestQ / currentIndividuals.size();
+        bestRatios.add(bestRatio);
+
+        double sigmaFFin = getStandardDeviation(individualToFitness.values(), fAvg);
+        sigmaFs.put(ni, sigmaFFin);
 
         double sStart = 0, sFin = 0, sAvg = 0, sMin = 0, sMax = 0;
         int niSMin = 0, niSMax = 0;
@@ -258,7 +295,35 @@ public class RunPoolExecutor {
                 .withSMax(sMax)
                 .withNiSMax(niSMax)
 
+                .withAvgFs(getOrderedValues(avgFs))
+                .withMaxFs(getOrderedValues(maxFs))
+                .withSigmaFs(getOrderedValues(sigmaFs))
+                .withOptimalRatios(optimalRatios)
+                .withBestRatios(bestRatios)
+                .withSs(getOrderedValuesPlus1(iterationToS))
+                .withRrs(getOrderedValuesPlus1(iterationToRR))
+                .withTetas(getOrderedValuesPlus1(iterationToTeta))
+                .withUniques(getOrderedIntValues(uniques))
+
                 .build();
+    }
+
+    private List<Double> getOrderedValues(Map<Integer, Double> iteratedValues) {
+        return IntStream.range(0, iteratedValues.size())
+                .mapToObj(iteratedValues::get)
+                .collect(toList());
+    }
+
+    private List<Double> getOrderedValuesPlus1(Map<Integer, Double> iteratedValues) {
+        return IntStream.rangeClosed(1, iteratedValues.size())
+                .mapToObj(iteratedValues::get)
+                .collect(toList());
+    }
+
+    private List<Integer> getOrderedIntValues(Map<Integer, Integer> iteratedValues) {
+        return IntStream.range(0, iteratedValues.size())
+                .mapToObj(iteratedValues::get)
+                .collect(toList());
     }
 
     private List<RunStats> executeAndGetAllRunStats(RunPool runPool) {
