@@ -119,8 +119,8 @@ public class RunPoolExecutor {
         Map<Integer, Double> maxFs = new HashMap<>();
         Map<Integer, Double> sigmaFs = new HashMap<>();
         Map<Integer, Integer> uniques = new HashMap<>();
-        List<Double> optimalRatios = new LinkedList<>();
-        List<Double> bestRatios = new LinkedList<>();
+        Map<Integer, Double> optimalRatios = new HashMap<>();
+        Map<Integer, Double> bestRatios = new HashMap<>();
 
         while (hasNotConverged(currentIndividuals, operator) && i < maxIterations) {
             individualToFitness = getIndividualToFitness(currentIndividuals, function);
@@ -139,10 +139,10 @@ public class RunPoolExecutor {
 
             int optimalQ = getEqualQuantity(currentIndividuals, optimal);
             double optimalRatio = (double) optimalQ / currentIndividuals.size();
-            optimalRatios.add(optimalRatio);
+            optimalRatios.put(i, optimalRatio);
             int bestQ = getEqualQuantity(currentIndividuals, best);
             double bestRatio = (double) bestQ / currentIndividuals.size();
-            bestRatios.add(bestRatio);
+            bestRatios.put(i, bestRatio);
 
 
             // metrics for all functions
@@ -227,10 +227,10 @@ public class RunPoolExecutor {
 
         int optimalQ = getEqualQuantity(currentIndividuals, optimal);
         double optimalRatio = (double) optimalQ / currentIndividuals.size();
-        optimalRatios.add(optimalRatio);
+        optimalRatios.put(ni, optimalRatio);
         int bestQ = getEqualQuantity(currentIndividuals, best);
         double bestRatio = (double) bestQ / currentIndividuals.size();
-        bestRatios.add(bestRatio);
+        bestRatios.put(ni, bestRatio);
 
         double sigmaFFin = getStandardDeviation(individualToFitness.values(), fAvg);
         sigmaFs.put(ni, sigmaFFin);
@@ -298,8 +298,8 @@ public class RunPoolExecutor {
                 .withAvgFs(getOrderedValues(avgFs))
                 .withMaxFs(getOrderedValues(maxFs))
                 .withSigmaFs(getOrderedValues(sigmaFs))
-                .withOptimalRatios(optimalRatios)
-                .withBestRatios(bestRatios)
+                .withOptimalRatios(getOrderedValues(optimalRatios))
+                .withBestRatios(getOrderedValues(bestRatios))
                 .withSs(getOrderedValuesPlus1(iterationToS))
                 .withRrs(getOrderedValuesPlus1(iterationToRR))
                 .withTetas(getOrderedValuesPlus1(iterationToTeta))

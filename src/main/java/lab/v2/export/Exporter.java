@@ -2,13 +2,10 @@ package lab.v2.export;
 
 import com.github.sh0nk.matplotlib4j.Plot;
 import com.github.sh0nk.matplotlib4j.PythonExecutionException;
-import lab.parameters.Encoding;
 import lab.v2.function.FitnessFunctionV2;
-import lab.v2.operator.Operator;
 import lab.v2.run.RunConfiguration;
 import lab.v2.run.RunPoolStats;
 import lab.v2.run.RunStats;
-import lab.v2.selection.Selector;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -127,8 +124,8 @@ public class Exporter {
                 drawPlot(xPopulations, avgFs, plotExportPath + "/" + (i + 1) + "/", "avgFs");
                 drawPlot(xPopulations, maxFs, plotExportPath + "/" + (i + 1) + "/", "maxFs");
                 drawPlot(xPopulations, sigmaFs, plotExportPath + "/" + (i + 1) + "/", "sigmaFs");
-                drawPlot(xPopulations, optimalRatios, plotExportPath + "/" + (i + 1) + "/", "optimalRatios");
-                drawPlot(xPopulations, bestRatios, plotExportPath + "/" + (i + 1) + "/", "bestRatios");
+                drawPlot(xPopulations, optimalRatios, plotExportPath + "/" + (i + 1) + "/", "optimalRatios", 0, 1);
+                drawPlot(xPopulations, bestRatios, plotExportPath + "/" + (i + 1) + "/", "bestRatios", 0, 1);
                 drawPlot(xIterations, ss, plotExportPath + "/" + (i + 1) + "/", "differences");
                 drawPlot(xPopulations, uniques, plotExportPath + "/" + (i + 1) + "/", "uniques");
             }
@@ -153,20 +150,37 @@ public class Exporter {
 
     private static void drawPlot(List<? extends Number> x, List<? extends Number> y, String out, String filename) {
         try {
-
-            File theDir1 = new File(out);
-            if (!theDir1.exists()) {
-                theDir1.mkdirs();
-            }
-
-            Plot plt = Plot.create();
-            plt.plot().add(x, y);
-            plt.title(filename);
-            plt.savefig(out + filename + ".png");
-            plt.executeSilently();
+            Plot plot = getPlot(x, y, out, filename);
+            plot.savefig(out + filename + ".png").dpi(300);
+            plot.executeSilently();
         } catch (IOException | PythonExecutionException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void drawPlot(List<? extends Number> x, List<? extends Number> y,
+                                 String out, String filename,
+                                 int minY, int maxY) {
+        try {
+            Plot plot = getPlot(x, y, out, filename);
+            plot.ylim(minY, maxY);
+            plot.savefig(out + filename + ".png").dpi(300);
+            plot.executeSilently();
+        } catch (IOException | PythonExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static Plot getPlot(List<? extends Number> x, List<? extends Number> y, String out, String filename) {
+        File theDir1 = new File(out);
+        if (!theDir1.exists()) {
+            theDir1.mkdirs();
+        }
+
+        Plot plt = Plot.create();
+        plt.plot().add(x, y);
+        plt.title(filename);
+        return plt;
     }
 
     private static void drawPlot(List<Integer> x, List<Double> y, List<Double> y1, String out, String filename) {
@@ -179,7 +193,7 @@ public class Exporter {
             Plot plt = Plot.create();
             plt.plot().add(x, y).color("orange");
             plt.plot().add(x, y1).color("blue");
-
+            plt.ylim(0, 1);
             plt.title(filename);
             plt.savefig(out + filename + ".png");
             plt.executeSilently();
