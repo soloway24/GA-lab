@@ -124,8 +124,8 @@ public class Exporter {
                 drawPlot(xPopulations, avgFs, plotExportPath + "/" + (i + 1) + "/", "avgFs");
                 drawPlot(xPopulations, maxFs, plotExportPath + "/" + (i + 1) + "/", "maxFs");
                 drawPlot(xPopulations, sigmaFs, plotExportPath + "/" + (i + 1) + "/", "sigmaFs");
-                drawPlot(xPopulations, optimalRatios, plotExportPath + "/" + (i + 1) + "/", "optimalRatios", 0, 1);
-                drawPlot(xPopulations, bestRatios, plotExportPath + "/" + (i + 1) + "/", "bestRatios", 0, 1);
+                drawPlot(xPopulations, optimalRatios, plotExportPath + "/" + (i + 1) + "/", "optimalRatios", -0.1, 1.1);
+                drawPlot(xPopulations, bestRatios, plotExportPath + "/" + (i + 1) + "/", "bestRatios", -0.1, 1.1);
                 drawPlot(xIterations, ss, plotExportPath + "/" + (i + 1) + "/", "differences");
                 drawPlot(xPopulations, uniques, plotExportPath + "/" + (i + 1) + "/", "uniques");
             }
@@ -160,7 +160,7 @@ public class Exporter {
 
     private static void drawPlot(List<? extends Number> x, List<? extends Number> y,
                                  String out, String filename,
-                                 int minY, int maxY) {
+                                 double minY, double maxY) {
         try {
             Plot plot = getPlot(x, y, out, filename);
             plot.ylim(minY, maxY);
@@ -193,7 +193,7 @@ public class Exporter {
             Plot plt = Plot.create();
             plt.plot().add(x, y).color("orange");
             plt.plot().add(x, y1).color("blue");
-            plt.ylim(0, 1);
+            plt.ylim(-0.1, 1.1);
             plt.title(filename);
             plt.savefig(out + filename + ".png");
             plt.executeSilently();
