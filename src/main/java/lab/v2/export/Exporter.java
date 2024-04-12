@@ -94,22 +94,27 @@ public class Exporter {
 
     public void exportPlots(List<RunStats> allRunStats, RunConfiguration runConfiguration) {
         String plotFilepath = getPlotFilepath(runConfiguration);
-        String plotExportPath = PLOTS_PATH + plotFilepath;
+        String plotExportDir = PLOTS_PATH + plotFilepath;
 
-        File theDir1 = new File(plotExportPath);
+        File theDir1 = new File(plotExportDir);
         if (!theDir1.exists()) {
             theDir1.mkdirs();
         }
 
         for (int i = 0; i < 5 && i < allRunStats.size(); i++) {
+            String plotExportPath = plotExportDir + (i + 1) + "/";
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet("Plots data");
+            String tablePath = plotExportPath + "plots_data" + ".xlsx";
+
             List<Integer> xIterations = IntStream.rangeClosed(1, allRunStats.get(i).ni())
                     .boxed().toList();
-            List<Integer> xPopulations = IntStream.rangeClosed(1, allRunStats.get(i).ni() + 1)
+            List<Integer> xGenerations = IntStream.rangeClosed(1, allRunStats.get(i).ni() + 1)
                     .boxed().toList();
 
             List<Double> rrs = allRunStats.get(i).rrs();
             List<Double> tetas = allRunStats.get(i).tetas();
-            drawPlot(xIterations, rrs, tetas, plotExportPath + "/" + (i + 1) + "/", "rrs and tetas");
+            drawPlot(xIterations, rrs, tetas, plotExportPath, "rrs and tetas");
 
 
             if (!runConfiguration.function().isConstant()) {
@@ -121,14 +126,82 @@ public class Exporter {
                 List<Double> ss = allRunStats.get(i).ss();
                 List<Integer> uniques = allRunStats.get(i).uniques();
 
-                drawPlot(xPopulations, avgFs, plotExportPath + "/" + (i + 1) + "/", "avgFs");
-                drawPlot(xPopulations, maxFs, plotExportPath + "/" + (i + 1) + "/", "maxFs");
-                drawPlot(xPopulations, sigmaFs, plotExportPath + "/" + (i + 1) + "/", "sigmaFs");
-                drawPlot(xPopulations, optimalRatios, plotExportPath + "/" + (i + 1) + "/", "optimalRatios", -0.1, 1.1);
-                drawPlot(xPopulations, bestRatios, plotExportPath + "/" + (i + 1) + "/", "bestRatios", -0.1, 1.1);
-                drawPlot(xIterations, ss, plotExportPath + "/" + (i + 1) + "/", "differences");
-                drawPlot(xPopulations, uniques, plotExportPath + "/" + (i + 1) + "/", "uniques");
+                drawPlot(xGenerations, avgFs, plotExportPath, "avgFs");
+                drawPlot(xGenerations, maxFs, plotExportPath, "maxFs");
+                drawPlot(xGenerations, sigmaFs, plotExportPath, "sigmaFs");
+                drawPlot(xGenerations, optimalRatios, plotExportPath, "optimalRatios", -0.1, 1.1);
+                drawPlot(xGenerations, bestRatios, plotExportPath, "bestRatios", -0.1, 1.1);
+                drawPlot(xIterations, ss, plotExportPath, "differences");
+                drawPlot(xGenerations, uniques, plotExportPath, "uniques");
+
+                createPlotsGenerationDataHeader(sheet);
+                createGenerationRows(sheet, 1, xGenerations, avgFs, maxFs, sigmaFs, optimalRatios, bestRatios, uniques);
+
+                int freeIndex = getFirstNullRowIndex(sheet);
+                createPlotsIterationDataHeader(sheet, freeIndex + 1);
+                createIterationRows(sheet, freeIndex + 2, xIterations, rrs, tetas, ss);
+            } else {
+                createPlotsIterationDataHeader(sheet, 0);
+                createIterationRows(sheet, 1, xIterations, rrs, tetas);
             }
+
+            saveWorkbook(workbook, tablePath);
+        }
+    }
+
+    private void createGenerationRows(Sheet sheet, int index,
+                                      List<Integer> xGenerations,
+                                      List<Double> avgFs,
+                                      List<Double> maxFs,
+                                      List<Double> sigmaFs,
+                                      List<Double> optimalRatios,
+                                      List<Double> bestRatios,
+                                      List<Integer> uniques
+    ) {
+        int rowIndex = index;
+        for (int j = 0; j < xGenerations.size(); j++) {
+            Row row = sheet.createRow(rowIndex++);
+            int cellIndex = 0;
+
+            row.createCell(cellIndex++).setCellValue(xGenerations.get(j));
+            row.createCell(cellIndex++).setCellValue(avgFs.get(j));
+            row.createCell(cellIndex++).setCellValue(maxFs.get(j));
+            row.createCell(cellIndex++).setCellValue(optimalRatios.get(j));
+            row.createCell(cellIndex++).setCellValue(bestRatios.get(j));
+            row.createCell(cellIndex++).setCellValue(sigmaFs.get(j));
+            row.createCell(cellIndex++).setCellValue(uniques.get(j));
+        }
+    }
+
+    private void createIterationRows(Sheet sheet, int index,
+                                     List<Integer> xIterations,
+                                     List<Double> rrs,
+                                     List<Double> tetas,
+                                     List<Double> ss) {
+        int rowIndex = index;
+        for (int j = 0; j < xIterations.size(); j++) {
+            Row row = sheet.createRow(rowIndex++);
+            int cellIndex = 0;
+
+            row.createCell(cellIndex++).setCellValue(xIterations.get(j));
+            row.createCell(cellIndex++).setCellValue(rrs.get(j));
+            row.createCell(cellIndex++).setCellValue(tetas.get(j));
+            row.createCell(cellIndex++).setCellValue(ss.get(j));
+        }
+    }
+
+    private void createIterationRows(Sheet sheet, int index,
+                                     List<Integer> xIterations,
+                                     List<Double> rrs,
+                                     List<Double> tetas) {
+        int rowIndex = index;
+        for (int j = 0; j < xIterations.size(); j++) {
+            Row row = sheet.createRow(rowIndex++);
+            int cellIndex = 0;
+
+            row.createCell(cellIndex++).setCellValue(xIterations.get(j));
+            row.createCell(cellIndex++).setCellValue(rrs.get(j));
+            row.createCell(cellIndex++).setCellValue(tetas.get(j));
         }
     }
 
@@ -148,7 +221,7 @@ public class Exporter {
                 encoding + "/";
     }
 
-    private static void drawPlot(List<? extends Number> x, List<? extends Number> y, String out, String filename) {
+    private void drawPlot(List<? extends Number> x, List<? extends Number> y, String out, String filename) {
         try {
             Plot plot = getPlot(x, y, out, filename);
             plot.savefig(out + filename + ".png").dpi(300);
@@ -158,9 +231,9 @@ public class Exporter {
         }
     }
 
-    private static void drawPlot(List<? extends Number> x, List<? extends Number> y,
-                                 String out, String filename,
-                                 double minY, double maxY) {
+    private void drawPlot(List<? extends Number> x, List<? extends Number> y,
+                          String out, String filename,
+                          double minY, double maxY) {
         try {
             Plot plot = getPlot(x, y, out, filename);
             plot.ylim(minY, maxY);
@@ -171,7 +244,7 @@ public class Exporter {
         }
     }
 
-    private static Plot getPlot(List<? extends Number> x, List<? extends Number> y, String out, String filename) {
+    private Plot getPlot(List<? extends Number> x, List<? extends Number> y, String out, String filename) {
         File theDir1 = new File(out);
         if (!theDir1.exists()) {
             theDir1.mkdirs();
@@ -183,7 +256,7 @@ public class Exporter {
         return plt;
     }
 
-    private static void drawPlot(List<Integer> x, List<Double> y, List<Double> y1, String out, String filename) {
+    private void drawPlot(List<Integer> x, List<Double> y, List<Double> y1, String out, String filename) {
         try {
             File theDir1 = new File(out);
             if (!theDir1.exists()) {
@@ -195,7 +268,7 @@ public class Exporter {
             plt.plot().add(x, y1).color("blue");
             plt.ylim(-0.1, 1.1);
             plt.title(filename);
-            plt.savefig(out + filename + ".png");
+            plt.savefig(out + filename + ".png").dpi(300);
             plt.executeSilently();
         } catch (IOException | PythonExecutionException e) {
             e.printStackTrace();
@@ -256,33 +329,31 @@ public class Exporter {
             workbook.write(outputStream);
         }
     }
-//    public static void exportRunPools(List<RunPoolStatsData> runPools, String prefix) {
-//        XSSFWorkbook workbook = new XSSFWorkbook();
-//        Sheet sheet = workbook.createSheet("Stats");
-//
-//        String exportPath = TABLES_PATH + prefix + "all_stats.xlsx";
-//
-//        createRunPoolHeaderRow(sheet, 0);
-//        for (int i = 0; i < runPools.size(); i++) {
-//            createRunPoolRow(sheet, i + 1, runPools.get(i));
-//        }
-//
-//        try {
-//            File currDir = new File(".");
-//            String path = currDir.getAbsolutePath();
-//            String fileLocation = path.substring(0, path.length() - 1) + exportPath;
-//            File fd = new File(fileLocation);
-//            fd.getParentFile().mkdirs();
-//
-//            FileOutputStream outputStream = new FileOutputStream(fileLocation);
-//            workbook.write(outputStream);
-//            workbook.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
-    private static void createRunHeaderRow(Sheet sheet) {
+    private void createPlotsGenerationDataHeader(Sheet sheet) {
+        Row row = sheet.createRow(0);
+        int i = 0;
+
+        row.createCell(i++).setCellValue("Generation #");
+        row.createCell(i++).setCellValue("avgF");
+        row.createCell(i++).setCellValue("maxF");
+        row.createCell(i++).setCellValue("optimalRatio");
+        row.createCell(i++).setCellValue("bestRatio");
+        row.createCell(i++).setCellValue("sigmaF");
+        row.createCell(i++).setCellValue("unique_X");
+    }
+
+    private void createPlotsIterationDataHeader(Sheet sheet, int rowIndex) {
+        Row row = sheet.createRow(rowIndex);
+        int i = 0;
+
+        row.createCell(i++).setCellValue("Iteration #");
+        row.createCell(i++).setCellValue("RR");
+        row.createCell(i++).setCellValue("Teta");
+        row.createCell(i++).setCellValue("difference");
+    }
+
+    private void createRunHeaderRow(Sheet sheet) {
         Row row = sheet.createRow(0);
         int i = 0;
 
@@ -380,7 +451,7 @@ public class Exporter {
         }
     }
 
-    private static void createRunPoolHeaderRow(Sheet sheet, int index) {
+    private void createRunPoolHeaderRow(Sheet sheet, int index) {
         Row row = sheet.createRow(index);
         int i = 0;
 
@@ -485,7 +556,7 @@ public class Exporter {
         row.createCell(i++).setCellValue("Sigma_MaxOptSaved_NI_loose");
     }
 
-    private static void createRunPoolRow(Sheet sheet, int index, int configNumber, RunPoolStats runPoolStats) {
+    private void createRunPoolRow(Sheet sheet, int index, int configNumber, RunPoolStats runPoolStats) {
         Row row = sheet.createRow(index);
         int i = 0;
 

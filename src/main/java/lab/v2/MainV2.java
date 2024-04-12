@@ -100,8 +100,8 @@ public class MainV2 {
         FitnessFunctionV2<?, ?> constAllFunction = FConstAllFunction.getInstance();
         FitnessFunctionV2<?, ?> quadraticFunction = new PowerFunction(10, 0, 10.23, 2, 2);
 
-//        return List.of(constAllFunction);
-        return List.of(quadraticFunction);
+        return List.of(constAllFunction);
+//        return List.of(quadraticFunction);
 //        return List.of(constAllFunction, quadraticFunction);
     }
 
@@ -111,9 +111,12 @@ public class MainV2 {
 
         ScalingSelector scalingSelector = new ScalingSelector();
         PowerScalingSelector powerScalingSelector = new PowerScalingSelector(scalingSelector, 1.1);
+        PowerScalingSelector powerScalingSelector2 = new PowerScalingSelector(scalingSelector, 2);
 
         PowerScalingRwsSelector powerScalingRwsSelector = new PowerScalingRwsSelector(powerScalingSelector, rwsSelector);
+        PowerScalingRwsSelector powerScalingRwsSelector2 = new PowerScalingRwsSelector(powerScalingSelector2, rwsSelector);
         PowerScalingSusSelector powerScalingSusSelector = new PowerScalingSusSelector(powerScalingSelector, susSelector);
+        PowerScalingSusSelector powerScalingSusSelector2 = new PowerScalingSusSelector(powerScalingSelector2, susSelector);
 
         DynamicPowerScalingSelector dynamicPowerScalingSelector0p9to1p1 = new DynamicPowerScalingSelector(scalingSelector, 0.9, 1.1);
         DynamicPowerScalingSelector dynamicPowerScalingSelector0p8to1p2 = new DynamicPowerScalingSelector(scalingSelector, 0.8, 1.2);
@@ -130,11 +133,12 @@ public class MainV2 {
 
         return List.of(
                 rwsSelector
-                ,
-                susSelector
 //                ,
+//                susSelector,
 //                powerScalingRwsSelector,
+//                powerScalingRwsSelector2,
 //                powerScalingSusSelector,
+//                powerScalingSusSelector2,
 //                dynamicPowerScalingRwsSelector0p9to1p1,
 //                dynamicPowerScalingRwsSelector0p8to1p2,
 //                dynamicPowerScalingSusSelector0p9to1p1,
