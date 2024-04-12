@@ -53,6 +53,7 @@ public class MainV2 {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
+//        executeAllSingleThread(runPools);
         executeAll(runPools);
 //        executeAllParallel(runPools);
 
@@ -60,8 +61,21 @@ public class MainV2 {
         System.out.println("Time Elapsed: " + stopWatch.getTime() / 1000.0);
     }
 
-    private void executeAll(List<RunPool> runPools) throws InterruptedException {
+    private void executeAllSingleThread(List<RunPool> runPools) throws InterruptedException {
         List<RunPoolStats> runPoolStats = runPoolExecutor.executeAllRunPools(runPools);
+
+        System.out.println("EXPORTING SINGLE RUN POOLS -----------------");
+        runPoolStats.forEach(exporter::exportSingleRunPoolStats);
+
+        System.out.println("EXPORTING SINGLE RUN POOL PLOTS -----------------");
+        runPoolStats.forEach(stats -> exporter.exportPlots(stats.allRunStats(), stats.runConfiguration()));
+
+        System.out.println("EXPORTING ALL RUN POOLS -----------------");
+        exporter.exportAllRunPools(runPoolStats);
+    }
+
+    private void executeAll(List<RunPool> runPools) throws InterruptedException {
+        List<RunPoolStats> runPoolStats = runPoolExecutor.executeAllRunPoolsParallel(runPools);
         ExecutorService executorService = new ForkJoinPool();
 
         System.out.println("EXPORTING SINGLE RUN POOLS -----------------");
@@ -100,8 +114,8 @@ public class MainV2 {
         FitnessFunctionV2<?, ?> constAllFunction = FConstAllFunction.getInstance();
         FitnessFunctionV2<?, ?> quadraticFunction = new PowerFunction(10, 0, 10.23, 2, 2);
 
-        return List.of(constAllFunction);
-//        return List.of(quadraticFunction);
+//        return List.of(constAllFunction);
+        return List.of(quadraticFunction);
 //        return List.of(constAllFunction, quadraticFunction);
     }
 

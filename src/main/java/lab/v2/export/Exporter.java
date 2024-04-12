@@ -125,13 +125,15 @@ public class Exporter {
                 List<Double> bestRatios = allRunStats.get(i).bestRatios();
                 List<Double> ss = allRunStats.get(i).ss();
                 List<Integer> uniques = allRunStats.get(i).uniques();
+                List<Double> is = allRunStats.get(i).is();
 
                 drawPlot(xGenerations, avgFs, plotExportPath, "avgFs");
                 drawPlot(xGenerations, maxFs, plotExportPath, "maxFs");
                 drawPlot(xGenerations, sigmaFs, plotExportPath, "sigmaFs");
                 drawPlot(xGenerations, optimalRatios, plotExportPath, "optimalRatios", -0.1, 1.1);
                 drawPlot(xGenerations, bestRatios, plotExportPath, "bestRatios", -0.1, 1.1);
-                drawPlot(xIterations, ss, plotExportPath, "differences");
+                drawPlot(xIterations, ss, plotExportPath, "difference");
+                drawPlot(xIterations, is, plotExportPath, "intensity");
                 drawPlot(xGenerations, uniques, plotExportPath, "uniques");
 
                 createPlotsGenerationDataHeader(sheet);
@@ -139,7 +141,7 @@ public class Exporter {
 
                 int freeIndex = getFirstNullRowIndex(sheet);
                 createPlotsIterationDataHeader(sheet, freeIndex + 1);
-                createIterationRows(sheet, freeIndex + 2, xIterations, rrs, tetas, ss);
+                createIterationRows(sheet, freeIndex + 2, xIterations, rrs, tetas, ss, is);
             } else {
                 createPlotsIterationDataHeader(sheet, 0);
                 createIterationRows(sheet, 1, xIterations, rrs, tetas);
@@ -177,7 +179,8 @@ public class Exporter {
                                      List<Integer> xIterations,
                                      List<Double> rrs,
                                      List<Double> tetas,
-                                     List<Double> ss) {
+                                     List<Double> ss,
+                                     List<Double> is) {
         int rowIndex = index;
         for (int j = 0; j < xIterations.size(); j++) {
             Row row = sheet.createRow(rowIndex++);
@@ -187,6 +190,7 @@ public class Exporter {
             row.createCell(cellIndex++).setCellValue(rrs.get(j));
             row.createCell(cellIndex++).setCellValue(tetas.get(j));
             row.createCell(cellIndex++).setCellValue(ss.get(j));
+            row.createCell(cellIndex++).setCellValue(is.get(j));
         }
     }
 
@@ -351,6 +355,7 @@ public class Exporter {
         row.createCell(i++).setCellValue("RR");
         row.createCell(i++).setCellValue("Teta");
         row.createCell(i++).setCellValue("difference");
+        row.createCell(i++).setCellValue("intensity");
     }
 
     private void createRunHeaderRow(Sheet sheet) {
@@ -398,7 +403,14 @@ public class Exporter {
         row.createCell(i++).setCellValue("NI_s_min");
         row.createCell(i++).setCellValue("s_max");
         row.createCell(i++).setCellValue("NI_s_max");
-        row.createCell(i).setCellValue("s_avg");
+        row.createCell(i++).setCellValue("s_avg");
+
+        row.createCell(i++).setCellValue("I_start");
+        row.createCell(i++).setCellValue("I_min");
+        row.createCell(i++).setCellValue("NI_I_min");
+        row.createCell(i++).setCellValue("I_max");
+        row.createCell(i++).setCellValue("NI_I_max");
+        row.createCell(i++).setCellValue("I_avg");
     }
 
     private void createRunRow(Sheet sheet, int index, FitnessFunctionV2<?, ?> function, RunStats runStats) {
@@ -447,7 +459,14 @@ public class Exporter {
             row.createCell(i++).setCellValue(runStats.niSMin());
             row.createCell(i++).setCellValue(runStats.sMax());
             row.createCell(i++).setCellValue(runStats.niSMax());
-            row.createCell(i).setCellValue(runStats.sAvg());
+            row.createCell(i++).setCellValue(runStats.sAvg());
+
+            row.createCell(i++).setCellValue(runStats.iStart());
+            row.createCell(i++).setCellValue(runStats.iMin());
+            row.createCell(i++).setCellValue(runStats.niImin());
+            row.createCell(i++).setCellValue(runStats.iMax());
+            row.createCell(i++).setCellValue(runStats.niImax());
+            row.createCell(i++).setCellValue(runStats.iAvg());
         }
     }
 
@@ -543,6 +562,22 @@ public class Exporter {
         row.createCell(i++).setCellValue("Max_s_start");
         row.createCell(i++).setCellValue("Avg_s_start");
         row.createCell(i++).setCellValue("Sigma_s_start");
+
+        row.createCell(i++).setCellValue("Min_I_min");
+        row.createCell(i++).setCellValue("NI_I_min");
+        row.createCell(i++).setCellValue("Max_I_max");
+        row.createCell(i++).setCellValue("NI_I_max");
+        row.createCell(i++).setCellValue("Avg_I_min");
+        row.createCell(i++).setCellValue("Avg_I_max");
+        row.createCell(i++).setCellValue("Avg_I_avg");
+        row.createCell(i++).setCellValue("Sigma_I_min");
+        row.createCell(i++).setCellValue("Sigma_I_max");
+        row.createCell(i++).setCellValue("Sigma_I_avg");
+        row.createCell(i++).setCellValue("Min_I_start");
+        row.createCell(i++).setCellValue("Max_I_start");
+        row.createCell(i++).setCellValue("Avg_I_start");
+        row.createCell(i++).setCellValue("Sigma_I_start");
+
 
         // all runs
         row.createCell(i++).setCellValue("NI_with_Loose");
@@ -651,6 +686,21 @@ public class Exporter {
             row.createCell(i++).setCellValue(runPoolStats.maxSStart());
             row.createCell(i++).setCellValue(runPoolStats.avgSStart());
             row.createCell(i++).setCellValue(runPoolStats.sigmaSStart());
+
+            row.createCell(i++).setCellValue(runPoolStats.minImin());
+            row.createCell(i++).setCellValue(runPoolStats.niMinImin());
+            row.createCell(i++).setCellValue(runPoolStats.maxImax());
+            row.createCell(i++).setCellValue(runPoolStats.niMaxImax());
+            row.createCell(i++).setCellValue(runPoolStats.avgImin());
+            row.createCell(i++).setCellValue(runPoolStats.avgImax());
+            row.createCell(i++).setCellValue(runPoolStats.avgIavg());
+            row.createCell(i++).setCellValue(runPoolStats.sigmaImin());
+            row.createCell(i++).setCellValue(runPoolStats.sigmaImax());
+            row.createCell(i++).setCellValue(runPoolStats.sigmaIavg());
+            row.createCell(i++).setCellValue(runPoolStats.minIstart());
+            row.createCell(i++).setCellValue(runPoolStats.maxIstart());
+            row.createCell(i++).setCellValue(runPoolStats.avgIstart());
+            row.createCell(i++).setCellValue(runPoolStats.sigmaIstart());
 
             // all runs
             row.createCell(i++).setCellValue(runPoolStats.niWithLoose());
