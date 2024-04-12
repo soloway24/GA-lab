@@ -146,9 +146,10 @@ public class MainV2 {
                 new DynamicPowerScalingSusSelector(dynamicPowerScalingSelector0p8to1p2, susSelector);
 
         return List.of(
-                rwsSelector
+//                rwsSelector
 //                ,
-//                susSelector,
+                susSelector
+//                ,
 //                powerScalingRwsSelector,
 //                powerScalingRwsSelector2,
 //                powerScalingSusSelector,

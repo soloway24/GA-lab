@@ -114,7 +114,7 @@ public class Exporter {
 
             List<Double> rrs = allRunStats.get(i).rrs();
             List<Double> tetas = allRunStats.get(i).tetas();
-            drawPlot(xIterations, rrs, tetas, plotExportPath, "rrs and tetas");
+            drawPlot(xIterations, rrs, tetas, plotExportPath, "rr and teta", "rr", "teta", -0.1, 1.1);
 
 
             if (!runConfiguration.function().isConstant()) {
@@ -137,6 +137,8 @@ public class Exporter {
                 drawPlot(xIterations, is, plotExportPath, "intensity");
                 drawPlot(xGenerations, uniques, plotExportPath, "uniques");
                 drawPlot(xGenerations, prs, plotExportPath, "Pr");
+                drawPlot(xGenerations, prs, sigmaFs, plotExportPath, "Pr and sigmaF", "Pr", "SigmaF");
+
 
                 createPlotsGenerationDataHeader(sheet);
                 createGenerationRows(sheet, 1, xGenerations, avgFs, maxFs, sigmaFs, optimalRatios, bestRatios, uniques, prs);
@@ -264,7 +266,10 @@ public class Exporter {
         return plt;
     }
 
-    private void drawPlot(List<Integer> x, List<Double> y, List<Double> y1, String out, String filename) {
+    private void drawPlot(List<Integer> x, List<Double> y, List<Double> y1,
+                          String out, String filename,
+                          String firstLabel, String secondLabel,
+                          double minY, double maxY) {
         try {
             File theDir1 = new File(out);
             if (!theDir1.exists()) {
@@ -272,9 +277,31 @@ public class Exporter {
             }
 
             Plot plt = Plot.create();
-            plt.plot().add(x, y).color("orange");
-            plt.plot().add(x, y1).color("blue");
-            plt.ylim(-0.1, 1.1);
+            plt.plot().add(x, y).color("orange").label(firstLabel);
+            plt.plot().add(x, y1).color("blue").label(secondLabel);
+            plt.legend().loc("center right");
+            plt.ylim(minY, maxY);
+            plt.title(filename);
+            plt.savefig(out + filename + ".png").dpi(300);
+            plt.executeSilently();
+        } catch (IOException | PythonExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void drawPlot(List<Integer> x, List<Double> y, List<Double> y1,
+                          String out, String filename,
+                          String firstLabel, String secondLabel) {
+        try {
+            File theDir1 = new File(out);
+            if (!theDir1.exists()) {
+                theDir1.mkdirs();
+            }
+
+            Plot plt = Plot.create();
+            plt.plot().add(x, y).color("orange").label(firstLabel);
+            plt.plot().add(x, y1).color("blue").label(secondLabel);
+            plt.legend().loc("center right");
             plt.title(filename);
             plt.savefig(out + filename + ".png").dpi(300);
             plt.executeSilently();
