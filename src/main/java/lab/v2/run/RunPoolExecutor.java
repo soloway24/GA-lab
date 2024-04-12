@@ -116,16 +116,12 @@ public class RunPoolExecutor {
         boolean hadOptimal = hasOptimal(currentIndividuals, optimal);
 
         double currentS = 0;
+        double currentI = 0;
+        double currentPr = 0;
+
         Map<Integer, Double> iterationToS = new HashMap<>();
         Map<Integer, Double> iterationToI = new HashMap<>();
-
-        double currentI = 0;
-        double iStart = 0;
-        double iMin = 0;
-        int niImin = 0;
-        double iMax = 0;
-        int niImax = 0;
-        double iAvg = 0;
+        Map<Integer, Double> generationToPr = new HashMap<>();
 
         Map<Integer, Double> avgFs = new HashMap<>();
         Map<Integer, Double> maxFs = new HashMap<>();
@@ -193,6 +189,9 @@ public class RunPoolExecutor {
                         ? 1
                         : (parentAvgF - avgF) / sigmaF;
                 iterationToI.put(i + 1, currentI);
+
+                currentPr = maxF / avgF;
+                generationToPr.put(i, currentPr);
             }
 
             // metrics only for FConstAll function
@@ -255,8 +254,30 @@ public class RunPoolExecutor {
         double sigmaFFin = getStandardDeviation(individualToFitness.values(), fAvg);
         sigmaFs.put(ni, sigmaFFin);
 
-        double sStart = 0, sFin = 0, sAvg = 0, sMin = 0, sMax = 0;
-        int niSMin = 0, niSMax = 0;
+        double prFin = fFound / fAvg;
+        generationToPr.put(ni, prFin);
+
+        double sStart = 0;
+        double sFin = 0;
+        double sMin = 0;
+        int niSMin = 0;
+        double sMax = 0;
+        int niSMax = 0;
+        double sAvg = 0;
+
+        double iStart = 0;
+        double iMin = 0;
+        int niImin = 0;
+        double iMax = 0;
+        int niImax = 0;
+        double iAvg = 0;
+
+        double prStart = 0;
+        double prMin = 0;
+        int niPrMin = 0;
+        double prMax = 0;
+        int niPrMax = 0;
+        double prAvg = 0;
 
         if (!function.isConstant()) {
             sStart = iterationToS.get(1);
@@ -277,6 +298,15 @@ public class RunPoolExecutor {
             iMax = maxIterationI.getValue().doubleValue();
             niImax = maxIterationI.getKey();
             iAvg = getAverage(iterationToI.values());
+
+            Map.Entry<Integer, ? extends Number> minGenerationPr = getMinIteratedValue(generationToPr);
+            Map.Entry<Integer, ? extends Number> maxGenerationPr = getMaxIteratedValue(generationToPr);
+            prStart = generationToPr.get(1);
+            prMin = minGenerationPr.getValue().doubleValue();
+            niPrMin = minGenerationPr.getKey();
+            prMax = maxGenerationPr.getValue().doubleValue();
+            niPrMax = maxGenerationPr.getKey();
+            prAvg = getAverage(generationToPr.values());
         }
 
 
@@ -331,6 +361,13 @@ public class RunPoolExecutor {
                 .withNiImax(niImax)
                 .withIAvg(iAvg)
 
+                .withPrStart(prStart)
+                .withPrMin(prMin)
+                .withNiPrMin(niPrMin)
+                .withPrMax(prMax)
+                .withNiPrMax(niPrMax)
+                .withPrAvg(prAvg)
+
                 .withAvgFs(getOrderedValues(avgFs))
                 .withMaxFs(getOrderedValues(maxFs))
                 .withSigmaFs(getOrderedValues(sigmaFs))
@@ -341,6 +378,7 @@ public class RunPoolExecutor {
                 .withTetas(getOrderedValuesPlus1(iterationToTeta))
                 .withUniques(getOrderedIntValues(uniques))
                 .withIs(getOrderedValuesPlus1(iterationToI))
+                .withPrs(getOrderedValues(generationToPr))
 
                 .build();
     }

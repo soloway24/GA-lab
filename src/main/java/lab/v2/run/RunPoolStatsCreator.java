@@ -202,6 +202,21 @@ public class RunPoolStatsCreator {
         double avgIstart = 0;
         double sigmaIstart = 0;
 
+        double minPrMin = 0;
+        int niMinPrMin = 0;
+        double maxPrMax = 0;
+        int niMaxPrMax = 0;
+        double avgPrMin = 0;
+        double avgPrMax = 0;
+        double avgPrAvg = 0;
+        double sigmaPrMin = 0;
+        double sigmaPrMax = 0;
+        double sigmaPrAvg = 0;
+        double minPrStart = 0;
+        double maxPrStart = 0;
+        double avgPrStart = 0;
+        double sigmaPrStart = 0;
+
         if (!runConfiguration.function().isConstant()) {
 
             // non-successful but converged runs
@@ -264,6 +279,32 @@ public class RunPoolStatsCreator {
             maxIstart = getMaxDouble(iStarts);
             avgIstart = getAverage(iStarts);
             sigmaIstart = getStandardDeviation(iStarts, avgIstart);
+
+
+            List<Pair<Double, Integer>> prMinGenerations = getMetricValueToIteration(sucRunStats, RunStats::prMin, RunStats::niPrMin);
+            List<Pair<Double, Integer>> prMaxGenerations = getMetricValueToIteration(sucRunStats, RunStats::prMax, RunStats::niPrMax);
+            Pair<Double, Integer> minPrMinIteration = getMinValueToIteration(prMinGenerations);
+            Pair<Double, Integer> maxPrMaxIteration = getMaxValueToIteration(prMaxGenerations);
+            minPrMin = minPrMinIteration.getKey();
+            niMinPrMin = minPrMinIteration.getValue();
+            maxPrMax = maxPrMaxIteration.getKey();
+            niMaxPrMax = maxPrMaxIteration.getValue();
+
+            List<Double> prMins = getDoubleValues(sucRunStats, RunStats::prMin);
+            List<Double> prMaxs = getDoubleValues(sucRunStats, RunStats::prMax);
+            List<Double> prAvgs = getDoubleValues(sucRunStats, RunStats::prAvg);
+            avgPrMin = getAverage(prMins);
+            avgPrMax = getAverage(prMaxs);
+            avgPrAvg = getAverage(prAvgs);
+            sigmaPrMin = getStandardDeviation(prMins, avgPrMin);
+            sigmaPrMax = getStandardDeviation(prMaxs, avgPrMax);
+            sigmaPrAvg = getStandardDeviation(prAvgs, avgPrAvg);
+
+            List<Double> prStarts = getDoubleValues(sucRunStats, RunStats::prStart);
+            minPrStart = getMinDouble(prStarts);
+            maxPrStart = getMaxDouble(prStarts);
+            avgPrStart = getAverage(prStarts);
+            sigmaPrStart = getStandardDeviation(prStarts, avgPrStart);
 
             // all runs
             List<RunStats> runsStatsWithLoose = allRunStats.stream()
@@ -389,6 +430,21 @@ public class RunPoolStatsCreator {
                 .withMaxIstart(maxIstart)
                 .withAvgIstart(avgIstart)
                 .withSigmaIstart(sigmaIstart)
+
+                .withMinPrMin(minPrMin)
+                .withNiMinPrMin(niMinPrMin)
+                .withMaxPrMax(maxPrMax)
+                .withNiMaxPrMax(niMaxPrMax)
+                .withAvgPrMin(avgPrMin)
+                .withAvgPrMax(avgPrMax)
+                .withAvgPrAvg(avgPrAvg)
+                .withSigmaPrMin(sigmaPrMin)
+                .withSigmaPrMax(sigmaPrMax)
+                .withSigmaPrAvg(sigmaPrAvg)
+                .withMinPrStart(minPrStart)
+                .withMaxPrStart(maxPrStart)
+                .withAvgPrStart(avgPrStart)
+                .withSigmaPrStart(sigmaPrStart)
 
                 // all runs
                 .withNiWithLoose(niWithLoose)
