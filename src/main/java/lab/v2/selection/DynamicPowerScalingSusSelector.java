@@ -32,4 +32,9 @@ public class DynamicPowerScalingSusSelector implements Selector {
         return dynamicPowerScalingSelector.select(individualToFitness, susSelector::select);
     }
 
+    @Override
+    public Map<Individual, Double> scale(Map<Individual, ? extends Number> individualToFitness) {
+        return dynamicPowerScalingSelector.scale(individualToFitness);
+    }
+
 }

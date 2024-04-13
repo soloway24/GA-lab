@@ -28,4 +28,9 @@ public class PowerScalingRwsSelector implements Selector {
     public List<Individual> select(Map<Individual, ? extends Number> individualToFitness) {
         return powerScalingSelector.select(individualToFitness, rwsSelector::select);
     }
+
+    @Override
+    public Map<Individual, Double> scale(Map<Individual, ? extends Number> individualToFitness) {
+        return powerScalingSelector.scale(individualToFitness);
+    }
 }

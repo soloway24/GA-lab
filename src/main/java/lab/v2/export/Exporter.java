@@ -663,8 +663,8 @@ public class Exporter {
         row.createCell(i++).setCellValue("Avg_Pr_min");
         row.createCell(i++).setCellValue("Avg_Pr_max");
         row.createCell(i++).setCellValue("Avg_Pr_avg");
-        row.createCell(i++).setCellValue("Sigma_Pr_max");
         row.createCell(i++).setCellValue("Sigma_Pr_min");
+        row.createCell(i++).setCellValue("Sigma_Pr_max");
         row.createCell(i++).setCellValue("Sigma_Pr_avg");
         row.createCell(i++).setCellValue("Min_Pr_start");
         row.createCell(i++).setCellValue("Max_Pr_start");

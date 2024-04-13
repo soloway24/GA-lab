@@ -28,6 +28,10 @@ public class DynamicPowerScalingSelector {
         return scalingSelector.select(individualToFitness, selectionFunction, getScalingFunction());
     }
 
+    public Map<Individual, Double> scale(Map<Individual, ? extends Number> individualToFitness) {
+        return scalingSelector.getIndividualToScaledFitness(individualToFitness, getScalingFunction());
+    }
+
     private <T extends Number> BiFunction<T, Map<Individual, T>, Double> getScalingFunction() {
         return (T fitness, Map<Individual, T> individualToFitness) -> scaleFitness(fitness, individualToFitness.values());
     }

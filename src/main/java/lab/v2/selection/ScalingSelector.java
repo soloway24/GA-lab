@@ -42,8 +42,8 @@ public class ScalingSelector {
                         LinkedHashMap::new));
     }
 
-    private <T extends Number> Map<Individual, Double> getIndividualToScaledFitness(Map<Individual, T> individualToFitness,
-                                                                                    BiFunction<T, Map<Individual, T>, Double> scalingFunction) {
+    public <T extends Number> Map<Individual, Double> getIndividualToScaledFitness(Map<Individual, T> individualToFitness,
+                                                                                   BiFunction<T, Map<Individual, T>, Double> scalingFunction) {
         Map<Individual, Double> individualToScaledFitness = individualToFitness.entrySet().stream()
                 .collect(toUnmodifiableMap(Entry::getKey, entry -> scalingFunction.apply(entry.getValue(), individualToFitness)));
 

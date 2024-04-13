@@ -23,8 +23,7 @@ import static java.util.stream.Collectors.toUnmodifiableMap;
 import static lab.v2.identifier.ConvergenceIdentifier.getEqualQuantity;
 import static lab.v2.identifier.SuccessfulRunIdentifier.getBestIndividual;
 import static lab.v2.selection.SelectorType.SUS;
-import static lab.v2.util.CalculationUtils.getAverage;
-import static lab.v2.util.CalculationUtils.getAverageFitness;
+import static lab.v2.util.CalculationUtils.*;
 import static lab.v2.util.MetricUtils.*;
 
 @RequiredArgsConstructor
@@ -197,7 +196,10 @@ public class RunPoolExecutor {
                         : (parentAvgF - avgF) / sigmaF;
                 iterationToI.put(i + 1, currentI);
 
-                currentPr = maxF / avgF;
+                Map<Individual, Double> scaledIndividuals = selector.scale(individualToFitness);
+                double bestScaledF = getMaxDouble(scaledIndividuals.values());
+                double avgScaledF = getAverage(scaledIndividuals.values());
+                currentPr = bestScaledF / avgScaledF;
                 generationToPr.put(i, currentPr);
 
                 currentGr = maxF >= previousBestF

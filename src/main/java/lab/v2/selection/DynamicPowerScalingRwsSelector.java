@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import static lab.v2.selection.SelectorType.RWS;
-import static lab.v2.selection.SelectorType.SUS;
 
 @RequiredArgsConstructor
 public class DynamicPowerScalingRwsSelector implements Selector {
@@ -32,4 +31,10 @@ public class DynamicPowerScalingRwsSelector implements Selector {
     public List<Individual> select(Map<Individual, ? extends Number> individualToFitness) {
         return dynamicPowerScalingSelector.select(individualToFitness, rwsSelector::select);
     }
+
+    @Override
+    public Map<Individual, Double> scale(Map<Individual, ? extends Number> individualToFitness) {
+        return dynamicPowerScalingSelector.scale(individualToFitness);
+    }
+
 }
