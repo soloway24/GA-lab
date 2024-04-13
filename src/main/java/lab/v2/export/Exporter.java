@@ -127,6 +127,7 @@ public class Exporter {
                 List<Integer> uniques = allRunStats.get(i).uniques();
                 List<Double> is = allRunStats.get(i).is();
                 List<Double> prs = allRunStats.get(i).prs();
+                List<Double> grs = allRunStats.get(i).grs();
 
                 drawPlot(xGenerations, avgFs, plotExportPath, "avgFs");
                 drawPlot(xGenerations, maxFs, plotExportPath, "maxFs");
@@ -137,6 +138,7 @@ public class Exporter {
                 drawPlot(xIterations, is, plotExportPath, "intensity");
                 drawPlot(xGenerations, uniques, plotExportPath, "uniques");
                 drawPlot(xGenerations, prs, plotExportPath, "Pr");
+                drawPlot(xIterations, grs, plotExportPath, "Gr");
                 drawPlot(xGenerations, prs, sigmaFs, plotExportPath, "Pr and sigmaF", "Pr", "SigmaF");
 
 
@@ -145,7 +147,7 @@ public class Exporter {
 
                 int freeIndex = getFirstNullRowIndex(sheet);
                 createPlotsIterationDataHeader(sheet, freeIndex + 1);
-                createIterationRows(sheet, freeIndex + 2, xIterations, rrs, tetas, ss, is);
+                createIterationRows(sheet, freeIndex + 2, xIterations, rrs, tetas, ss, is, grs);
             } else {
                 createPlotsIterationDataHeader(sheet, 0);
                 createIterationRows(sheet, 1, xIterations, rrs, tetas);
@@ -186,7 +188,9 @@ public class Exporter {
                                      List<Double> rrs,
                                      List<Double> tetas,
                                      List<Double> ss,
-                                     List<Double> is) {
+                                     List<Double> is,
+                                     List<Double> grs
+    ) {
         int rowIndex = index;
         for (int j = 0; j < xIterations.size(); j++) {
             Row row = sheet.createRow(rowIndex++);
@@ -197,6 +201,7 @@ public class Exporter {
             row.createCell(cellIndex++).setCellValue(tetas.get(j));
             row.createCell(cellIndex++).setCellValue(ss.get(j));
             row.createCell(cellIndex++).setCellValue(is.get(j));
+            row.createCell(cellIndex++).setCellValue(grs.get(j));
         }
     }
 
@@ -377,6 +382,7 @@ public class Exporter {
         row.createCell(i++).setCellValue("sigmaF");
         row.createCell(i++).setCellValue("unique_X");
         row.createCell(i++).setCellValue("Pr");
+        row.createCell(i++).setCellValue("Gr");
     }
 
     private void createPlotsIterationDataHeader(Sheet sheet, int rowIndex) {
@@ -444,6 +450,12 @@ public class Exporter {
         row.createCell(i++).setCellValue("NI_I_max");
         row.createCell(i++).setCellValue("I_avg");
 
+        row.createCell(i++).setCellValue("GR_start");
+        row.createCell(i++).setCellValue("GR_early");
+        row.createCell(i++).setCellValue("GR_late");
+        row.createCell(i++).setCellValue("NI_GR_late");
+        row.createCell(i++).setCellValue("GR_avg");
+
         row.createCell(i++).setCellValue("Pr_start");
         row.createCell(i++).setCellValue("Pr_min");
         row.createCell(i++).setCellValue("NI_Pr_min");
@@ -506,6 +518,12 @@ public class Exporter {
             row.createCell(i++).setCellValue(runStats.iMax());
             row.createCell(i++).setCellValue(runStats.niImax());
             row.createCell(i++).setCellValue(runStats.iAvg());
+
+            row.createCell(i++).setCellValue(runStats.grStart());
+            row.createCell(i++).setCellValue(runStats.grEarly());
+            row.createCell(i++).setCellValue(runStats.grLate());
+            row.createCell(i++).setCellValue(runStats.niGrLate());
+            row.createCell(i++).setCellValue(runStats.grAvg());
 
             row.createCell(i++).setCellValue(runStats.prStart());
             row.createCell(i++).setCellValue(runStats.prMin());

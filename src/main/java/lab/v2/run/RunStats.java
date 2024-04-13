@@ -58,6 +58,12 @@ public record RunStats(Map<Individual, ? extends Number> finalPopulation,
                        int niImax,
                        double iAvg,
 
+                       double grStart,
+                       double grEarly,
+                       double grAvg,
+                       double grLate,
+                       int niGrLate,
+
                        double prStart,
                        double prMin,
                        int niPrMin,
@@ -75,6 +81,7 @@ public record RunStats(Map<Individual, ? extends Number> finalPopulation,
                        List<Double> tetas,
                        List<Integer> uniques,
                        List<Double> is,
-                       List<Double> prs
+                       List<Double> prs,
+                       List<Double> grs
 ) {
 }

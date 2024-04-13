@@ -53,8 +53,8 @@ public class MainV2 {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
-//        executeAllSingleThread(runPools);
-        executeAll(runPools);
+        executeAllSingleThread(runPools);
+//        executeAll(runPools);
 //        executeAllParallel(runPools);
 
         stopWatch.stop();
@@ -146,9 +146,9 @@ public class MainV2 {
                 new DynamicPowerScalingSusSelector(dynamicPowerScalingSelector0p8to1p2, susSelector);
 
         return List.of(
-//                rwsSelector
+                rwsSelector
 //                ,
-                susSelector
+//                susSelector
 //                ,
 //                powerScalingRwsSelector,
 //                powerScalingRwsSelector2,

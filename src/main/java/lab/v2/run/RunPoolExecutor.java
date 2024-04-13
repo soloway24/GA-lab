@@ -122,6 +122,13 @@ public class RunPoolExecutor {
         Map<Integer, Double> iterationToS = new HashMap<>();
         Map<Integer, Double> iterationToI = new HashMap<>();
         Map<Integer, Double> generationToPr = new HashMap<>();
+        Map<Integer, Double> iterationToGr = new HashMap<>();
+
+        int previousBestQ = Integer.MIN_VALUE;
+        double previousBestF = Double.MIN_VALUE;
+        double currentGr = 0;
+        double grLate = Double.MIN_VALUE;
+        int niGrLate = Integer.MIN_VALUE;
 
         Map<Integer, Double> avgFs = new HashMap<>();
         Map<Integer, Double> maxFs = new HashMap<>();
@@ -192,11 +199,23 @@ public class RunPoolExecutor {
 
                 currentPr = maxF / avgF;
                 generationToPr.put(i, currentPr);
+
+                if (maxF >= previousBestF) {
+                    currentGr = (double) bestQ / previousBestQ;
+                } else {
+                    currentGr = 0;
+                }
+                iterationToGr.put(i, currentPr);
+                if (bestQ >= 0.5 && grLate == Double.MIN_VALUE) {
+                    grLate = currentGr;
+                    niGrLate = i;
+                }
             }
 
             // metrics only for FConstAll function
 
-
+            previousBestF = maxF;
+            previousBestQ = bestQ;
             currentIndividuals = offsprings;
             i++;
         }
@@ -271,6 +290,10 @@ public class RunPoolExecutor {
         double iMax = 0;
         int niImax = 0;
         double iAvg = 0;
+
+        double grStart = iterationToGr.get(0);
+        double grEarly = iterationToGr.get(2);
+        double grAvg = getAverage(iterationToGr.values());
 
         double prStart = 0;
         double prMin = 0;
@@ -361,6 +384,12 @@ public class RunPoolExecutor {
                 .withNiImax(niImax)
                 .withIAvg(iAvg)
 
+                .withGrStart(grStart)
+                .withGrEarly(grEarly)
+                .withGrLate(grLate)
+                .withNiGrLate(niGrLate)
+                .withGrAvg(grAvg)
+
                 .withPrStart(prStart)
                 .withPrMin(prMin)
                 .withNiPrMin(niPrMin)
@@ -379,6 +408,7 @@ public class RunPoolExecutor {
                 .withUniques(getOrderedIntValues(uniques))
                 .withIs(getOrderedValuesPlus1(iterationToI))
                 .withPrs(getOrderedValues(generationToPr))
+                .withGrs(getOrderedValues(iterationToGr))
 
                 .build();
     }
