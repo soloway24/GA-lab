@@ -202,6 +202,20 @@ public class RunPoolStatsCreator {
         double avgIstart = 0;
         double sigmaIstart = 0;
 
+        double minGrEarly = 0;
+        double maxGrEarly = 0;
+        double avgGrEarly = 0;
+        double minGrLate = 0;
+        double maxGrLate = 0;
+        double avgGrLate = 0;
+        double minGrAvg = 0;
+        double maxGrAvg = 0;
+        double avgGrAvg = 0;
+        double minGrStart = 0;
+        double maxGrStart = 0;
+        double avgGrStart = 0;
+        double sigmaGrStart = 0;
+
         double minPrMin = 0;
         int niMinPrMin = 0;
         double maxPrMax = 0;
@@ -280,6 +294,28 @@ public class RunPoolStatsCreator {
             avgIstart = getAverage(iStarts);
             sigmaIstart = getStandardDeviation(iStarts, avgIstart);
 
+
+            List<Double> grEarlys = getDoubleValues(sucRunStats, RunStats::grEarly);
+            List<Double> grLates = getDoubleValues(sucRunStats, RunStats::grLate);
+            List<Double> grAvgs = getDoubleValues(sucRunStats, RunStats::grAvg);
+            List<Double> grStarts = getDoubleValues(sucRunStats, RunStats::grStart);
+
+            minGrEarly = getMinDouble(grEarlys);
+            maxGrEarly = getMaxDouble(grEarlys);
+            avgGrEarly = getAverage(grEarlys);
+
+            minGrLate = getMinDouble(grLates);
+            maxGrLate = getMaxDouble(grLates);
+            avgGrLate = getAverage(grLates);
+
+            minGrAvg = getMinDouble(grAvgs);
+            maxGrAvg = getMaxDouble(grAvgs);
+            avgGrAvg = getAverage(grAvgs);
+
+            minGrStart = getMinDouble(grStarts);
+            maxGrStart = getMaxDouble(grStarts);
+            avgGrStart = getAverage(grStarts);
+            sigmaGrStart = getStandardDeviation(grStarts, avgGrStart);
 
             List<Pair<Double, Integer>> prMinGenerations = getMetricValueToIteration(sucRunStats, RunStats::prMin, RunStats::niPrMin);
             List<Pair<Double, Integer>> prMaxGenerations = getMetricValueToIteration(sucRunStats, RunStats::prMax, RunStats::niPrMax);
@@ -430,6 +466,20 @@ public class RunPoolStatsCreator {
                 .withMaxIstart(maxIstart)
                 .withAvgIstart(avgIstart)
                 .withSigmaIstart(sigmaIstart)
+
+                .withMinGrEarly(minGrEarly)
+                .withMaxGrEarly(maxGrEarly)
+                .withAvgGrEarly(avgGrEarly)
+                .withMinGrLate(minGrLate)
+                .withMaxGrLate(maxGrLate)
+                .withAvgGrLate(avgGrLate)
+                .withMinGrAvg(minGrAvg)
+                .withMaxGrAvg(maxGrAvg)
+                .withAvgGrAvg(avgGrAvg)
+                .withMinGrStart(minGrStart)
+                .withMaxGrStart(maxGrStart)
+                .withAvgGrStart(avgGrStart)
+                .withSigmaGrStart(sigmaGrStart)
 
                 .withMinPrMin(minPrMin)
                 .withNiMinPrMin(niMinPrMin)

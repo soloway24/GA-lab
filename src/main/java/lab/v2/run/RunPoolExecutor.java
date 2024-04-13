@@ -200,13 +200,11 @@ public class RunPoolExecutor {
                 currentPr = maxF / avgF;
                 generationToPr.put(i, currentPr);
 
-                if (maxF >= previousBestF) {
-                    currentGr = (double) bestQ / previousBestQ;
-                } else {
-                    currentGr = 0;
-                }
-                iterationToGr.put(i, currentPr);
-                if (bestQ >= 0.5 && grLate == Double.MIN_VALUE) {
+                currentGr = maxF >= previousBestF
+                        ? (double) bestQ / previousBestQ
+                        : 0;
+                iterationToGr.put(i, currentGr);
+                if (optimalQ >= 0.5 * runConfiguration.populationSize() && grLate == Double.MIN_VALUE) {
                     grLate = currentGr;
                     niGrLate = i;
                 }
@@ -291,8 +289,13 @@ public class RunPoolExecutor {
         int niImax = 0;
         double iAvg = 0;
 
-        double grStart = iterationToGr.get(0);
-        double grEarly = iterationToGr.get(2);
+        iterationToGr.remove(0);
+        currentGr = fFound >= previousBestF
+                ? (double) bestQ / previousBestQ
+                : 0;
+        iterationToGr.put(ni, currentGr);
+        double grStart = iterationToGr.get(1);
+        double grEarly = iterationToGr.get(3);
         double grAvg = getAverage(iterationToGr.values());
 
         double prStart = 0;
@@ -408,7 +411,7 @@ public class RunPoolExecutor {
                 .withUniques(getOrderedIntValues(uniques))
                 .withIs(getOrderedValuesPlus1(iterationToI))
                 .withPrs(getOrderedValues(generationToPr))
-                .withGrs(getOrderedValues(iterationToGr))
+                .withGrs(getOrderedValuesPlus1(iterationToGr))
 
                 .build();
     }

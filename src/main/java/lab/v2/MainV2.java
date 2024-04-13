@@ -53,8 +53,8 @@ public class MainV2 {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
-        executeAllSingleThread(runPools);
-//        executeAll(runPools);
+//        executeAllSingleThread(runPools);
+        executeAll(runPools);
 //        executeAllParallel(runPools);
 
         stopWatch.stop();
