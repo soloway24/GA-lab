@@ -114,8 +114,10 @@ public class Exporter {
 
             List<Double> rrs = allRunStats.get(i).rrs();
             List<Double> tetas = allRunStats.get(i).tetas();
-            drawPlot(xIterations, rrs, tetas, plotExportPath, "rr and teta", "rr", "teta", -0.1, 1.1);
+            List<Integer> uniques = allRunStats.get(i).uniques();
 
+            drawPlot(xIterations, rrs, tetas, plotExportPath, "rr and teta", "rr", "teta", -0.1, 1.1);
+            drawPlot(xGenerations, uniques, plotExportPath, "uniques");
 
             if (!runConfiguration.function().isConstant()) {
                 List<Double> avgFs = allRunStats.get(i).avgFs();
@@ -124,7 +126,6 @@ public class Exporter {
                 List<Double> optimalRatios = allRunStats.get(i).optimalRatios();
                 List<Double> bestRatios = allRunStats.get(i).bestRatios();
                 List<Double> ss = allRunStats.get(i).ss();
-                List<Integer> uniques = allRunStats.get(i).uniques();
                 List<Double> is = allRunStats.get(i).is();
                 List<Double> prs = allRunStats.get(i).prs();
                 List<Double> grs = allRunStats.get(i).grs();
@@ -136,7 +137,6 @@ public class Exporter {
                 drawPlot(xGenerations, bestRatios, plotExportPath, "bestRatios", -0.1, 1.1);
                 drawPlot(xIterations, ss, plotExportPath, "difference");
                 drawPlot(xIterations, is, plotExportPath, "intensity");
-                drawPlot(xGenerations, uniques, plotExportPath, "uniques");
                 drawPlot(xGenerations, prs, plotExportPath, "Pr");
                 drawPlot(xIterations, grs, plotExportPath, "Gr");
                 drawPlot(xGenerations, prs, sigmaFs, plotExportPath, "Pr and sigmaF", "Pr", "SigmaF");
@@ -149,8 +149,12 @@ public class Exporter {
                 createPlotsIterationDataHeader(sheet, freeIndex + 1);
                 createIterationRows(sheet, freeIndex + 2, xIterations, rrs, tetas, ss, is, grs);
             } else {
-                createPlotsIterationDataHeader(sheet, 0);
-                createIterationRows(sheet, 1, xIterations, rrs, tetas);
+                createPlotsGenerationDataHeaderConst(sheet);
+                createGenerationRows(sheet, 1, xGenerations, uniques);
+
+                int freeIndex = getFirstNullRowIndex(sheet);
+                createPlotsIterationDataHeader(sheet, freeIndex + 1);
+                createIterationRows(sheet, freeIndex + 2, xIterations, rrs, tetas);
             }
 
             saveWorkbook(workbook, tablePath);
@@ -180,6 +184,20 @@ public class Exporter {
             row.createCell(cellIndex++).setCellValue(sigmaFs.get(j));
             row.createCell(cellIndex++).setCellValue(uniques.get(j));
             row.createCell(cellIndex++).setCellValue(prs.get(j));
+        }
+    }
+
+    private void createGenerationRows(Sheet sheet, int index,
+                                      List<Integer> xGenerations,
+                                      List<Integer> uniques
+    ) {
+        int rowIndex = index;
+        for (int j = 0; j < xGenerations.size(); j++) {
+            Row row = sheet.createRow(rowIndex++);
+            int cellIndex = 0;
+
+            row.createCell(cellIndex++).setCellValue(xGenerations.get(j));
+            row.createCell(cellIndex++).setCellValue(uniques.get(j));
         }
     }
 
@@ -382,6 +400,14 @@ public class Exporter {
         row.createCell(i++).setCellValue("sigmaF");
         row.createCell(i++).setCellValue("unique_X");
         row.createCell(i++).setCellValue("Pr");
+    }
+
+    private void createPlotsGenerationDataHeaderConst(Sheet sheet) {
+        Row row = sheet.createRow(0);
+        int i = 0;
+
+        row.createCell(i++).setCellValue("Generation #");
+        row.createCell(i++).setCellValue("unique_X");
     }
 
     private void createPlotsIterationDataHeader(Sheet sheet, int rowIndex) {

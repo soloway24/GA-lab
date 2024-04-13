@@ -291,14 +291,9 @@ public class RunPoolExecutor {
         int niImax = 0;
         double iAvg = 0;
 
-        iterationToGr.remove(0);
-        currentGr = fFound >= previousBestF
-                ? (double) bestQ / previousBestQ
-                : 0;
-        iterationToGr.put(ni, currentGr);
-        double grStart = iterationToGr.get(1);
-        double grEarly = iterationToGr.get(3);
-        double grAvg = getAverage(iterationToGr.values());
+        double grStart = 0;
+        double grEarly = 0;
+        double grAvg = 0;
 
         double prStart = 0;
         double prMin = 0;
@@ -326,6 +321,15 @@ public class RunPoolExecutor {
             iMax = maxIterationI.getValue().doubleValue();
             niImax = maxIterationI.getKey();
             iAvg = getAverage(iterationToI.values());
+
+            iterationToGr.remove(0);
+            currentGr = fFound >= previousBestF
+                    ? (double) bestQ / previousBestQ
+                    : 0;
+            iterationToGr.put(ni, currentGr);
+            grStart = iterationToGr.get(1);
+            grEarly = iterationToGr.get(3);
+            grAvg = getAverage(iterationToGr.values());
 
             Map.Entry<Integer, ? extends Number> minGenerationPr = getMinIteratedValue(generationToPr);
             Map.Entry<Integer, ? extends Number> maxGenerationPr = getMaxIteratedValue(generationToPr);
