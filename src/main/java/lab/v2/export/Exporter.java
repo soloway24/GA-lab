@@ -129,6 +129,7 @@ public class Exporter {
                 List<Double> is = allRunStats.get(i).is();
                 List<Double> prs = allRunStats.get(i).prs();
                 List<Double> grs = allRunStats.get(i).grs();
+                List<Double> fishes = allRunStats.get(i).fishes();
 
                 drawPlot(xGenerations, avgFs, plotExportPath, "avgFs");
                 drawPlot(xGenerations, maxFs, plotExportPath, "maxFs");
@@ -139,6 +140,7 @@ public class Exporter {
                 drawPlot(xIterations, is, plotExportPath, "intensity");
                 drawPlot(xGenerations, prs, plotExportPath, "Pr");
                 drawPlot(xIterations, grs, plotExportPath, "Gr");
+                drawPlot(xIterations, fishes, plotExportPath, "Fisher Exact Test");
                 drawPlot(xGenerations, prs, sigmaFs, plotExportPath, "Pr and sigmaF", "Pr", "SigmaF");
 
 
@@ -147,7 +149,7 @@ public class Exporter {
 
                 int freeIndex = getFirstNullRowIndex(sheet);
                 createPlotsIterationDataHeader(sheet, freeIndex + 1);
-                createIterationRows(sheet, freeIndex + 2, xIterations, rrs, tetas, ss, is, grs);
+                createIterationRows(sheet, freeIndex + 2, xIterations, rrs, tetas, ss, is, grs, fishes);
             } else {
                 createPlotsGenerationDataHeaderConst(sheet);
                 createGenerationRows(sheet, 1, xGenerations, uniques);
@@ -207,7 +209,8 @@ public class Exporter {
                                      List<Double> tetas,
                                      List<Double> ss,
                                      List<Double> is,
-                                     List<Double> grs
+                                     List<Double> grs,
+                                     List<Double> fishes
     ) {
         int rowIndex = index;
         for (int j = 0; j < xIterations.size(); j++) {
@@ -220,6 +223,7 @@ public class Exporter {
             row.createCell(cellIndex++).setCellValue(ss.get(j));
             row.createCell(cellIndex++).setCellValue(is.get(j));
             row.createCell(cellIndex++).setCellValue(grs.get(j));
+            row.createCell(cellIndex++).setCellValue(fishes.get(j));
         }
     }
 
@@ -420,6 +424,7 @@ public class Exporter {
         row.createCell(i++).setCellValue("difference");
         row.createCell(i++).setCellValue("intensity");
         row.createCell(i++).setCellValue("Gr");
+        row.createCell(i++).setCellValue("Pfet");
     }
 
     private void createRunHeaderRow(Sheet sheet) {
@@ -488,6 +493,13 @@ public class Exporter {
         row.createCell(i++).setCellValue("Pr_max");
         row.createCell(i++).setCellValue("NI_Pr_max");
         row.createCell(i++).setCellValue("Pr_avg");
+
+        row.createCell(i++).setCellValue("Fish_start");
+        row.createCell(i++).setCellValue("Fish_min");
+        row.createCell(i++).setCellValue("NI_Fish_min");
+        row.createCell(i++).setCellValue("Fish_max");
+        row.createCell(i++).setCellValue("NI_Fish_max");
+        row.createCell(i++).setCellValue("Fish_avg");
     }
 
     private void createRunRow(Sheet sheet, int index, FitnessFunctionV2<?, ?> function, RunStats runStats) {
@@ -557,6 +569,13 @@ public class Exporter {
             row.createCell(i++).setCellValue(runStats.prMax());
             row.createCell(i++).setCellValue(runStats.niPrMax());
             row.createCell(i++).setCellValue(runStats.prAvg());
+
+            row.createCell(i++).setCellValue(runStats.fishStart());
+            row.createCell(i++).setCellValue(runStats.fishMin());
+            row.createCell(i++).setCellValue(runStats.niFishMin());
+            row.createCell(i++).setCellValue(runStats.fishMax());
+            row.createCell(i++).setCellValue(runStats.niFishMax());
+            row.createCell(i++).setCellValue(runStats.fishAvg());
         }
     }
 

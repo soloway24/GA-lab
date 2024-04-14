@@ -117,11 +117,13 @@ public class RunPoolExecutor {
         double currentS = 0;
         double currentI = 0;
         double currentPr = 0;
+        double currentFish = 0;
 
         Map<Integer, Double> iterationToS = new HashMap<>();
         Map<Integer, Double> iterationToI = new HashMap<>();
         Map<Integer, Double> generationToPr = new HashMap<>();
         Map<Integer, Double> iterationToGr = new HashMap<>();
+        Map<Integer, Double> iterationToFish = new HashMap<>();
 
         int previousBestQ = Integer.MIN_VALUE;
         double previousBestF = Double.MIN_VALUE;
@@ -129,12 +131,12 @@ public class RunPoolExecutor {
         double grLate = Double.MIN_VALUE;
         int niGrLate = Integer.MIN_VALUE;
 
-        Map<Integer, Double> avgFs = new HashMap<>();
-        Map<Integer, Double> maxFs = new HashMap<>();
-        Map<Integer, Double> sigmaFs = new HashMap<>();
-        Map<Integer, Integer> uniques = new HashMap<>();
-        Map<Integer, Double> optimalRatios = new HashMap<>();
-        Map<Integer, Double> bestRatios = new HashMap<>();
+        Map<Integer, Double> generationToAvgF = new HashMap<>();
+        Map<Integer, Double> generationToMaxF = new HashMap<>();
+        Map<Integer, Double> generationToSigmaF = new HashMap<>();
+        Map<Integer, Integer> generationToUniqueX = new HashMap<>();
+        Map<Integer, Double> generationToOptimalRatio = new HashMap<>();
+        Map<Integer, Double> generationToBestRatio = new HashMap<>();
 
         int maxIterations = getMaxIterations(function, selector);
 
@@ -144,21 +146,21 @@ public class RunPoolExecutor {
             offsprings = operator.apply(parentPool);
 
             double avgF = getAverageFitness(individualToFitness);
-            avgFs.put(i, avgF);
+            generationToAvgF.put(i, avgF);
             Individual best = getBestIndividual(individualToFitness);
             double maxF = individualToFitness.get(best).doubleValue();
-            maxFs.put(i, maxF);
+            generationToMaxF.put(i, maxF);
             double sigmaF = getStandardDeviation(individualToFitness.values(), avgF);
-            sigmaFs.put(i, sigmaF);
+            generationToSigmaF.put(i, sigmaF);
             int unique = getUniqueBinaryCodes(currentIndividuals).size();
-            uniques.put(i, unique);
+            generationToUniqueX.put(i, unique);
 
             int optimalQ = getEqualQuantity(currentIndividuals, optimal);
             double optimalRatio = (double) optimalQ / currentIndividuals.size();
-            optimalRatios.put(i, optimalRatio);
+            generationToOptimalRatio.put(i, optimalRatio);
             int bestQ = getEqualQuantity(currentIndividuals, best);
             double bestRatio = (double) bestQ / currentIndividuals.size();
-            bestRatios.put(i, bestRatio);
+            generationToBestRatio.put(i, bestRatio);
 
 
             // metrics for all functions
@@ -210,6 +212,10 @@ public class RunPoolExecutor {
                     grLate = currentGr;
                     niGrLate = i;
                 }
+
+
+                currentFish = computePFET(individualToFitness, parentPool);
+                iterationToFish.put(i + 1, currentFish);
             }
 
             // metrics only for FConstAll function
@@ -251,7 +257,7 @@ public class RunPoolExecutor {
         int niTetaMax = maxIterationTeta.getKey();
 
         int uniqueXFin = getUniqueBinaryCodes(currentIndividuals).size();
-        uniques.put(ni, uniqueXFin);
+        generationToUniqueX.put(ni, uniqueXFin);
 
         // metrics for all functions except FConstAll
         if (numLoose == 0) {
@@ -260,18 +266,18 @@ public class RunPoolExecutor {
         Individual best = getBestIndividual(individualToFitness);
         double fFound = individualToFitness.get(best).doubleValue();
         double fAvg = getAverageFitness(individualToFitness);
-        maxFs.put(ni, fFound);
-        avgFs.put(ni, fAvg);
+        generationToMaxF.put(ni, fFound);
+        generationToAvgF.put(ni, fAvg);
 
         int optimalQ = getEqualQuantity(currentIndividuals, optimal);
         double optimalRatio = (double) optimalQ / currentIndividuals.size();
-        optimalRatios.put(ni, optimalRatio);
+        generationToOptimalRatio.put(ni, optimalRatio);
         int bestQ = getEqualQuantity(currentIndividuals, best);
         double bestRatio = (double) bestQ / currentIndividuals.size();
-        bestRatios.put(ni, bestRatio);
+        generationToBestRatio.put(ni, bestRatio);
 
         double sigmaFFin = getStandardDeviation(individualToFitness.values(), fAvg);
-        sigmaFs.put(ni, sigmaFFin);
+        generationToSigmaF.put(ni, sigmaFFin);
 
         double prFin = fFound / fAvg;
         generationToPr.put(ni, prFin);
@@ -301,6 +307,14 @@ public class RunPoolExecutor {
         double prMax = 0;
         int niPrMax = 0;
         double prAvg = 0;
+
+        double fishStart = 0;
+        double fishMin = 0;
+        int niFishMin = 0;
+        double fishMax = 0;
+        int niFishMax = 0;
+        double fishAvg = 0;
+
 
         if (!function.isConstant()) {
             sStart = iterationToS.get(1);
@@ -339,6 +353,15 @@ public class RunPoolExecutor {
             prMax = maxGenerationPr.getValue().doubleValue();
             niPrMax = maxGenerationPr.getKey();
             prAvg = getAverage(generationToPr.values());
+
+            Map.Entry<Integer, ? extends Number> minIterationFish = getMinIteratedValue(iterationToFish);
+            Map.Entry<Integer, ? extends Number> maxIterationFish = getMaxIteratedValue(iterationToFish);
+            fishStart = iterationToFish.get(1);
+            fishMin = minIterationFish.getValue().doubleValue();
+            niFishMin = minIterationFish.getKey();
+            fishMax = maxIterationFish.getValue().doubleValue();
+            niFishMax = maxIterationFish.getKey();
+            fishAvg = getAverage(iterationToFish.values());
         }
 
 
@@ -406,18 +429,26 @@ public class RunPoolExecutor {
                 .withNiPrMax(niPrMax)
                 .withPrAvg(prAvg)
 
-                .withAvgFs(getOrderedValues(avgFs))
-                .withMaxFs(getOrderedValues(maxFs))
-                .withSigmaFs(getOrderedValues(sigmaFs))
-                .withOptimalRatios(getOrderedValues(optimalRatios))
-                .withBestRatios(getOrderedValues(bestRatios))
+                .withFishStart(fishStart)
+                .withFishMin(fishMin)
+                .withNiFishMin(niFishMin)
+                .withFishMax(fishMax)
+                .withNiFishMax(niFishMax)
+                .withFishAvg(fishAvg)
+
+                .withAvgFs(getOrderedValues(generationToAvgF))
+                .withMaxFs(getOrderedValues(generationToMaxF))
+                .withSigmaFs(getOrderedValues(generationToSigmaF))
+                .withOptimalRatios(getOrderedValues(generationToOptimalRatio))
+                .withBestRatios(getOrderedValues(generationToBestRatio))
                 .withSs(getOrderedValuesPlus1(iterationToS))
                 .withRrs(getOrderedValuesPlus1(iterationToRR))
                 .withTetas(getOrderedValuesPlus1(iterationToTeta))
-                .withUniques(getOrderedIntValues(uniques))
+                .withUniques(getOrderedIntValues(generationToUniqueX))
                 .withIs(getOrderedValuesPlus1(iterationToI))
                 .withPrs(getOrderedValues(generationToPr))
                 .withGrs(getOrderedValuesPlus1(iterationToGr))
+                .withFishes(getOrderedValuesPlus1(iterationToFish))
 
                 .build();
     }

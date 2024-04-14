@@ -1,6 +1,7 @@
 package lab.v2.util;
 
 import lab.v2.Individual;
+import org.apache.commons.math3.distribution.HypergeometricDistribution;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 
 import java.util.Collection;
@@ -8,10 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import static java.util.Map.entry;
-import static java.util.stream.Collectors.toUnmodifiableSet;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.*;
 import static lab.v2.util.CalculationUtils.getAverage;
+import static lab.v2.util.CalculationUtils.getMedian;
 
 public class MetricUtils {
 
@@ -70,5 +74,60 @@ public class MetricUtils {
         return individuals.stream()
                 .map(Individual::getIndex)
                 .collect(toUnmodifiableSet());
+    }
+
+    private static Map<Integer, Long> getIndexToCount(Collection<Individual> individuals) {
+        return individuals.stream()
+                .collect(groupingBy(Individual::getIndex, counting()));
+    }
+
+
+    public static double computePFET(Map<Individual, ? extends Number> individualToFitness, List<Individual> parentPool) {
+        if (individualToFitness.size() != parentPool.size()) {
+            throw new IllegalArgumentException("fitnesses and offspringCounts must have the same size.");
+        }
+
+        Map<Integer, Double> indexToFitness = individualToFitness.entrySet()
+                .stream()
+                .map(entry -> entry(entry.getKey().getIndex(), entry.getValue().doubleValue()))
+                .collect(toUnmodifiableMap(Entry::getKey, Entry::getValue));
+
+        int n = individualToFitness.size();
+        List<Double> fitnesses = IntStream.rangeClosed(1, n)
+                .mapToObj(i -> ofNullable(indexToFitness.get(i)).orElseThrow())
+                .toList();
+
+        Map<Integer, Long> parentPoolIndexToCount = getIndexToCount(parentPool);
+        List<Long> offspringCounts = IntStream.rangeClosed(1, n)
+                .mapToObj(i -> ofNullable(parentPoolIndexToCount.get(i)).orElse(0L))
+                .toList();
+
+        return computePFET(fitnesses, offspringCounts);
+    }
+
+    public static double computePFET(List<Double> fitnesses, List<Long> offspringCounts) {
+        if (fitnesses.size() != offspringCounts.size()) {
+            throw new IllegalArgumentException("fitnesses and offspringCounts lists must have the same size.");
+        }
+
+        int n = fitnesses.size();
+        double medianFitness = getMedian(fitnesses);
+        double medianOffspringCount = getMedian(offspringCounts);
+        if (medianOffspringCount == 0) {
+            medianOffspringCount = 1;
+        }
+
+        int a = 0, b = 0, c = 0, d = 0;
+        for (int i = 0; i < n; i++) {
+            if (fitnesses.get(i) <= medianFitness && offspringCounts.get(i) <= medianOffspringCount) a++;
+            if (fitnesses.get(i) > medianFitness && offspringCounts.get(i) <= medianOffspringCount) b++;
+            if (fitnesses.get(i) <= medianFitness && offspringCounts.get(i) > medianOffspringCount) c++;
+            if (fitnesses.get(i) > medianFitness && offspringCounts.get(i) > medianOffspringCount) d++;
+        }
+
+        HypergeometricDistribution distribution = new HypergeometricDistribution(a + b + c + d, a + c, a + b);
+        double pRandom = distribution.upperCumulativeProbability(a);
+
+        return -Math.log10(pRandom);
     }
 }
