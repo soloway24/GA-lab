@@ -231,6 +231,21 @@ public class RunPoolStatsCreator {
         double avgPrStart = 0;
         double sigmaPrStart = 0;
 
+        double minFishMin = 0;
+        int niMinFishMin = 0;
+        double maxFishMax = 0;
+        int niMaxFishMax = 0;
+        double avgFishMin = 0;
+        double avgFishMax = 0;
+        double avgFishAvg = 0;
+        double sigmaFishMin = 0;
+        double sigmaFishMax = 0;
+        double sigmaFishAvg = 0;
+        double minFishStart = 0;
+        double maxFishStart = 0;
+        double avgFishStart = 0;
+        double sigmaFishStart = 0;
+
         if (!runConfiguration.function().isConstant()) {
 
             // non-successful but converged runs
@@ -341,6 +356,31 @@ public class RunPoolStatsCreator {
             maxPrStart = getMaxDouble(prStarts);
             avgPrStart = getAverage(prStarts);
             sigmaPrStart = getStandardDeviation(prStarts, avgPrStart);
+
+            List<Pair<Double, Integer>> fishMinGenerations = getMetricValueToIteration(sucRunStats, RunStats::fishMin, RunStats::niFishMin);
+            List<Pair<Double, Integer>> fishMaxGenerations = getMetricValueToIteration(sucRunStats, RunStats::fishMax, RunStats::niFishMax);
+            Pair<Double, Integer> minfishMinIteration = getMinValueToIteration(fishMinGenerations);
+            Pair<Double, Integer> maxfishMaxIteration = getMaxValueToIteration(fishMaxGenerations);
+            minFishMin = minfishMinIteration.getKey();
+            niMinFishMin = minfishMinIteration.getValue();
+            maxFishMax = maxfishMaxIteration.getKey();
+            niMaxFishMax = maxfishMaxIteration.getValue();
+
+            List<Double> fishMins = getDoubleValues(sucRunStats, RunStats::fishMin);
+            List<Double> fishMaxs = getDoubleValues(sucRunStats, RunStats::fishMax);
+            List<Double> fishAvgs = getDoubleValues(sucRunStats, RunStats::fishAvg);
+            avgFishMin = getAverage(fishMins);
+            avgFishMax = getAverage(fishMaxs);
+            avgFishAvg = getAverage(fishAvgs);
+            sigmaFishMin = getStandardDeviation(fishMins, avgFishMin);
+            sigmaFishMax = getStandardDeviation(fishMaxs, avgFishMax);
+            sigmaFishAvg = getStandardDeviation(fishAvgs, avgFishAvg);
+
+            List<Double> fishStarts = getDoubleValues(sucRunStats, RunStats::fishStart);
+            minFishStart = getMinDouble(fishStarts);
+            maxFishStart = getMaxDouble(fishStarts);
+            avgFishStart = getAverage(fishStarts);
+            sigmaFishStart = getStandardDeviation(fishStarts, avgFishStart);
 
             // all runs
             List<RunStats> runsStatsWithLoose = allRunStats.stream()
@@ -495,6 +535,21 @@ public class RunPoolStatsCreator {
                 .withMaxPrStart(maxPrStart)
                 .withAvgPrStart(avgPrStart)
                 .withSigmaPrStart(sigmaPrStart)
+
+                .withMinFishMin(minFishMin)
+                .withNiMinFishMin(niMinFishMin)
+                .withMaxFishMax(maxFishMax)
+                .withNiMaxFishMax(niMaxFishMax)
+                .withAvgFishMin(avgFishMin)
+                .withAvgFishMax(avgFishMax)
+                .withAvgFishAvg(avgFishAvg)
+                .withSigmaFishMin(sigmaFishMin)
+                .withSigmaFishMax(sigmaFishMax)
+                .withSigmaFishAvg(sigmaFishAvg)
+                .withMinFishStart(minFishStart)
+                .withMaxFishStart(maxFishStart)
+                .withAvgFishStart(avgFishStart)
+                .withSigmaFishStart(sigmaFishStart)
 
                 // all runs
                 .withNiWithLoose(niWithLoose)

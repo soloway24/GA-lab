@@ -716,6 +716,21 @@ public class Exporter {
         row.createCell(i++).setCellValue("Avg_Pr_start");
         row.createCell(i++).setCellValue("Sigma_Pr_start");
 
+        row.createCell(i++).setCellValue("Min_Fish_min");
+        row.createCell(i++).setCellValue("NI_Fish_min");
+        row.createCell(i++).setCellValue("Max_Fish_max");
+        row.createCell(i++).setCellValue("NI_Fish_max");
+        row.createCell(i++).setCellValue("Avg_Fish_min");
+        row.createCell(i++).setCellValue("Avg_Fish_max");
+        row.createCell(i++).setCellValue("Avg_Fish_avg");
+        row.createCell(i++).setCellValue("Sigma_Fish_min");
+        row.createCell(i++).setCellValue("Sigma_Fish_max");
+        row.createCell(i++).setCellValue("Sigma_Fish_avg");
+        row.createCell(i++).setCellValue("Min_Fish_start");
+        row.createCell(i++).setCellValue("Max_Fish_start");
+        row.createCell(i++).setCellValue("Avg_Fish_start");
+        row.createCell(i++).setCellValue("Sigma_Fish_start");
+
         // all runs
         row.createCell(i++).setCellValue("NI_with_Loose");
         row.createCell(i++).setCellValue("Avg_NI_loose");
@@ -867,6 +882,21 @@ public class Exporter {
             row.createCell(i++).setCellValue(runPoolStats.maxPrStart());
             row.createCell(i++).setCellValue(runPoolStats.avgPrStart());
             row.createCell(i++).setCellValue(runPoolStats.sigmaPrStart());
+
+            row.createCell(i++).setCellValue(runPoolStats.minFishMin());
+            row.createCell(i++).setCellValue(runPoolStats.niMinFishMin());
+            row.createCell(i++).setCellValue(runPoolStats.maxFishMax());
+            row.createCell(i++).setCellValue(runPoolStats.niMaxFishMax());
+            row.createCell(i++).setCellValue(runPoolStats.avgFishMin());
+            row.createCell(i++).setCellValue(runPoolStats.avgFishMax());
+            row.createCell(i++).setCellValue(runPoolStats.avgFishAvg());
+            row.createCell(i++).setCellValue(runPoolStats.sigmaFishMin());
+            row.createCell(i++).setCellValue(runPoolStats.sigmaFishMax());
+            row.createCell(i++).setCellValue(runPoolStats.sigmaFishAvg());
+            row.createCell(i++).setCellValue(runPoolStats.minFishStart());
+            row.createCell(i++).setCellValue(runPoolStats.maxFishStart());
+            row.createCell(i++).setCellValue(runPoolStats.avgFishStart());
+            row.createCell(i++).setCellValue(runPoolStats.sigmaFishStart());
 
             // all runs
             row.createCell(i++).setCellValue(runPoolStats.niWithLoose());
