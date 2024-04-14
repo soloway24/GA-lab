@@ -1,5 +1,6 @@
 package lab.v2.run;
 
+import lab.v2.metric.KendallMetrics;
 import org.apache.commons.math3.util.Pair;
 
 import java.util.Comparator;
@@ -246,6 +247,21 @@ public class RunPoolStatsCreator {
         double avgFishStart = 0;
         double sigmaFishStart = 0;
 
+        double minKendallMin = 0;
+        int niMinKendallMin = 0;
+        double maxKendallMax = 0;
+        int niMaxKendallMax = 0;
+        double avgKendallMin = 0;
+        double avgKendallMax = 0;
+        double avgKendallAvg = 0;
+        double sigmaKendallMin = 0;
+        double sigmaKendallMax = 0;
+        double sigmaKendallAvg = 0;
+        double minKendallStart = 0;
+        double maxKendallStart = 0;
+        double avgKendallStart = 0;
+        double sigmaKendallStart = 0;
+
         if (!runConfiguration.function().isConstant()) {
 
             // non-successful but converged runs
@@ -265,6 +281,8 @@ public class RunPoolStatsCreator {
             }
 
             // successful runs
+
+            // difference
             List<Pair<Double, Integer>> sMinIterations = getMetricValueToIteration(sucRunStats, RunStats::sMin, RunStats::niSMin);
             Pair<Double, Integer> minSMinIteration = getMinValueToIteration(sMinIterations);
             minSMin = minSMinIteration.getKey();
@@ -284,6 +302,7 @@ public class RunPoolStatsCreator {
             avgSStart = getAverage(sStarts);
             sigmaSStart = getStandardDeviation(sStarts, avgSStart);
 
+            // selection intensity
             List<Pair<Double, Integer>> iMinIterations = getMetricValueToIteration(sucRunStats, RunStats::iMin, RunStats::niImin);
             List<Pair<Double, Integer>> iMaxIterations = getMetricValueToIteration(sucRunStats, RunStats::iMax, RunStats::niImax);
             Pair<Double, Integer> minIminIteration = getMinValueToIteration(iMinIterations);
@@ -309,7 +328,7 @@ public class RunPoolStatsCreator {
             avgIstart = getAverage(iStarts);
             sigmaIstart = getStandardDeviation(iStarts, avgIstart);
 
-
+            // Growth rate
             List<Double> grEarlys = getDoubleValues(sucRunStats, RunStats::grEarly);
             List<Double> grLates = getDoubleValues(sucRunStats, RunStats::grLate);
             List<Double> grAvgs = getDoubleValues(sucRunStats, RunStats::grAvg);
@@ -332,6 +351,7 @@ public class RunPoolStatsCreator {
             avgGrStart = getAverage(grStarts);
             sigmaGrStart = getStandardDeviation(grStarts, avgGrStart);
 
+            // Selection pressure
             List<Pair<Double, Integer>> prMinGenerations = getMetricValueToIteration(sucRunStats, RunStats::prMin, RunStats::niPrMin);
             List<Pair<Double, Integer>> prMaxGenerations = getMetricValueToIteration(sucRunStats, RunStats::prMax, RunStats::niPrMax);
             Pair<Double, Integer> minPrMinIteration = getMinValueToIteration(prMinGenerations);
@@ -357,6 +377,7 @@ public class RunPoolStatsCreator {
             avgPrStart = getAverage(prStarts);
             sigmaPrStart = getStandardDeviation(prStarts, avgPrStart);
 
+            // Fisher's Exact test
             List<Pair<Double, Integer>> fishMinGenerations = getMetricValueToIteration(sucRunStats, RunStats::fishMin, RunStats::niFishMin);
             List<Pair<Double, Integer>> fishMaxGenerations = getMetricValueToIteration(sucRunStats, RunStats::fishMax, RunStats::niFishMax);
             Pair<Double, Integer> minfishMinIteration = getMinValueToIteration(fishMinGenerations);
@@ -381,6 +402,32 @@ public class RunPoolStatsCreator {
             maxFishStart = getMaxDouble(fishStarts);
             avgFishStart = getAverage(fishStarts);
             sigmaFishStart = getStandardDeviation(fishStarts, avgFishStart);
+
+            // Kendall's Tau-B
+            List<Pair<Double, Integer>> kendallMinGenerations = getMetricValueToIteration(sucRunStats, RunStats::kendallMin, RunStats::niKendallMin);
+            List<Pair<Double, Integer>> kendallMaxGenerations = getMetricValueToIteration(sucRunStats, RunStats::kendallMax, RunStats::niKendallMax);
+            Pair<Double, Integer> minkendallMinIteration = getMinValueToIteration(kendallMinGenerations);
+            Pair<Double, Integer> maxkendallMaxIteration = getMaxValueToIteration(kendallMaxGenerations);
+            minKendallMin = minkendallMinIteration.getKey();
+            niMinKendallMin = minkendallMinIteration.getValue();
+            maxKendallMax = maxkendallMaxIteration.getKey();
+            niMaxKendallMax = maxkendallMaxIteration.getValue();
+
+            List<Double> kendallMins = getDoubleValues(sucRunStats, RunStats::kendallMin);
+            List<Double> kendallMaxs = getDoubleValues(sucRunStats, RunStats::kendallMax);
+            List<Double> kendallAvgs = getDoubleValues(sucRunStats, RunStats::kendallAvg);
+            avgKendallMin = getAverage(kendallMins);
+            avgKendallMax = getAverage(kendallMaxs);
+            avgKendallAvg = getAverage(kendallAvgs);
+            sigmaKendallMin = getStandardDeviation(kendallMins, avgKendallMin);
+            sigmaKendallMax = getStandardDeviation(kendallMaxs, avgKendallMax);
+            sigmaKendallAvg = getStandardDeviation(kendallAvgs, avgKendallAvg);
+
+            List<Double> kendallStarts = getDoubleValues(sucRunStats, RunStats::kendallStart);
+            minKendallStart = getMinDouble(kendallStarts);
+            maxKendallStart = getMaxDouble(kendallStarts);
+            avgKendallStart = getAverage(kendallStarts);
+            sigmaKendallStart = getStandardDeviation(kendallStarts, avgKendallStart);
 
             // all runs
             List<RunStats> runsStatsWithLoose = allRunStats.stream()
@@ -550,6 +597,25 @@ public class RunPoolStatsCreator {
                 .withMaxFishStart(maxFishStart)
                 .withAvgFishStart(avgFishStart)
                 .withSigmaFishStart(sigmaFishStart)
+
+                .withKendallMetrics(
+                        KendallMetrics.builder()
+                                .withMinKendallMin(minKendallMin)
+                                .withNiMinKendallMin(niMinKendallMin)
+                                .withMaxKendallMax(maxKendallMax)
+                                .withNiMaxKendallMax(niMaxKendallMax)
+                                .withAvgKendallMin(avgKendallMin)
+                                .withAvgKendallMax(avgKendallMax)
+                                .withAvgKendallAvg(avgKendallAvg)
+                                .withSigmaKendallMin(sigmaKendallMin)
+                                .withSigmaKendallMax(sigmaKendallMax)
+                                .withSigmaKendallAvg(sigmaKendallAvg)
+                                .withMinKendallStart(minKendallStart)
+                                .withMaxKendallStart(maxKendallStart)
+                                .withAvgKendallStart(avgKendallStart)
+                                .withSigmaKendallStart(sigmaKendallStart)
+                                .build()
+                )
 
                 // all runs
                 .withNiWithLoose(niWithLoose)

@@ -1,5 +1,6 @@
 package lab.v2.run;
 
+import lab.v2.metric.KendallMetrics;
 import lombok.Builder;
 
 import java.util.List;
@@ -145,6 +146,8 @@ public record RunPoolStats(RunConfiguration runConfiguration,
                            double maxFishStart,
                            double avgFishStart,
                            double sigmaFishStart,
+
+                           KendallMetrics kendallMetrics,
 
                            // all runs
                            int niWithLoose,

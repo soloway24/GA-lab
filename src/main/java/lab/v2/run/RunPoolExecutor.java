@@ -118,12 +118,14 @@ public class RunPoolExecutor {
         double currentI = 0;
         double currentPr = 0;
         double currentFish = 0;
+        double currentKendall = 0;
 
         Map<Integer, Double> iterationToS = new HashMap<>();
         Map<Integer, Double> iterationToI = new HashMap<>();
         Map<Integer, Double> generationToPr = new HashMap<>();
         Map<Integer, Double> iterationToGr = new HashMap<>();
         Map<Integer, Double> iterationToFish = new HashMap<>();
+        Map<Integer, Double> iterationToKendall = new HashMap<>();
 
         int previousBestQ = Integer.MIN_VALUE;
         double previousBestF = Double.MIN_VALUE;
@@ -216,6 +218,9 @@ public class RunPoolExecutor {
 
                 currentFish = computePFET(individualToFitness, parentPool);
                 iterationToFish.put(i + 1, currentFish);
+
+                currentKendall = computeKendallTauB(individualToFitness, parentPool);
+                iterationToKendall.put(i + 1, currentKendall);
             }
 
             // metrics only for FConstAll function
@@ -315,6 +320,13 @@ public class RunPoolExecutor {
         int niFishMax = 0;
         double fishAvg = 0;
 
+        double kendallStart = 0;
+        double kendallMin = 0;
+        int niKendallMin = 0;
+        double kendallMax = 0;
+        int niKendallMax = 0;
+        double kendallAvg = 0;
+
 
         if (!function.isConstant()) {
             sStart = iterationToS.get(1);
@@ -362,6 +374,15 @@ public class RunPoolExecutor {
             fishMax = maxIterationFish.getValue().doubleValue();
             niFishMax = maxIterationFish.getKey();
             fishAvg = getAverage(iterationToFish.values());
+
+            Map.Entry<Integer, ? extends Number> minIterationKendall = getMinIteratedValue(iterationToKendall);
+            Map.Entry<Integer, ? extends Number> maxIterationKendall = getMaxIteratedValue(iterationToKendall);
+            kendallStart = iterationToKendall.get(1);
+            kendallMin = minIterationKendall.getValue().doubleValue();
+            niKendallMin = minIterationKendall.getKey();
+            kendallMax = maxIterationKendall.getValue().doubleValue();
+            niKendallMax = maxIterationKendall.getKey();
+            kendallAvg = getAverage(iterationToKendall.values());
         }
 
 
@@ -436,6 +457,13 @@ public class RunPoolExecutor {
                 .withNiFishMax(niFishMax)
                 .withFishAvg(fishAvg)
 
+                .withKendallStart(kendallStart)
+                .withKendallMin(kendallMin)
+                .withNiKendallMin(niKendallMin)
+                .withKendallMax(kendallMax)
+                .withNiKendallMax(niKendallMax)
+                .withKendallAvg(kendallAvg)
+
                 .withAvgFs(getOrderedValues(generationToAvgF))
                 .withMaxFs(getOrderedValues(generationToMaxF))
                 .withSigmaFs(getOrderedValues(generationToSigmaF))
@@ -449,6 +477,7 @@ public class RunPoolExecutor {
                 .withPrs(getOrderedValues(generationToPr))
                 .withGrs(getOrderedValuesPlus1(iterationToGr))
                 .withFishes(getOrderedValuesPlus1(iterationToFish))
+                .withKendalls(getOrderedValuesPlus1(iterationToKendall))
 
                 .build();
     }

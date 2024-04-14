@@ -130,6 +130,7 @@ public class Exporter {
                 List<Double> prs = allRunStats.get(i).prs();
                 List<Double> grs = allRunStats.get(i).grs();
                 List<Double> fishes = allRunStats.get(i).fishes();
+                List<Double> kendalls = allRunStats.get(i).kendalls();
 
                 drawPlot(xGenerations, avgFs, plotExportPath, "avgFs");
                 drawPlot(xGenerations, maxFs, plotExportPath, "maxFs");
@@ -140,7 +141,8 @@ public class Exporter {
                 drawPlot(xIterations, is, plotExportPath, "intensity");
                 drawPlot(xGenerations, prs, plotExportPath, "Pr");
                 drawPlot(xIterations, grs, plotExportPath, "Gr");
-                drawPlot(xIterations, fishes, plotExportPath, "Fisher Exact Test");
+                drawPlot(xIterations, fishes, plotExportPath, "Fisher's Exact Test");
+                drawPlot(xIterations, kendalls, plotExportPath, "Kendall's Tau-B", -1.1, 1.1);
                 drawPlot(xGenerations, prs, sigmaFs, plotExportPath, "Pr and sigmaF", "Pr", "SigmaF");
 
 
@@ -149,7 +151,7 @@ public class Exporter {
 
                 int freeIndex = getFirstNullRowIndex(sheet);
                 createPlotsIterationDataHeader(sheet, freeIndex + 1);
-                createIterationRows(sheet, freeIndex + 2, xIterations, rrs, tetas, ss, is, grs, fishes);
+                createIterationRows(sheet, freeIndex + 2, xIterations, rrs, tetas, ss, is, grs, fishes, kendalls);
             } else {
                 createPlotsGenerationDataHeaderConst(sheet);
                 createGenerationRows(sheet, 1, xGenerations, uniques);
@@ -210,7 +212,8 @@ public class Exporter {
                                      List<Double> ss,
                                      List<Double> is,
                                      List<Double> grs,
-                                     List<Double> fishes
+                                     List<Double> fishes,
+                                     List<Double> kendalls
     ) {
         int rowIndex = index;
         for (int j = 0; j < xIterations.size(); j++) {
@@ -224,6 +227,7 @@ public class Exporter {
             row.createCell(cellIndex++).setCellValue(is.get(j));
             row.createCell(cellIndex++).setCellValue(grs.get(j));
             row.createCell(cellIndex++).setCellValue(fishes.get(j));
+            row.createCell(cellIndex++).setCellValue(kendalls.get(j));
         }
     }
 
@@ -425,6 +429,7 @@ public class Exporter {
         row.createCell(i++).setCellValue("intensity");
         row.createCell(i++).setCellValue("Gr");
         row.createCell(i++).setCellValue("Pfet");
+        row.createCell(i++).setCellValue("Ptau");
     }
 
     private void createRunHeaderRow(Sheet sheet) {
@@ -500,6 +505,13 @@ public class Exporter {
         row.createCell(i++).setCellValue("Fish_max");
         row.createCell(i++).setCellValue("NI_Fish_max");
         row.createCell(i++).setCellValue("Fish_avg");
+
+        row.createCell(i++).setCellValue("Kend_start");
+        row.createCell(i++).setCellValue("Kend_min");
+        row.createCell(i++).setCellValue("NI_Kend_min");
+        row.createCell(i++).setCellValue("Kend_max");
+        row.createCell(i++).setCellValue("NI_Kend_max");
+        row.createCell(i++).setCellValue("Kend_avg");
     }
 
     private void createRunRow(Sheet sheet, int index, FitnessFunctionV2<?, ?> function, RunStats runStats) {
@@ -576,6 +588,13 @@ public class Exporter {
             row.createCell(i++).setCellValue(runStats.fishMax());
             row.createCell(i++).setCellValue(runStats.niFishMax());
             row.createCell(i++).setCellValue(runStats.fishAvg());
+
+            row.createCell(i++).setCellValue(runStats.kendallStart());
+            row.createCell(i++).setCellValue(runStats.kendallMin());
+            row.createCell(i++).setCellValue(runStats.niKendallMin());
+            row.createCell(i++).setCellValue(runStats.kendallMax());
+            row.createCell(i++).setCellValue(runStats.niKendallMax());
+            row.createCell(i++).setCellValue(runStats.kendallAvg());
         }
     }
 
@@ -730,6 +749,21 @@ public class Exporter {
         row.createCell(i++).setCellValue("Max_Fish_start");
         row.createCell(i++).setCellValue("Avg_Fish_start");
         row.createCell(i++).setCellValue("Sigma_Fish_start");
+
+        row.createCell(i++).setCellValue("Min_Kend_min");
+        row.createCell(i++).setCellValue("NI_Kend_min");
+        row.createCell(i++).setCellValue("Max_Kend_max");
+        row.createCell(i++).setCellValue("NI_Kend_max");
+        row.createCell(i++).setCellValue("Avg_Kend_min");
+        row.createCell(i++).setCellValue("Avg_Kend_max");
+        row.createCell(i++).setCellValue("Avg_Kend_avg");
+        row.createCell(i++).setCellValue("Sigma_Kend_min");
+        row.createCell(i++).setCellValue("Sigma_Kend_max");
+        row.createCell(i++).setCellValue("Sigma_Kend_avg");
+        row.createCell(i++).setCellValue("Min_Kend_start");
+        row.createCell(i++).setCellValue("Max_Kend_start");
+        row.createCell(i++).setCellValue("Avg_Kend_start");
+        row.createCell(i++).setCellValue("Sigma_Kend_start");
 
         // all runs
         row.createCell(i++).setCellValue("NI_with_Loose");
@@ -897,6 +931,21 @@ public class Exporter {
             row.createCell(i++).setCellValue(runPoolStats.maxFishStart());
             row.createCell(i++).setCellValue(runPoolStats.avgFishStart());
             row.createCell(i++).setCellValue(runPoolStats.sigmaFishStart());
+
+            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().minKendallMin());
+            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().niMinKendallMin());
+            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().maxKendallMax());
+            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().niMaxKendallMax());
+            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().avgKendallMin());
+            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().avgKendallMax());
+            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().avgKendallAvg());
+            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().sigmaKendallMin());
+            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().sigmaKendallMax());
+            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().sigmaKendallAvg());
+            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().minKendallStart());
+            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().maxKendallStart());
+            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().avgKendallStart());
+            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().sigmaKendallStart());
 
             // all runs
             row.createCell(i++).setCellValue(runPoolStats.niWithLoose());

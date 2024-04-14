@@ -2,6 +2,7 @@ package lab.v2.util;
 
 import lab.v2.Individual;
 import org.apache.commons.math3.distribution.HypergeometricDistribution;
+import org.apache.commons.math3.stat.correlation.KendallsCorrelation;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 
 import java.util.Collection;
@@ -130,4 +131,41 @@ public class MetricUtils {
 
         return -Math.log10(pRandom);
     }
+
+    public static double computeKendallTauB(Map<Individual, ? extends Number> individualToFitness, List<Individual> parentPool) {
+        if (individualToFitness.size() != parentPool.size()) {
+            throw new IllegalArgumentException("fitnesses and offspringCounts must have the same size.");
+        }
+
+        Map<Integer, Double> indexToFitness = individualToFitness.entrySet()
+                .stream()
+                .map(entry -> entry(entry.getKey().getIndex(), entry.getValue().doubleValue()))
+                .collect(toUnmodifiableMap(Entry::getKey, Entry::getValue));
+
+        int n = individualToFitness.size();
+        double[] fitnesses = IntStream.rangeClosed(1, n)
+                .mapToDouble(i -> ofNullable(indexToFitness.get(i)).orElseThrow())
+                .toArray();
+
+        Map<Integer, Long> parentPoolIndexToCount = getIndexToCount(parentPool);
+        double[] offspringCounts = IntStream.rangeClosed(1, n)
+                .mapToDouble(i -> ofNullable(parentPoolIndexToCount.get(i)).orElse(0L))
+                .toArray();
+
+        return computeKendallTauB(fitnesses, offspringCounts);
+    }
+
+    public static double computeKendallTauB(double[] x, double[] y) {
+        KendallsCorrelation kendallsCorrelation = new KendallsCorrelation();
+        return kendallsCorrelation.correlation(x, y);
+    }
+
+    public static void main(String[] args) {
+        double[] x = {12, 2, 1, 12, 2};
+        double[] y = {1, 4, 7, 1, 0};
+
+        double tauB = computeKendallTauB(x, y);
+        System.out.println("Kendall's τ-b: " + tauB);
+    }
+
 }
