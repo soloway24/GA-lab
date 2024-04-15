@@ -56,7 +56,7 @@ public class ConvergenceIdentifier {
                 .size();
     }
 
-    private boolean isHomogenous(List<Individual> individuals, double minPercentage) {
+    public static boolean isHomogenous(List<Individual> individuals, double minPercentage) {
         Map<Integer, List<Boolean>> indexToBits = new HashMap<>();
         individuals.stream()
                 .map(Individual::getBinaryCode)
@@ -64,7 +64,7 @@ public class ConvergenceIdentifier {
         return isHomogenous(indexToBits, minPercentage);
     }
 
-    private boolean isHomogenous(Map<Integer, List<Boolean>> indexToBits, double minPercentage) {
+    private static boolean isHomogenous(Map<Integer, List<Boolean>> indexToBits, double minPercentage) {
         for (Map.Entry<Integer, List<Boolean>> entry : indexToBits.entrySet()) {
             if (isNotHomogenous(entry.getValue(), minPercentage)) {
                 return false;
@@ -73,7 +73,7 @@ public class ConvergenceIdentifier {
         return true;
     }
 
-    private boolean isNotHomogenous(List<Boolean> bits, double minPercentage) {
+    private static boolean isNotHomogenous(List<Boolean> bits, double minPercentage) {
         int oneCount = bits.stream()
                 .filter(bool -> bool)
                 .toList()
@@ -88,7 +88,7 @@ public class ConvergenceIdentifier {
         return onePercentage < minPercentage && zeroPercentage < minPercentage;
     }
 
-    private void putBits(String binaryCode, Map<Integer, List<Boolean>> indexToBits) {
+    private static void putBits(String binaryCode, Map<Integer, List<Boolean>> indexToBits) {
         String[] chars = binaryCode.split("");
         IntStream.range(0, chars.length)
                 .forEach(i -> {

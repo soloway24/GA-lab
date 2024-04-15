@@ -2,7 +2,9 @@ package lab.v2.export;
 
 import com.github.sh0nk.matplotlib4j.Plot;
 import com.github.sh0nk.matplotlib4j.PythonExecutionException;
+import com.github.sh0nk.matplotlib4j.builder.HistBuilder;
 import lab.v2.function.FitnessFunctionV2;
+import lab.v2.metric.IndividualMetrics;
 import lab.v2.run.RunConfiguration;
 import lab.v2.run.RunPoolStats;
 import lab.v2.run.RunStats;
@@ -17,8 +19,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
+
+import static java.lang.String.valueOf;
 
 public class Exporter {
 
@@ -102,35 +108,37 @@ public class Exporter {
         }
 
         for (int i = 0; i < 5 && i < allRunStats.size(); i++) {
+            RunStats runStats = allRunStats.get(i);
+
             String plotExportPath = plotExportDir + (i + 1) + "/";
             XSSFWorkbook workbook = new XSSFWorkbook();
             Sheet sheet = workbook.createSheet("Plots data");
             String tablePath = plotExportPath + "plots_data" + ".xlsx";
 
-            List<Integer> xIterations = IntStream.rangeClosed(1, allRunStats.get(i).ni())
+            List<Integer> xIterations = IntStream.rangeClosed(1, runStats.ni())
                     .boxed().toList();
-            List<Integer> xGenerations = IntStream.rangeClosed(1, allRunStats.get(i).ni() + 1)
+            List<Integer> xGenerations = IntStream.rangeClosed(1, runStats.ni() + 1)
                     .boxed().toList();
 
-            List<Double> rrs = allRunStats.get(i).rrs();
-            List<Double> tetas = allRunStats.get(i).tetas();
-            List<Integer> uniques = allRunStats.get(i).uniques();
+            List<Double> rrs = runStats.rrs();
+            List<Double> tetas = runStats.tetas();
+            List<Integer> uniques = runStats.uniques();
 
             drawPlot(xIterations, rrs, tetas, plotExportPath, "rr and teta", "rr", "teta", -0.1, 1.1);
             drawPlot(xGenerations, uniques, plotExportPath, "uniques");
 
             if (!runConfiguration.function().isConstant()) {
-                List<Double> avgFs = allRunStats.get(i).avgFs();
-                List<Double> maxFs = allRunStats.get(i).maxFs();
-                List<Double> sigmaFs = allRunStats.get(i).sigmaFs();
-                List<Double> optimalRatios = allRunStats.get(i).optimalRatios();
-                List<Double> bestRatios = allRunStats.get(i).bestRatios();
-                List<Double> ss = allRunStats.get(i).ss();
-                List<Double> is = allRunStats.get(i).is();
-                List<Double> prs = allRunStats.get(i).prs();
-                List<Double> grs = allRunStats.get(i).grs();
-                List<Double> fishes = allRunStats.get(i).fishes();
-                List<Double> kendalls = allRunStats.get(i).kendalls();
+                List<Double> avgFs = runStats.avgFs();
+                List<Double> maxFs = runStats.maxFs();
+                List<Double> sigmaFs = runStats.sigmaFs();
+                List<Double> optimalRatios = runStats.optimalRatios();
+                List<Double> bestRatios = runStats.bestRatios();
+                List<Double> ss = runStats.ss();
+                List<Double> is = runStats.is();
+                List<Double> prs = runStats.prs();
+                List<Double> grs = runStats.grs();
+                List<Double> fishes = runStats.fishes();
+                List<Double> kendalls = runStats.kendalls();
 
                 drawPlot(xGenerations, avgFs, plotExportPath, "avgFs");
                 drawPlot(xGenerations, maxFs, plotExportPath, "maxFs");
@@ -161,8 +169,56 @@ public class Exporter {
                 createIterationRows(sheet, freeIndex + 2, xIterations, rrs, tetas);
             }
 
+            drawHistograms(runStats, plotExportPath, runConfiguration.function(), runConfiguration.populationSize());
+
             saveWorkbook(workbook, tablePath);
         }
+    }
+
+    private void drawHistograms(RunStats runStats, String plotExportPath, FitnessFunctionV2<?, ? extends Number> function, int populationSize) {
+        Map<Integer, List<IndividualMetrics>> generationToIndMetrics = runStats.generationToIndMetrics();
+        generationToIndMetrics.forEach((generation, individualMetrics) ->
+                drawGenerationHistograms(individualMetrics, plotExportPath, valueOf(generation), function, populationSize));
+
+        Map<Homogeneity, List<IndividualMetrics>> homogeneityToIndMetrics = runStats.homogeneityToIndMetrics();
+        homogeneityToIndMetrics.forEach((h, individualMetrics) ->
+                drawGenerationHistograms(individualMetrics, plotExportPath, "homo-" + h.getPercentage(), function, populationSize));
+    }
+
+    private void drawGenerationHistograms(List<IndividualMetrics> individualMetrics,
+                                          String plotExportPath,
+                                          String filename,
+                                          FitnessFunctionV2<?, ?> functionV2,
+                                          int populationSize) {
+        List<Long> ones = getOnes(individualMetrics);
+        List<Double> phenotypes = getPhenotypes(individualMetrics);
+        List<Double> fitnesses = getFitnesses(individualMetrics);
+        double minX = functionV2.getMinX().map(Number::doubleValue).orElseThrow();
+        double maxX = functionV2.getMaxX().map(Number::doubleValue).orElseThrow();
+        double minFitness = functionV2.getMinFitness().doubleValue();
+        double maxFitness = functionV2.getMaxFitness().doubleValue();
+
+        drawHistogram(ones, plotExportPath + "genotype/", filename, 0, functionV2.getChromosomeLength(), populationSize);
+        drawHistogramNoBins(phenotypes, plotExportPath + "phenotype/", filename, minX, maxX, populationSize);
+        drawHistogramNoBins(fitnesses, plotExportPath + "fitness/", filename, minFitness, maxFitness, populationSize);
+    }
+
+    private List<Long> getOnes(List<IndividualMetrics> individualMetrics) {
+        return individualMetrics.stream()
+                .map(IndividualMetrics::ones)
+                .toList();
+    }
+
+    private List<Double> getPhenotypes(List<IndividualMetrics> individualMetrics) {
+        return individualMetrics.stream()
+                .map(IndividualMetrics::phenotype)
+                .toList();
+    }
+
+    private List<Double> getFitnesses(List<IndividualMetrics> individualMetrics) {
+        return individualMetrics.stream()
+                .map(IndividualMetrics::fitness)
+                .toList();
     }
 
     private void createGenerationRows(Sheet sheet, int index,
@@ -958,5 +1014,68 @@ public class Exporter {
             row.createCell(i++).setCellValue(runPoolStats.avgMaxOptSavedNILoose());
             row.createCell(i++).setCellValue(runPoolStats.sigmaMaxOptSavedNILoose());
         }
+    }
+
+
+    private static List<Double> bins(double min, double max, double step) {
+        List<Double> res = new ArrayList<>();
+        for (double i = min - 1; i <= max + 1; i += step) {
+            res.add(i);
+        }
+        return res;
+    }
+
+    private void drawHistogram(List<? extends Number> x, String out, String filename, double minX, double maxX, double step, int populationSize) {
+        if (x == null)
+            return;
+
+        File theDir = new File(out);
+        if (!theDir.exists()) {
+            theDir.mkdirs();
+        }
+
+        try {
+            Plot plt = Plot.create();
+            plt.hist().add(x).orientation(HistBuilder.Orientation.vertical).bins(bins(minX, maxX, step));
+            plt.title(filename);
+            plt.ylim(0, populationSize);
+
+            double dist = (maxX - minX) / 10.0;
+            plt.xlim(minX - dist, maxX + dist);
+            plt.savefig(out + filename + ".png");
+
+            plt.executeSilently();
+        } catch (IOException | PythonExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void drawHistogramNoBins(List<? extends Number> x, String out, String filename, double minX, double maxX, int populationSize) {
+        if (x == null)
+            return;
+
+        File theDir = new File(out);
+        if (!theDir.exists()) {
+            theDir.mkdirs();
+        }
+
+        try {
+            Plot plt = Plot.create();
+            plt.hist().add(x).orientation(HistBuilder.Orientation.vertical);
+            plt.title(filename);
+            plt.ylim(0, populationSize);
+
+            double dist = (maxX - minX) / 10.0;
+            plt.xlim(minX - dist, maxX + dist);
+            plt.savefig(out + filename + ".png");
+
+            plt.executeSilently();
+        } catch (IOException | PythonExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void drawHistogram(List<? extends Number> x, String out, String filename, double minX, double maxX, int populationSize) {
+        drawHistogram(x, out, filename, minX, maxX, 1, populationSize);
     }
 }

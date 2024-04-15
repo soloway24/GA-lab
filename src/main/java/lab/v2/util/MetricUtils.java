@@ -160,6 +160,12 @@ public class MetricUtils {
         return kendallsCorrelation.correlation(x, y);
     }
 
+    public static long getOnesCount(Individual individual) {
+        return individual.getBinaryCode().chars()
+                .filter(ch -> ch == '1')
+                .count();
+    }
+
     public static void main(String[] args) {
         double[] x = {12, 2, 1, 12, 2};
         double[] y = {1, 4, 7, 1, 0};

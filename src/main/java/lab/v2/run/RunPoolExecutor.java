@@ -2,8 +2,10 @@ package lab.v2.run;
 
 import lab.parameters.Encoding;
 import lab.v2.Individual;
+import lab.v2.export.Homogeneity;
 import lab.v2.function.FitnessFunctionV2;
 import lab.v2.identifier.ConvergenceIdentifier;
+import lab.v2.metric.IndividualMetrics;
 import lab.v2.operator.Operator;
 import lab.v2.population.Population;
 import lab.v2.selection.Selector;
@@ -20,7 +22,9 @@ import static java.lang.Math.max;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toUnmodifiableMap;
+import static lab.v2.encoding.DecoderV2.decodeV2;
 import static lab.v2.identifier.ConvergenceIdentifier.getEqualQuantity;
+import static lab.v2.identifier.ConvergenceIdentifier.isHomogenous;
 import static lab.v2.identifier.SuccessfulRunIdentifier.getBestIndividual;
 import static lab.v2.selection.SelectorType.SUS;
 import static lab.v2.util.CalculationUtils.*;
@@ -140,6 +144,9 @@ public class RunPoolExecutor {
         Map<Integer, Double> generationToOptimalRatio = new HashMap<>();
         Map<Integer, Double> generationToBestRatio = new HashMap<>();
 
+        Map<Integer, List<IndividualMetrics>> generationToIndMetrics = new HashMap<>();
+        Map<Homogeneity, List<IndividualMetrics>> homogeneityToIndMetrics = new HashMap<>();
+
         int maxIterations = getMaxIterations(function, selector);
 
         while (hasNotConverged(currentIndividuals, operator) && i < maxIterations) {
@@ -221,9 +228,21 @@ public class RunPoolExecutor {
 
                 currentKendall = computeKendallTauB(individualToFitness, parentPool);
                 iterationToKendall.put(i + 1, currentKendall);
+
+                if (i < 3 || (i + 1) % 10000 == 0) {
+                    List<IndividualMetrics> individualMetrics = buildAllIndividualMetrics(currentIndividuals, function);
+                    generationToIndMetrics.put(i + 1, individualMetrics);
+                }
+
+                List<Individual> finalCurrentIndividuals = currentIndividuals;
+                Arrays.stream(Homogeneity.values())
+                        .forEach(h -> {
+                            if (!homogeneityToIndMetrics.containsKey(h) && isHomogenous(finalCurrentIndividuals, h.getPercentage())) {
+                                homogeneityToIndMetrics.put(h, buildAllIndividualMetrics(finalCurrentIndividuals, function));
+                            }
+                        });
             }
 
-            // metrics only for FConstAll function
 
             previousBestF = maxF;
             previousBestQ = bestQ;
@@ -479,7 +498,21 @@ public class RunPoolExecutor {
                 .withFishes(getOrderedValuesPlus1(iterationToFish))
                 .withKendalls(getOrderedValuesPlus1(iterationToKendall))
 
+                .withGenerationToIndMetrics(generationToIndMetrics)
+                .withHomogeneityToIndMetrics(homogeneityToIndMetrics)
+
                 .build();
+    }
+
+    private List<IndividualMetrics> buildAllIndividualMetrics(List<Individual> individuals, FitnessFunctionV2<?, ?> function) {
+        return individuals.stream()
+                .map(individual -> buildIndividualMetrics(individual, function))
+                .toList();
+    }
+
+    private IndividualMetrics buildIndividualMetrics(Individual individual, FitnessFunctionV2<?, ?> function) {
+        return new IndividualMetrics(individual, getOnesCount(individual), decodeV2(individual, function).doubleValue(),
+                function.evaluate(individual).doubleValue());
     }
 
     private List<Double> getOrderedValues(Map<Integer, Double> iteratedValues) {

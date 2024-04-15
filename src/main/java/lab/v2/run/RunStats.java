@@ -1,6 +1,8 @@
 package lab.v2.run;
 
 import lab.v2.Individual;
+import lab.v2.export.Homogeneity;
+import lab.v2.metric.IndividualMetrics;
 import lombok.Builder;
 
 import java.util.List;
@@ -98,6 +100,8 @@ public record RunStats(Map<Individual, ? extends Number> finalPopulation,
                        List<Double> prs,
                        List<Double> grs,
                        List<Double> fishes,
-                       List<Double> kendalls
+                       List<Double> kendalls,
+                       Map<Integer, List<IndividualMetrics>> generationToIndMetrics,
+                       Map<Homogeneity, List<IndividualMetrics>> homogeneityToIndMetrics
 ) {
 }
