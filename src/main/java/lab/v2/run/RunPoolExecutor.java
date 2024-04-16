@@ -228,21 +228,9 @@ public class RunPoolExecutor {
 
                 currentKendall = computeKendallTauB(individualToFitness, parentPool);
                 iterationToKendall.put(i + 1, currentKendall);
-
-                if (i < 3 || (i + 1) % 10000 == 0) {
-                    List<IndividualMetrics> individualMetrics = buildAllIndividualMetrics(currentIndividuals, function);
-                    generationToIndMetrics.put(i + 1, individualMetrics);
-                }
-
-                List<Individual> finalCurrentIndividuals = currentIndividuals;
-                Arrays.stream(Homogeneity.values())
-                        .forEach(h -> {
-                            if (!homogeneityToIndMetrics.containsKey(h) && isHomogenous(finalCurrentIndividuals, h.getPercentage())) {
-                                homogeneityToIndMetrics.put(h, buildAllIndividualMetrics(finalCurrentIndividuals, function));
-                            }
-                        });
             }
 
+            populateHistogramData(function, currentIndividuals, i, generationToIndMetrics, homogeneityToIndMetrics);
 
             previousBestF = maxF;
             previousBestQ = bestQ;
@@ -305,6 +293,9 @@ public class RunPoolExecutor {
 
         double prFin = fFound / fAvg;
         generationToPr.put(ni, prFin);
+
+        List<IndividualMetrics> individualMetrics = buildAllIndividualMetrics(currentIndividuals, function);
+        generationToIndMetrics.put(ni, individualMetrics);
 
         double sStart = 0;
         double sFin = 0;
@@ -504,6 +495,20 @@ public class RunPoolExecutor {
                 .build();
     }
 
+    private void populateHistogramData(FitnessFunctionV2<?, ? extends Number> function, List<Individual> currentIndividuals, int i, Map<Integer, List<IndividualMetrics>> generationToIndMetrics, Map<Homogeneity, List<IndividualMetrics>> homogeneityToIndMetrics) {
+        if (i < 3 || (i + 1) % 10000 == 0) {
+            List<IndividualMetrics> individualMetrics = buildAllIndividualMetrics(currentIndividuals, function);
+            generationToIndMetrics.put(i + 1, individualMetrics);
+        }
+
+        Arrays.stream(Homogeneity.values())
+                .forEach(h -> {
+                    if (!homogeneityToIndMetrics.containsKey(h) && isHomogenous(currentIndividuals, h.getPercentage())) {
+                        homogeneityToIndMetrics.put(h, buildAllIndividualMetrics(currentIndividuals, function));
+                    }
+                });
+    }
+
     private List<IndividualMetrics> buildAllIndividualMetrics(List<Individual> individuals, FitnessFunctionV2<?, ?> function) {
         return individuals.stream()
                 .map(individual -> buildIndividualMetrics(individual, function))
@@ -511,7 +516,9 @@ public class RunPoolExecutor {
     }
 
     private IndividualMetrics buildIndividualMetrics(Individual individual, FitnessFunctionV2<?, ?> function) {
-        return new IndividualMetrics(individual, getOnesCount(individual), decodeV2(individual, function).doubleValue(),
+        return function.isConstant()
+                ? new IndividualMetrics(individual, getOnesCount(individual), null, null)
+                : new IndividualMetrics(individual, getOnesCount(individual), decodeV2(individual, function).doubleValue(),
                 function.evaluate(individual).doubleValue());
     }
 

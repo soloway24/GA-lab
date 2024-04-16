@@ -188,19 +188,32 @@ public class Exporter {
     private void drawGenerationHistograms(List<IndividualMetrics> individualMetrics,
                                           String plotExportPath,
                                           String filename,
-                                          FitnessFunctionV2<?, ?> functionV2,
+                                          FitnessFunctionV2<?, ?> function,
                                           int populationSize) {
         List<Long> ones = getOnes(individualMetrics);
-        List<Double> phenotypes = getPhenotypes(individualMetrics);
-        List<Double> fitnesses = getFitnesses(individualMetrics);
-        double minX = functionV2.getMinX().map(Number::doubleValue).orElseThrow();
-        double maxX = functionV2.getMaxX().map(Number::doubleValue).orElseThrow();
-        double minFitness = functionV2.getMinFitness().doubleValue();
-        double maxFitness = functionV2.getMaxFitness().doubleValue();
+        drawHistogram(ones, plotExportPath + "genotype/", filename, 0, function.getChromosomeLength(), populationSize);
+        if (!function.isConstant()) {
+            List<Double> phenotypes = getPhenotypes(individualMetrics);
+            List<Double> fitnesses = getFitnesses(individualMetrics);
+            double minX = function.getMinX().map(Number::doubleValue).orElseThrow();
+            double maxX = function.getMaxX().map(Number::doubleValue).orElseThrow();
+            double minFitness = function.getMinFitness().doubleValue();
+            double maxFitness = function.getMaxFitness().doubleValue();
 
-        drawHistogram(ones, plotExportPath + "genotype/", filename, 0, functionV2.getChromosomeLength(), populationSize);
-        drawHistogramNoBins(phenotypes, plotExportPath + "phenotype/", filename, minX, maxX, populationSize);
-        drawHistogramNoBins(fitnesses, plotExportPath + "fitness/", filename, minFitness, maxFitness, populationSize);
+            long distinctPh = phenotypes.stream().distinct().count();
+            if (distinctPh == 1) {
+                drawHistogram(phenotypes, plotExportPath + "phenotype/", filename, minX, maxX, populationSize);
+            } else {
+                drawHistogramNoBins(phenotypes, plotExportPath + "phenotype/", filename, minX, maxX, populationSize);
+            }
+
+            long distinctF = fitnesses.stream().distinct().count();
+            if (distinctF == 1) {
+                drawHistogram(fitnesses, plotExportPath + "fitness/", filename, minFitness, maxFitness, populationSize);
+            } else {
+                drawHistogramNoBins(fitnesses, plotExportPath + "fitness/", filename, minFitness, maxFitness, populationSize);
+            }
+        }
     }
 
     private List<Long> getOnes(List<IndividualMetrics> individualMetrics) {
