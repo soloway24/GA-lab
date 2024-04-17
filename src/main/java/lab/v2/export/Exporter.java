@@ -8,6 +8,7 @@ import lab.v2.metric.IndividualMetrics;
 import lab.v2.run.RunConfiguration;
 import lab.v2.run.RunPoolStats;
 import lab.v2.run.RunStats;
+import org.apache.commons.math3.util.Pair;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -22,9 +23,15 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 import static java.lang.String.valueOf;
+import static java.util.Map.Entry.comparingByKey;
+import static java.util.Optional.ofNullable;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.*;
+import static lab.v2.export.Homogeneity.*;
 
 public class Exporter {
 
@@ -183,6 +190,45 @@ public class Exporter {
         Map<Homogeneity, List<IndividualMetrics>> homogeneityToIndMetrics = runStats.homogeneityToIndMetrics();
         homogeneityToIndMetrics.forEach((h, individualMetrics) ->
                 drawGenerationHistograms(individualMetrics, plotExportPath, "homo-" + h.getPercentage(), function, populationSize));
+
+        exportHistogramTable(plotExportPath, generationToIndMetrics, homogeneityToIndMetrics, function.isConstant());
+    }
+
+    private void exportHistogramTable(String plotExportPath,
+                                      Map<Integer, List<IndividualMetrics>> generationToIndMetrics,
+                                      Map<Homogeneity, List<IndividualMetrics>> homogeneityToIndMetrics,
+                                      boolean isConst) {
+
+        generationToIndMetrics.entrySet().stream()
+                .max(comparingByKey())
+                .ifPresent(entry -> exportSingleHistogramData(plotExportPath, valueOf(entry.getKey()), entry.getValue(), isConst));
+
+        List<Homogeneity> exportedHomogeneities = List.of(NINETY, NINETY_FIVE, NINETY_NINE);
+        exportedHomogeneities.stream()
+                .map(h -> Pair.create(h, homogeneityToIndMetrics.get(h)))
+                .filter(pair -> pair.getValue() != null)
+                .forEach(pair ->
+                        exportSingleHistogramData(
+                                plotExportPath,
+                                "homo-" + pair.getKey().getPercentage(),
+                                pair.getValue(),
+                                isConst)
+                );
+    }
+
+    private void exportSingleHistogramData(String plotExportPath, String fileName, List<IndividualMetrics> individualMetrics, boolean isConst) {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Histogram data");
+        String tablePath = plotExportPath + "hist_data/" + fileName + ".xlsx";
+
+        if (isConst) {
+            createHistogramDataHeaderConst(sheet);
+        } else {
+            createHistogramDataHeader(sheet);
+        }
+        createHistogramDataRow(sheet, 1, individualMetrics);
+
+        saveWorkbook(workbook, tablePath);
     }
 
     private void drawGenerationHistograms(List<IndividualMetrics> individualMetrics,
@@ -334,7 +380,7 @@ public class Exporter {
     private void drawPlot(List<? extends Number> x, List<? extends Number> y, String out, String filename) {
         try {
             Plot plot = getPlot(x, y, out, filename);
-            plot.savefig(out + filename + ".png").dpi(300);
+            plot.savefig(out + filename + ".png");
             plot.executeSilently();
         } catch (IOException | PythonExecutionException e) {
             e.printStackTrace();
@@ -347,7 +393,7 @@ public class Exporter {
         try {
             Plot plot = getPlot(x, y, out, filename);
             plot.ylim(minY, maxY);
-            plot.savefig(out + filename + ".png").dpi(300);
+            plot.savefig(out + filename + ".png");
             plot.executeSilently();
         } catch (IOException | PythonExecutionException e) {
             e.printStackTrace();
@@ -382,7 +428,7 @@ public class Exporter {
             plt.legend().loc("center right");
             plt.ylim(minY, maxY);
             plt.title(filename);
-            plt.savefig(out + filename + ".png").dpi(300);
+            plt.savefig(out + filename + ".png");
             plt.executeSilently();
         } catch (IOException | PythonExecutionException e) {
             e.printStackTrace();
@@ -403,7 +449,7 @@ public class Exporter {
             plt.plot().add(x, y1).color("blue").label(secondLabel);
             plt.legend().loc("center right");
             plt.title(filename);
-            plt.savefig(out + filename + ".png").dpi(300);
+            plt.savefig(out + filename + ".png");
             plt.executeSilently();
         } catch (IOException | PythonExecutionException e) {
             e.printStackTrace();
@@ -463,6 +509,51 @@ public class Exporter {
             createRunPoolHeaderRow(sheet, 0);
             workbook.write(outputStream);
         }
+    }
+
+    private void createHistogramDataHeader(Sheet sheet) {
+        Row row = sheet.createRow(0);
+        int i = 0;
+
+        row.createCell(i++).setCellValue("Genotype");
+        row.createCell(i++).setCellValue("Ones");
+        row.createCell(i++).setCellValue("Phenotype");
+        row.createCell(i++).setCellValue("Fitness");
+        row.createCell(i++).setCellValue("Count");
+    }
+
+    private void createHistogramDataHeaderConst(Sheet sheet) {
+        Row row = sheet.createRow(0);
+        int i = 0;
+
+        row.createCell(i++).setCellValue("Genotype");
+        row.createCell(i++).setCellValue("Ones");
+        row.createCell(i++).setCellValue("Count");
+    }
+
+    private void createHistogramDataRow(Sheet sheet, int index, List<IndividualMetrics> individualMetrics) {
+        AtomicInteger rowIndex = new AtomicInteger(index);
+
+        Map<String, Pair<IndividualMetrics, Long>> genotypeToMetrics = individualMetrics.stream()
+                .collect(groupingBy(identity(), counting()))
+                .entrySet()
+                .stream()
+                .collect(toUnmodifiableMap(entry -> entry.getKey().individual().getBinaryCode(), entry -> Pair.create(entry.getKey(), entry.getValue()),
+                        (a, b) -> Pair.create(a.getFirst(), a.getSecond() + b.getSecond())));
+
+        genotypeToMetrics.forEach((key, value) -> {
+            Row row = sheet.createRow(rowIndex.getAndIncrement());
+            AtomicInteger i = new AtomicInteger();
+            row.createCell(i.getAndIncrement()).setCellValue(key);
+            row.createCell(i.getAndIncrement()).setCellValue(value.getFirst().ones());
+
+            ofNullable(value.getFirst().phenotype())
+                    .ifPresent(ph -> row.createCell(i.getAndIncrement()).setCellValue(ph));
+            ofNullable(value.getFirst().fitness())
+                    .ifPresent(f -> row.createCell(i.getAndIncrement()).setCellValue(f));
+
+            row.createCell(i.getAndIncrement()).setCellValue(value.getSecond());
+        });
     }
 
     private void createPlotsGenerationDataHeader(Sheet sheet) {

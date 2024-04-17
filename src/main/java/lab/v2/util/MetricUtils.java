@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.IntStream;
 
+import static java.lang.Double.isNaN;
 import static java.util.Map.entry;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.*;
@@ -157,7 +158,10 @@ public class MetricUtils {
 
     public static double computeKendallTauB(double[] x, double[] y) {
         KendallsCorrelation kendallsCorrelation = new KendallsCorrelation();
-        return kendallsCorrelation.correlation(x, y);
+        double kendall = kendallsCorrelation.correlation(x, y);
+        return isNaN(kendall)
+                ? 0
+                : kendall;
     }
 
     public static long getOnesCount(Individual individual) {

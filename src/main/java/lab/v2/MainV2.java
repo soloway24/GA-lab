@@ -146,18 +146,18 @@ public class MainV2 {
                 new DynamicPowerScalingSusSelector(dynamicPowerScalingSelector0p8to1p2, susSelector);
 
         return List.of(
-                rwsSelector
+//                rwsSelector
 //                ,
-//                susSelector
-//                ,
+                susSelector
+                ,
 //                powerScalingRwsSelector,
 //                powerScalingRwsSelector2,
-//                powerScalingSusSelector,
-//                powerScalingSusSelector2,
+                powerScalingSusSelector,
+                powerScalingSusSelector2,
 //                dynamicPowerScalingRwsSelector0p9to1p1,
 //                dynamicPowerScalingRwsSelector0p8to1p2,
-//                dynamicPowerScalingSusSelector0p9to1p1,
-//                dynamicPowerScalingSusSelector0p8to1p2
+                dynamicPowerScalingSusSelector0p9to1p1,
+                dynamicPowerScalingSusSelector0p8to1p2
         );
     }
 
