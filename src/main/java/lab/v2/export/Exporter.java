@@ -125,7 +125,7 @@ public class Exporter {
 
             List<Integer> xIterations = IntStream.rangeClosed(1, runStats.ni())
                     .boxed().toList();
-            List<Integer> xGenerations = IntStream.rangeClosed(1, runStats.ni() + 1)
+            List<Integer> xGenerations = IntStream.rangeClosed(0, runStats.ni())
                     .boxed().toList();
 
             List<Double> rrs = runStats.rrs();

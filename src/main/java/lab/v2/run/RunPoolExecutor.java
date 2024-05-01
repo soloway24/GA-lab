@@ -364,7 +364,7 @@ public class RunPoolExecutor {
                     : 0;
             iterationToGr.put(ni, currentGr);
             grStart = iterationToGr.get(1);
-            grEarly = iterationToGr.get(3);
+            grEarly = iterationToGr.get(2);
             grAvg = getAverage(iterationToGr.values());
 
             Map.Entry<Integer, ? extends Number> minGenerationPr = getMinIteratedValue(generationToPr);
