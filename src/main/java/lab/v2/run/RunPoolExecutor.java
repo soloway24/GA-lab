@@ -518,7 +518,8 @@ public class RunPoolExecutor {
     private IndividualMetrics buildIndividualMetrics(Individual individual, FitnessFunctionV2<?, ?> function) {
         return function.isConstant()
                 ? new IndividualMetrics(individual, getOnesCount(individual), null, null)
-                : new IndividualMetrics(individual, getOnesCount(individual), decodeV2(individual, function).doubleValue(),
+                : new IndividualMetrics(individual, getOnesCount(individual),
+                function.supportsDecoding() ? decodeV2(individual, function).doubleValue() : null,
                 function.evaluate(individual).doubleValue());
     }
 

@@ -170,6 +170,12 @@ public class MetricUtils {
                 .count();
     }
 
+    public static long getZeroCount(Individual individual) {
+        return individual.getBinaryCode().chars()
+                .filter(ch -> ch == '0')
+                .count();
+    }
+
     public static void main(String[] args) {
         double[] x = {12, 2, 1, 12, 2};
         double[] y = {1, 4, 7, 1, 0};

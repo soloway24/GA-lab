@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
@@ -191,17 +192,18 @@ public class Exporter {
         homogeneityToIndMetrics.forEach((h, individualMetrics) ->
                 drawGenerationHistograms(individualMetrics, plotExportPath, "homo-" + h.getPercentage(), function, populationSize));
 
-        exportHistogramTable(plotExportPath, generationToIndMetrics, homogeneityToIndMetrics, function.isConstant());
+        exportHistogramTable(plotExportPath, generationToIndMetrics, homogeneityToIndMetrics, function.isConstant(), function.supportsDecoding());
     }
 
     private void exportHistogramTable(String plotExportPath,
                                       Map<Integer, List<IndividualMetrics>> generationToIndMetrics,
                                       Map<Homogeneity, List<IndividualMetrics>> homogeneityToIndMetrics,
-                                      boolean isConst) {
+                                      boolean isConst,
+                                      boolean supportsDecoding) {
 
         generationToIndMetrics.entrySet().stream()
                 .max(comparingByKey())
-                .ifPresent(entry -> exportSingleHistogramData(plotExportPath, valueOf(entry.getKey()), entry.getValue(), isConst));
+                .ifPresent(entry -> exportSingleHistogramData(plotExportPath, valueOf(entry.getKey()), entry.getValue(), isConst, supportsDecoding));
 
         List<Homogeneity> exportedHomogeneities = List.of(NINETY, NINETY_FIVE, NINETY_NINE);
         exportedHomogeneities.stream()
@@ -212,11 +214,13 @@ public class Exporter {
                                 plotExportPath,
                                 "homo-" + pair.getKey().getPercentage(),
                                 pair.getValue(),
-                                isConst)
+                                isConst,
+                                supportsDecoding)
                 );
     }
 
-    private void exportSingleHistogramData(String plotExportPath, String fileName, List<IndividualMetrics> individualMetrics, boolean isConst) {
+    private void exportSingleHistogramData(String plotExportPath, String fileName, List<IndividualMetrics> individualMetrics,
+                                           boolean isConst, boolean supportsDecoding) {
         XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Histogram data");
         String tablePath = plotExportPath + "hist_data/" + fileName + ".xlsx";
@@ -224,7 +228,7 @@ public class Exporter {
         if (isConst) {
             createHistogramDataHeaderConst(sheet);
         } else {
-            createHistogramDataHeader(sheet);
+            createHistogramDataHeader(sheet, supportsDecoding);
         }
         createHistogramDataRow(sheet, 1, individualMetrics);
 
@@ -241,17 +245,24 @@ public class Exporter {
         if (!function.isConstant()) {
             List<Double> phenotypes = getPhenotypes(individualMetrics);
             List<Double> fitnesses = getFitnesses(individualMetrics);
-            double minX = function.getMinX().map(Number::doubleValue).orElseThrow();
-            double maxX = function.getMaxX().map(Number::doubleValue).orElseThrow();
+
+            Optional<Double> minXOpt = function.getMinX().map(Number::doubleValue);
+            Optional<Double> maxXOpt = function.getMaxX().map(Number::doubleValue);
+
+            if (minXOpt.isPresent() && maxXOpt.isPresent()) {
+                double minX = minXOpt.get();
+                double maxX = maxXOpt.get();
+
+                long distinctPh = phenotypes.stream().distinct().count();
+                if (distinctPh == 1) {
+                    drawHistogram(phenotypes, plotExportPath + "phenotype/", filename, minX, maxX, populationSize);
+                } else {
+                    drawHistogramNoBins(phenotypes, plotExportPath + "phenotype/", filename, minX, maxX, populationSize);
+                }
+            }
+
             double minFitness = function.getMinFitness().doubleValue();
             double maxFitness = function.getMaxFitness().doubleValue();
-
-            long distinctPh = phenotypes.stream().distinct().count();
-            if (distinctPh == 1) {
-                drawHistogram(phenotypes, plotExportPath + "phenotype/", filename, minX, maxX, populationSize);
-            } else {
-                drawHistogramNoBins(phenotypes, plotExportPath + "phenotype/", filename, minX, maxX, populationSize);
-            }
 
             long distinctF = fitnesses.stream().distinct().count();
             if (distinctF == 1) {
@@ -511,13 +522,15 @@ public class Exporter {
         }
     }
 
-    private void createHistogramDataHeader(Sheet sheet) {
+    private void createHistogramDataHeader(Sheet sheet, boolean supportsDecoding) {
         Row row = sheet.createRow(0);
         int i = 0;
 
         row.createCell(i++).setCellValue("Genotype");
         row.createCell(i++).setCellValue("Ones");
-        row.createCell(i++).setCellValue("Phenotype");
+        if (supportsDecoding) {
+            row.createCell(i++).setCellValue("Phenotype");
+        }
         row.createCell(i++).setCellValue("Fitness");
         row.createCell(i++).setCellValue("Count");
     }

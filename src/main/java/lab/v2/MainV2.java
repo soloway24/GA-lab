@@ -4,6 +4,7 @@ import lab.v2.convertor.FitnessToProbabilityConvertor;
 import lab.v2.convertor.ProbabilityToExpectedQuantityConvertor;
 import lab.v2.export.Exporter;
 import lab.v2.function.FConstAllFunction;
+import lab.v2.function.FhFunction;
 import lab.v2.function.FitnessFunctionV2;
 import lab.v2.function.PowerFunction;
 import lab.v2.identifier.ConvergenceIdentifier;
@@ -112,9 +113,11 @@ public class MainV2 {
 
     private List<FitnessFunctionV2<?, ?>> getFunctions() {
         FitnessFunctionV2<?, ?> constAllFunction = FConstAllFunction.getInstance();
+        FitnessFunctionV2<?, ?> fhFunction = FhFunction.getInstance();
         FitnessFunctionV2<?, ?> quadraticFunction = new PowerFunction(10, 0, 10.23, 2, 2);
 
-        return List.of(constAllFunction);
+//        return List.of(constAllFunction);
+        return List.of(fhFunction);
 //        return List.of(quadraticFunction);
 //        return List.of(constAllFunction, quadraticFunction);
     }

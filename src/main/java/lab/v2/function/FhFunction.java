@@ -12,35 +12,37 @@ import java.util.Optional;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static lab.parameters.Encoding.STANDARD;
+import static lab.v2.identifier.ConvergenceIdentifier.areAllEqualTo;
 import static lab.v2.identifier.ConvergenceIdentifier.areTheSameWithPercentage;
 import static lab.v2.operator.OperatorType.NONE;
-import static lab.v2.population.PopulationType.RANDOM;
+import static lab.v2.population.PopulationType.*;
+import static lab.v2.util.MetricUtils.getZeroCount;
 
-public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
+public class FhFunction implements FitnessFunctionV2<Number, Long> {
 
     private static final double SAME_PERCENTAGE = 0.9;
-    private static final Individual OPTIMAL_STANDARD_INDIVIDUAL = new Individual("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", STANDARD);
+    private static final Individual OPTIMAL_INDIVIDUAL = new Individual("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", STANDARD);
 
     private static final Map<Encoding, Individual> ENCODING_TO_OPTIMAL = Map.of(
-            STANDARD, OPTIMAL_STANDARD_INDIVIDUAL
+            STANDARD, OPTIMAL_INDIVIDUAL
     );
 
-    private static FConstAllFunction instance;
+    private static FhFunction instance;
 
-    private FConstAllFunction() {
+    private FhFunction() {
     }
 
-    public static FConstAllFunction getInstance() {
+    public static FhFunction getInstance() {
         return ofNullable(instance)
                 .orElseGet(() -> {
-                    instance = new FConstAllFunction();
+                    instance = new FhFunction();
                     return instance;
                 });
     }
 
     @Override
     public String getName() {
-        return "FconstALL";
+        return "FH";
     }
 
     @Override
@@ -54,13 +56,13 @@ public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
     }
 
     @Override
-    public Integer getMinFitness() {
-        return 100;
+    public Long getMinFitness() {
+        return 0L;
     }
 
     @Override
-    public Integer getMaxFitness() {
-        return 100;
+    public Long getMaxFitness() {
+        return 100L;
     }
 
     @Override
@@ -80,8 +82,8 @@ public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
     }
 
     @Override
-    public Integer evaluate(Individual individual) {
-        return 100;
+    public Long evaluate(Individual individual) {
+        return getZeroCount(individual);
     }
 
     @Override
@@ -91,13 +93,17 @@ public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
 
     @Override
     public List<PopulationType> getSupportedPopulationConfigurations(OperatorType operatorType) {
-        return List.of(RANDOM);
+        if (operatorType == NONE) {
+            return List.of(ONE_OPTIMAL, FIVE_PERCENT_OPTIMAL, TEN_PERCENT_OPTIMAL);
+        }
+
+        return List.of(ZERO_OPTIMAL, ONE_OPTIMAL, FIVE_PERCENT_OPTIMAL, TEN_PERCENT_OPTIMAL);
     }
 
     @Override
     public boolean isSuccessful(Map<Individual, ? extends Number> individualToFitness, OperatorType operatorType, boolean hasConverged) {
         if (operatorType == NONE) {
-            return hasConverged;
+            return hasConverged && areAllEqualTo(individualToFitness.keySet(), OPTIMAL_INDIVIDUAL);
         }
 
         return hasConverged && areTheSameWithPercentage(individualToFitness.keySet(), SAME_PERCENTAGE);
@@ -105,7 +111,7 @@ public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
 
     @Override
     public boolean isConstant() {
-        return true;
+        return false;
     }
 
     @Override

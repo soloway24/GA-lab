@@ -31,6 +31,9 @@ public interface FitnessFunctionV2<ARG_T extends Number, RES_T extends Number> {
     RES_T evaluate(Individual individual);
 
     Optional<ARG_T> convertToX(long decimalValue);
+    default boolean supportsDecoding() {
+        return true;
+    }
 
     List<PopulationType> getSupportedPopulationConfigurations(OperatorType operatorType);
 
