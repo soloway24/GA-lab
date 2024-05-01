@@ -573,7 +573,7 @@ public class Exporter {
         Row row = sheet.createRow(0);
         int i = 0;
 
-        row.createCell(i++).setCellValue("Generation #");
+        row.createCell(i++).setCellValue("Iteration #");
         row.createCell(i++).setCellValue("avgF");
         row.createCell(i++).setCellValue("maxF");
         row.createCell(i++).setCellValue("optimalRatio");
@@ -587,7 +587,7 @@ public class Exporter {
         Row row = sheet.createRow(0);
         int i = 0;
 
-        row.createCell(i++).setCellValue("Generation #");
+        row.createCell(i++).setCellValue("Iteration #");
         row.createCell(i++).setCellValue("unique_X");
     }
 
