@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.util.Optional.empty;
+
 public interface FitnessFunctionV2<ARG_T extends Number, RES_T extends Number> {
 
     String getName();
@@ -47,6 +49,10 @@ public interface FitnessFunctionV2<ARG_T extends Number, RES_T extends Number> {
 
     default boolean isConstant() {
         return false;
+    }
+
+    default Optional<Integer> getCustomRunPoolSize(SelectorType selectorType) {
+        return empty();
     }
 
 }

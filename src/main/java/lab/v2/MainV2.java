@@ -42,9 +42,8 @@ public class MainV2 {
         List<FitnessFunctionV2<?, ?>> functions = getFunctions();
         List<Selector> selectors = getSelectors();
         List<Operator> operators = getOperators();
-        int runPoolSize = getRunPoolSize();
         List<RunPoolConfiguration> runPoolConfigurations = getRunPoolConfigurations(functions, selectors, operators,
-                populationSizes, runPoolSize);
+                populationSizes);
         List<RunPool> runPools = getRunPools(runPoolConfigurations);
 
 
@@ -81,13 +80,17 @@ public class MainV2 {
             exporter.exportSingleRunPoolStats(stats);
         }));
 
+        executorService.shutdown();
+        executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        System.gc();
+        ExecutorService plotsExecutorService = new ForkJoinPool();
         System.out.println("EXPORTING SINGLE RUN POOL PLOTS -----------------");
-        runPoolStats.forEach(stats -> executorService.submit(() -> {
+        runPoolStats.forEach(stats -> plotsExecutorService.submit(() -> {
             exporter.exportPlots(stats.allRunStats(), stats.runConfiguration());
         }));
 
-        executorService.shutdown();
-        executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        plotsExecutorService.shutdown();
+        plotsExecutorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 
         System.out.println("EXPORTING ALL RUN POOLS -----------------");
         exporter.exportAllRunPools(runPoolStats);
@@ -149,20 +152,20 @@ public class MainV2 {
                 new DynamicPowerScalingSusSelector(dynamicPowerScalingSelector0p8to1p2, susSelector);
 
         return List.of(
-                rwsSelector
-                ,
+//                rwsSelector
+//                ,
                 susSelector
-                ,
-                powerScalingRwsSelector,
-                powerScalingRwsSelector2,
-                powerScalingSusSelector,
-                powerScalingSusSelector2,
-                dynamicPowerScalingRwsSelector0p9to1p1
-                ,
-                dynamicPowerScalingRwsSelector0p8to1p2
-                ,
-                dynamicPowerScalingSusSelector0p9to1p1,
-                dynamicPowerScalingSusSelector0p8to1p2
+//                ,
+//                powerScalingRwsSelector,
+//                powerScalingRwsSelector2,
+//                powerScalingSusSelector,
+//                powerScalingSusSelector2,
+//                dynamicPowerScalingRwsSelector0p9to1p1
+//                ,
+//                dynamicPowerScalingRwsSelector0p8to1p2
+//                ,
+//                dynamicPowerScalingSusSelector0p9to1p1,
+//                dynamicPowerScalingSusSelector0p8to1p2
         );
     }
 
@@ -172,16 +175,11 @@ public class MainV2 {
         return List.of(noneOperator);
     }
 
-    private int getRunPoolSize() {
-        return 100;
-    }
-
     private List<RunPoolConfiguration> getRunPoolConfigurations(List<FitnessFunctionV2<?, ?>> functions,
                                                                 List<Selector> selectors,
                                                                 List<Operator> operators,
-                                                                List<Integer> populationSizes,
-                                                                int runPoolSize) {
-        return runConfigurationFactory.createPoolConfigurations(functions, selectors, operators, populationSizes, runPoolSize);
+                                                                List<Integer> populationSizes) {
+        return runConfigurationFactory.createPoolConfigurations(functions, selectors, operators, populationSizes);
     }
 
     private List<RunPool> getRunPools(List<RunPoolConfiguration> runPoolConfigurations) {

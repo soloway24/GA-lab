@@ -83,7 +83,7 @@ class SuccessfulRunIdentifierTest {
     }
 
     private void initMocks() {
-        when(function.getMaxX()).thenReturn(of(MAX_X));
+        when(function.getOptimalX()).thenReturn(of(MAX_X));
         when(function.getMaxFitness()).thenReturn(MAX_FITNESS);
     }
 }

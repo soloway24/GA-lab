@@ -4,14 +4,14 @@ import lab.parameters.Encoding;
 import lab.v2.Individual;
 import lab.v2.operator.OperatorType;
 import lab.v2.population.PopulationType;
+import lab.v2.selection.SelectorType;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.Math.pow;
-import static java.util.Optional.of;
-import static java.util.Optional.ofNullable;
+import static java.util.Optional.*;
 import static lab.parameters.Encoding.GRAY;
 import static lab.parameters.Encoding.STANDARD;
 import static lab.utils.Constants.PRECISION_BASE;
@@ -19,6 +19,7 @@ import static lab.v2.encoding.DecoderV2.decodeV2;
 import static lab.v2.identifier.SuccessfulRunIdentifier.isSuccessfulRealFunction;
 import static lab.v2.operator.OperatorType.NONE;
 import static lab.v2.population.PopulationType.*;
+import static lab.v2.selection.SelectorType.SUS;
 import static lab.v2.validators.EncodingSpaceValidator.validateEncodingSpace;
 
 public class PowerFunction5_12 implements FitnessFunctionV2<Double, Double> {
@@ -27,7 +28,8 @@ public class PowerFunction5_12 implements FitnessFunctionV2<Double, Double> {
     private static final Individual OPTIMAL_GRAY_INDIVIDUAL = new Individual("1100000000", GRAY);
 
     private static final Map<Encoding, Individual> ENCODING_TO_OPTIMAL = Map.of(
-            STANDARD, OPTIMAL_STANDARD_INDIVIDUAL,
+            STANDARD, OPTIMAL_STANDARD_INDIVIDUAL
+            ,
             GRAY, OPTIMAL_GRAY_INDIVIDUAL
     );
 
@@ -64,7 +66,10 @@ public class PowerFunction5_12 implements FitnessFunctionV2<Double, Double> {
 
     @Override
     public List<Encoding> getSupportedEncodings() {
-        return List.of(STANDARD, GRAY);
+        return List.of(STANDARD
+                ,
+                GRAY
+        );
     }
 
     @Override
@@ -114,6 +119,7 @@ public class PowerFunction5_12 implements FitnessFunctionV2<Double, Double> {
     public List<PopulationType> getSupportedPopulationConfigurations(OperatorType operatorType) {
         if (operatorType == NONE) {
             return List.of(ONE_OPTIMAL, FIVE_PERCENT_OPTIMAL, TEN_PERCENT_OPTIMAL);
+//            return List.of(ONE_OPTIMAL);
         }
 
         return List.of(ZERO_OPTIMAL, ONE_OPTIMAL, FIVE_PERCENT_OPTIMAL, TEN_PERCENT_OPTIMAL);
@@ -122,5 +128,12 @@ public class PowerFunction5_12 implements FitnessFunctionV2<Double, Double> {
     @Override
     public boolean isSuccessful(Map<Individual, ? extends Number> individualToFitness, OperatorType operatorType, boolean hasConverged) {
         return isSuccessfulRealFunction(this, individualToFitness, hasConverged);
+    }
+
+    @Override
+    public Optional<Integer> getCustomRunPoolSize(SelectorType selectorType) {
+        return selectorType == SUS
+                ? of(10)
+                : empty();
     }
 }

@@ -150,6 +150,10 @@ public class RunPoolExecutor {
         int maxIterations = getMaxIterations(function, selector);
 
         while (hasNotConverged(currentIndividuals, operator) && i < maxIterations) {
+            if (i % 10000 == 0 && i > 0) {
+                System.out.println(i);
+            }
+
             individualToFitness = getIndividualToFitness(currentIndividuals, function);
             parentPool = selector.select(individualToFitness);
             offsprings = operator.apply(parentPool);

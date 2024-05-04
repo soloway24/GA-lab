@@ -1,5 +1,6 @@
 package lab.v2.run;
 
+import lab.v2.population.Population;
 import lab.v2.population.PopulationConfiguration;
 import lab.v2.population.PopulationPool;
 import lab.v2.population.PopulationPoolInitializer;
@@ -14,6 +15,7 @@ import static java.util.Optional.ofNullable;
 @RequiredArgsConstructor
 public class RunPoolCreator {
 
+    private static final int MAX_RUN_POOL_SIZE = 100;
     private final PopulationPoolInitializer populationPoolInitializer;
     private final Map<PopulationConfiguration, PopulationPool> populationConfigToPool = new HashMap<>();
 
@@ -31,8 +33,17 @@ public class RunPoolCreator {
 
     private PopulationPool getPopulationPool(RunPoolConfiguration runPoolConfiguration) {
         PopulationConfiguration populationConfiguration = convert(runPoolConfiguration.runConfiguration());
-        return ofNullable(populationConfigToPool.get(populationConfiguration))
-                .orElseGet(() -> addAndGetPopulationPool(populationConfiguration, runPoolConfiguration.runPoolSize()));
+        PopulationPool maxPopulationPool = ofNullable(populationConfigToPool.get(populationConfiguration))
+                .orElseGet(() -> addAndGetPopulationPool(populationConfiguration));
+        return getLimitedPopulationPool(runPoolConfiguration, maxPopulationPool);
+    }
+
+    private PopulationPool getLimitedPopulationPool(RunPoolConfiguration runPoolConfiguration, PopulationPool populationPool) {
+        List<Population> populations = populationPool.populations()
+                .stream()
+                .limit(runPoolConfiguration.runPoolSize())
+                .toList();
+        return new PopulationPool(populationPool.populationConfiguration(), populations);
     }
 
     private PopulationConfiguration convert(RunConfiguration runConfiguration) {
@@ -40,8 +51,8 @@ public class RunPoolCreator {
                 runConfiguration.encoding(), runConfiguration.populationSize());
     }
 
-    private PopulationPool addAndGetPopulationPool(PopulationConfiguration populationConfiguration, int runPoolSize) {
-        PopulationPool populationPool = populationPoolInitializer.initializePopulationPool(populationConfiguration, runPoolSize);
+    private PopulationPool addAndGetPopulationPool(PopulationConfiguration populationConfiguration) {
+        PopulationPool populationPool = populationPoolInitializer.initializePopulationPool(populationConfiguration, MAX_RUN_POOL_SIZE);
         populationConfigToPool.put(populationConfiguration, populationPool);
         return populationPool;
     }

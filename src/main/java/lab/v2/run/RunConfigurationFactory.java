@@ -31,13 +31,17 @@ public class RunConfigurationFactory {
     public List<RunPoolConfiguration> createPoolConfigurations(List<FitnessFunctionV2<?, ?>> functions,
                                                                List<Selector> selectors,
                                                                List<Operator> operators,
-                                                               List<Integer> populationSizes,
-                                                               int runPoolSize) {
+                                                               List<Integer> populationSizes) {
         List<RunConfiguration> runConfigurations = createAll(functions, selectors, operators, populationSizes);
 
         return runConfigurations.stream()
-                .map(runConfig -> new RunPoolConfiguration(runConfig, runPoolSize))
+                .map(runConfig -> new RunPoolConfiguration(runConfig, getRunPoolSize(runConfig)))
                 .toList();
+    }
+
+    private int getRunPoolSize(RunConfiguration runConfiguration) {
+        return runConfiguration.function().getCustomRunPoolSize(runConfiguration.selector().getSelectorType())
+                .orElse(100);
     }
 
     public List<RunConfiguration> createAll(List<FitnessFunctionV2<?, ?>> functions,
