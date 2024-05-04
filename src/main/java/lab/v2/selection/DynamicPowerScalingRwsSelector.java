@@ -30,7 +30,7 @@ public class DynamicPowerScalingRwsSelector implements Selector {
     public String getFullName() {
         return "DPS RWS "
                 + dynamicPowerScalingSelector.getStartPower()
-                + " -> "
+                + " - "
                 + dynamicPowerScalingSelector.getEndPower();
     }
 

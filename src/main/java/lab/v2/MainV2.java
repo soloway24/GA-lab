@@ -117,11 +117,17 @@ public class MainV2 {
         FitnessFunctionV2<?, ?> quadraticFunction = new PowerFunction(10, 0, 10.23, 2, 2);
         FitnessFunctionV2<?, ?> quadratic512Function = new PowerFunction5_12(10, -5.12, 5.11, 2,
                 5.12, 2, 2);
+        FitnessFunctionV2<?, ?> exponent025 = new ExponentialFunction(10, 0, 10.23, 2, 0.25);
+        FitnessFunctionV2<?, ?> exponent1 = new ExponentialFunction(10, 0, 10.23, 2, 1);
+        FitnessFunctionV2<?, ?> exponent2 = new ExponentialFunction(10, 0, 10.23, 2, 2);
 
 //        return List.of(constAllFunction);
 //        return List.of(fhFunction);
 //        return List.of(quadraticFunction);
-        return List.of(quadratic512Function);
+//        return List.of(quadratic512Function);
+//        return List.of(exponent025);
+//        return List.of(exponent1);
+        return List.of(exponent2);
 //        return List.of(constAllFunction, quadraticFunction);
     }
 
@@ -152,17 +158,17 @@ public class MainV2 {
                 new DynamicPowerScalingSusSelector(dynamicPowerScalingSelector0p8to1p2, susSelector);
 
         return List.of(
-//                rwsSelector
+                rwsSelector
+                ,
+//                susSelector
 //                ,
-                susSelector
-//                ,
-//                powerScalingRwsSelector,
-//                powerScalingRwsSelector2,
+                powerScalingRwsSelector,
+                powerScalingRwsSelector2,
 //                powerScalingSusSelector,
 //                powerScalingSusSelector2,
-//                dynamicPowerScalingRwsSelector0p9to1p1
-//                ,
-//                dynamicPowerScalingRwsSelector0p8to1p2
+                dynamicPowerScalingRwsSelector0p9to1p1
+                ,
+                dynamicPowerScalingRwsSelector0p8to1p2
 //                ,
 //                dynamicPowerScalingSusSelector0p9to1p1,
 //                dynamicPowerScalingSusSelector0p8to1p2

@@ -30,7 +30,7 @@ public class DynamicPowerScalingSusSelector implements Selector {
     public String getFullName() {
         return "DPS SUS "
                 + dynamicPowerScalingSelector.getStartPower()
-                + " -> "
+                + " - "
                 + dynamicPowerScalingSelector.getEndPower();
     }
 
