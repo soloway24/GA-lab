@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import static java.lang.String.valueOf;
 import static lab.v2.selection.SelectorType.RWS;
 
 @RequiredArgsConstructor
@@ -21,10 +23,26 @@ public class DynamicPowerScalingRwsSelector implements Selector {
 
     @Override
     public String getName() {
+        return "DPS RWS";
+    }
+
+    @Override
+    public String getFullName() {
         return "DPS RWS "
                 + dynamicPowerScalingSelector.getStartPower()
                 + " -> "
                 + dynamicPowerScalingSelector.getEndPower();
+    }
+
+    @Override
+    public Optional<String> getParam1() {
+        return Optional.of(valueOf(dynamicPowerScalingSelector.getStartPower()));
+
+    }
+
+    @Override
+    public Optional<String> getParam2() {
+        return Optional.of(valueOf(dynamicPowerScalingSelector.getEndPower()));
     }
 
     @Override

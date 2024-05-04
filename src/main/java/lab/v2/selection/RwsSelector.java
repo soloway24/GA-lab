@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -27,6 +28,21 @@ public class RwsSelector implements Selector {
     @Override
     public String getName() {
         return "RWS";
+    }
+
+    @Override
+    public String getFullName() {
+        return "RWS";
+    }
+
+    @Override
+    public Optional<String> getParam1() {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<String> getParam2() {
+        return Optional.empty();
     }
 
     @Override

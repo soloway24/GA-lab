@@ -117,8 +117,8 @@ public class MainV2 {
         FitnessFunctionV2<?, ?> quadraticFunction = new PowerFunction(10, 0, 10.23, 2, 2);
 
 //        return List.of(constAllFunction);
-        return List.of(fhFunction);
-//        return List.of(quadraticFunction);
+//        return List.of(fhFunction);
+        return List.of(quadraticFunction);
 //        return List.of(constAllFunction, quadraticFunction);
     }
 
@@ -149,18 +149,20 @@ public class MainV2 {
                 new DynamicPowerScalingSusSelector(dynamicPowerScalingSelector0p8to1p2, susSelector);
 
         return List.of(
-//                rwsSelector
-//                ,
-                susSelector
+                rwsSelector
                 ,
-//                powerScalingRwsSelector,
+//                susSelector
+//                ,
+                powerScalingRwsSelector,
 //                powerScalingRwsSelector2,
-                powerScalingSusSelector,
-                powerScalingSusSelector2,
-//                dynamicPowerScalingRwsSelector0p9to1p1,
-//                dynamicPowerScalingRwsSelector0p8to1p2,
-                dynamicPowerScalingSusSelector0p9to1p1,
-                dynamicPowerScalingSusSelector0p8to1p2
+//                powerScalingSusSelector,
+//                powerScalingSusSelector2,
+                dynamicPowerScalingRwsSelector0p9to1p1
+//                ,
+//                dynamicPowerScalingRwsSelector0p8to1p2
+//                ,
+//                dynamicPowerScalingSusSelector0p9to1p1,
+//                dynamicPowerScalingSusSelector0p8to1p2
         );
     }
 

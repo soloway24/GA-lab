@@ -33,6 +33,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 import static lab.v2.export.Homogeneity.*;
+import static lab.v2.operator.OperatorType.NONE;
 
 public class Exporter {
 
@@ -50,7 +51,7 @@ public class Exporter {
 
     private String getFileName(RunConfiguration runConfiguration) {
         String functionName = runConfiguration.function().getName();
-        String selectorName = runConfiguration.selector().getName();
+        String selectorName = runConfiguration.selector().getFullName();
         String operatorName = runConfiguration.operator().getName();
         String populationType = runConfiguration.populationType().name();
         String encoding = runConfiguration.encoding().name();
@@ -115,7 +116,9 @@ public class Exporter {
             theDir1.mkdirs();
         }
 
-        for (int i = 0; i < 5 && i < allRunStats.size(); i++) {
+        int exportRunQ = getExportRunQ(runConfiguration);
+
+        for (int i = 0; i < exportRunQ && i < allRunStats.size(); i++) {
             RunStats runStats = allRunStats.get(i);
 
             String plotExportPath = plotExportDir + (i + 1) + "/";
@@ -181,6 +184,17 @@ public class Exporter {
 
             saveWorkbook(workbook, tablePath);
         }
+    }
+
+    private int getExportRunQ(RunConfiguration runConfiguration) {
+        if (runConfiguration.operator().getOperatorType() == NONE) {
+            return runConfiguration.populationSize() == 100
+                    ? 4
+                    : 2;
+        }
+        return runConfiguration.populationSize() == 100
+                ? 2
+                : 0;
     }
 
     private void drawHistograms(RunStats runStats, String plotExportPath, FitnessFunctionV2<?, ? extends Number> function, int populationSize) {
@@ -374,7 +388,7 @@ public class Exporter {
 
     private String getPlotFilepath(RunConfiguration runConfiguration) {
         String functionName = runConfiguration.function().getName();
-        String selectorName = runConfiguration.selector().getName();
+        String selectorName = runConfiguration.selector().getFullName();
         String operatorName = runConfiguration.operator().getName();
         String populationType = runConfiguration.populationType().name();
         String encoding = runConfiguration.encoding().name();
@@ -779,6 +793,8 @@ public class Exporter {
         row.createCell(i++).setCellValue("N");
         row.createCell(i++).setCellValue("Function");
         row.createCell(i++).setCellValue("Selector");
+        row.createCell(i++).setCellValue("Param 1");
+        row.createCell(i++).setCellValue("Param 2");
         row.createCell(i++).setCellValue("Operator");
         row.createCell(i++).setCellValue("Population Type");
         row.createCell(i++).setCellValue("Encoding");
@@ -956,10 +972,23 @@ public class Exporter {
 
         RunConfiguration runConfiguration = runPoolStats.runConfiguration();
 
+        Optional<String> param1 = runConfiguration.selector().getParam1();
+        Optional<String> param2 = runConfiguration.selector().getParam2();
+
         row.createCell(i++).setCellValue(configNumber);
         row.createCell(i++).setCellValue(runConfiguration.populationSize());
         row.createCell(i++).setCellValue(runConfiguration.function().getName());
         row.createCell(i++).setCellValue(runConfiguration.selector().getName());
+
+        if (param1.isPresent()) {
+            row.createCell(i).setCellValue(param1.get());
+        }
+        i++;
+        if (param2.isPresent()) {
+            row.createCell(i).setCellValue(param2.get());
+        }
+        i++;
+
         row.createCell(i++).setCellValue(runConfiguration.operator().getName());
         row.createCell(i++).setCellValue(runConfiguration.populationType().name());
         row.createCell(i++).setCellValue(runConfiguration.encoding().name());
@@ -1142,7 +1171,8 @@ public class Exporter {
         return res;
     }
 
-    private void drawHistogram(List<? extends Number> x, String out, String filename, double minX, double maxX, double step, int populationSize) {
+    private void drawHistogram(List<? extends Number> x, String out, String filename, double minX, double maxX,
+                               double step, int populationSize) {
         if (x == null)
             return;
 
@@ -1167,7 +1197,8 @@ public class Exporter {
         }
     }
 
-    private void drawHistogramNoBins(List<? extends Number> x, String out, String filename, double minX, double maxX, int populationSize) {
+    private void drawHistogramNoBins(List<? extends Number> x, String out, String filename, double minX,
+                                     double maxX, int populationSize) {
         if (x == null)
             return;
 
@@ -1192,7 +1223,8 @@ public class Exporter {
         }
     }
 
-    private void drawHistogram(List<? extends Number> x, String out, String filename, double minX, double maxX, int populationSize) {
+    private void drawHistogram(List<? extends Number> x, String out, String filename, double minX, double maxX,
+                               int populationSize) {
         drawHistogram(x, out, filename, minX, maxX, 1, populationSize);
     }
 }

@@ -5,11 +5,8 @@ import lab.v2.convertor.FitnessToProbabilityConvertor;
 import lab.v2.convertor.ProbabilityToExpectedQuantityConvertor;
 import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Random;
 
 import static lab.v2.selection.SelectorType.SUS;
 
@@ -29,6 +26,21 @@ public class SusSelector implements Selector {
     @Override
     public String getName() {
         return "SUS";
+    }
+
+    @Override
+    public String getFullName() {
+        return "SUS";
+    }
+
+    @Override
+    public Optional<String> getParam1() {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<String> getParam2() {
+        return Optional.empty();
     }
 
     @Override
