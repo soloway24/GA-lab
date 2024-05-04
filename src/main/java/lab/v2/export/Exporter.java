@@ -180,11 +180,11 @@ public class Exporter {
                 createPlotsIterationDataHeader(sheet, freeIndex + 1);
                 createIterationRows(sheet, freeIndex + 2, xIterations, rrs, tetas);
             }
+            saveWorkbook(workbook, tablePath);
 
             // POSSIBLE DUPLICATE
             drawHistograms(runStats, plotExportPath, runConfiguration.function(), runConfiguration.populationSize());
 
-            saveWorkbook(workbook, tablePath);
             System.gc();
         }
     }
@@ -212,7 +212,7 @@ public class Exporter {
         }
     }
 
-        private int getExportRunQ(RunConfiguration runConfiguration) {
+    private int getExportRunQ(RunConfiguration runConfiguration) {
         if (runConfiguration.operator().getOperatorType() == NONE) {
             return runConfiguration.populationSize() == 100
                     ? 4
@@ -310,9 +310,12 @@ public class Exporter {
 
             long distinctF = fitnesses.stream().distinct().count();
             if (distinctF == 1) {
-                double actualMaxFitness = fitnesses.stream().max(Double::compareTo).orElseThrow();
-                double step = actualMaxFitness / 10;
-                drawHistogram(fitnesses, plotExportPath + "fitness/", filename, minFitness, maxFitness, step, populationSize);
+                double f = fitnesses.get(0);
+                if (maxFitness - minFitness > 1000) {
+                    drawHistogram(fitnesses, plotExportPath + "fitness/", filename, f - 10, f + 10, populationSize);
+                } else {
+                    drawHistogram(fitnesses, plotExportPath + "fitness/", filename, minFitness, maxFitness, populationSize);
+                }
             } else {
                 drawHistogramNoBins(fitnesses, plotExportPath + "fitness/", filename, minFitness, maxFitness, populationSize);
             }
@@ -348,7 +351,18 @@ public class Exporter {
                                       List<Double> prs
     ) {
         int rowIndex = index;
-        for (int j = 0; j < xGenerations.size(); j++) {
+        int size = xGenerations.size();
+        int divider = size / 1000;
+        int step = divider != 0
+                ? size / divider
+                : 0;
+        for (int j = 0; j < size; j++) {
+            if (size > 2000
+                    && j > 1000
+                    && j % step != 0
+                    && j != size - 1) {
+                continue;
+            }
             Row row = sheet.createRow(rowIndex++);
             int cellIndex = 0;
 
@@ -388,7 +402,18 @@ public class Exporter {
                                      List<Double> kendalls
     ) {
         int rowIndex = index;
-        for (int j = 0; j < xIterations.size(); j++) {
+        int size = xIterations.size();
+        int divider = size / 1000;
+        int step = divider != 0
+                ? size / divider
+                : 0;
+        for (int j = 0; j < size; j++) {
+            if (size > 2000
+                    && j > 1000
+                    && j % step != 0
+                    && j != size - 1) {
+                continue;
+            }
             Row row = sheet.createRow(rowIndex++);
             int cellIndex = 0;
 

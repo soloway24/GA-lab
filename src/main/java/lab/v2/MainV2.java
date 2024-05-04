@@ -113,7 +113,7 @@ public class MainV2 {
 
         System.gc();
 
-        ExecutorService plotsExecutorService = Executors.newFixedThreadPool(4);
+        ExecutorService plotsExecutorService = new ForkJoinPool();
         System.out.println("EXPORTING SINGLE RUN POOL PLOTS -----------------");
         runPoolStats.forEach(stats -> plotsExecutorService.submit(() -> {
             exporter.exportPlots(stats.allRunStats(), stats.runConfiguration());
@@ -157,11 +157,11 @@ public class MainV2 {
 
 //        return List.of(constAllFunction);
 //        return List.of(fhFunction);
-//        return List.of(quadraticFunction);
+        return List.of(quadraticFunction);
 //        return List.of(quadratic512Function);
 //        return List.of(exponent025);
 //        return List.of(exponent1);
-        return List.of(exponent2);
+//        return List.of(exponent2);
 //        return List.of(constAllFunction, quadraticFunction);
     }
 

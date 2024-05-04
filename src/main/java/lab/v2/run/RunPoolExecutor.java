@@ -500,7 +500,7 @@ public class RunPoolExecutor {
     }
 
     private void populateHistogramData(FitnessFunctionV2<?, ? extends Number> function, List<Individual> currentIndividuals, int i, Map<Integer, List<IndividualMetrics>> generationToIndMetrics, Map<Homogeneity, List<IndividualMetrics>> homogeneityToIndMetrics) {
-        if (i < 3 || (i + 1) % 10000 == 0) {
+        if (i < 3 || (i + 1) % 500000 == 0) {
             List<IndividualMetrics> individualMetrics = buildAllIndividualMetrics(currentIndividuals, function);
             generationToIndMetrics.put(i + 1, individualMetrics);
         }
