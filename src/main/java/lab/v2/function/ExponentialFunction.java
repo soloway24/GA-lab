@@ -60,6 +60,8 @@ public class ExponentialFunction implements FitnessFunctionV2<Double, Double> {
     @Override
     public List<Encoding> getSupportedEncodings() {
         return List.of(STANDARD, GRAY);
+//        return List.of(STANDARD);
+//        return List.of(GRAY);
     }
 
     @Override
@@ -109,6 +111,9 @@ public class ExponentialFunction implements FitnessFunctionV2<Double, Double> {
     public List<PopulationType> getSupportedPopulationConfigurations(OperatorType operatorType) {
         if (operatorType == NONE) {
             return List.of(ONE_OPTIMAL, FIVE_PERCENT_OPTIMAL, TEN_PERCENT_OPTIMAL);
+//            return List.of(ONE_OPTIMAL);
+//            return List.of(FIVE_PERCENT_OPTIMAL);
+//            return List.of(TEN_PERCENT_OPTIMAL);
         }
 
         return List.of(ZERO_OPTIMAL, ONE_OPTIMAL, FIVE_PERCENT_OPTIMAL, TEN_PERCENT_OPTIMAL);

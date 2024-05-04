@@ -16,8 +16,10 @@ import org.apache.commons.lang3.time.StopWatch;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 public class MainV2 {
 
@@ -61,17 +63,39 @@ public class MainV2 {
     private void executeAllSingleThread(List<RunPool> runPools) throws InterruptedException {
         List<RunPoolStats> runPoolStats = runPoolExecutor.executeAllRunPools(runPools);
 
+        System.gc();
+
         System.out.println("EXPORTING SINGLE RUN POOLS -----------------");
         runPoolStats.forEach(exporter::exportSingleRunPoolStats);
 
+        System.gc();
+
         System.out.println("EXPORTING SINGLE RUN POOL PLOTS -----------------");
-        runPoolStats.forEach(stats -> exporter.exportPlots(stats.allRunStats(), stats.runConfiguration()));
+
+        int size = runPoolStats.size();
+        IntStream.range(0, size)
+                .forEach(i -> {
+                    System.out.println("Plots " + (i + 1) + "/" + size);
+                    exporter.exportPlots(runPoolStats.get(i).allRunStats(), runPoolStats.get(i).runConfiguration());
+                });
+
+        System.gc();
+
+        // POSSIBLE DUPLICATE
+        System.out.println("EXPORTING SINGLE RUN POOL HISTOGRAMS -----------------");
+        IntStream.range(0, size)
+                .forEach(i -> {
+                    System.out.println("Histograms " + (i + 1) + "/" + size);
+                    exporter.exportHistograms(runPoolStats.get(i).allRunStats(), runPoolStats.get(i).runConfiguration());
+                });
+
+        System.gc();
 
         System.out.println("EXPORTING ALL RUN POOLS -----------------");
         exporter.exportAllRunPools(runPoolStats);
     }
 
-    private void executeAll(List<RunPool> runPools) throws InterruptedException {
+    private void executeAll(List<RunPool> runPools) {
         List<RunPoolStats> runPoolStats = runPoolExecutor.executeAllRunPoolsParallel(runPools);
         ExecutorService executorService = new ForkJoinPool();
 
@@ -81,16 +105,26 @@ public class MainV2 {
         }));
 
         executorService.shutdown();
-        executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        try {
+            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         System.gc();
-        ExecutorService plotsExecutorService = new ForkJoinPool();
+
+        ExecutorService plotsExecutorService = Executors.newFixedThreadPool(4);
         System.out.println("EXPORTING SINGLE RUN POOL PLOTS -----------------");
         runPoolStats.forEach(stats -> plotsExecutorService.submit(() -> {
             exporter.exportPlots(stats.allRunStats(), stats.runConfiguration());
         }));
 
         plotsExecutorService.shutdown();
-        plotsExecutorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        try {
+            plotsExecutorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         System.out.println("EXPORTING ALL RUN POOLS -----------------");
         exporter.exportAllRunPools(runPoolStats);
@@ -159,16 +193,18 @@ public class MainV2 {
 
         return List.of(
                 rwsSelector
-                ,
+//                ,
 //                susSelector
 //                ,
-                powerScalingRwsSelector,
-                powerScalingRwsSelector2,
+//                powerScalingRwsSelector
+//                ,
+//                powerScalingRwsSelector2
+//                ,
 //                powerScalingSusSelector,
 //                powerScalingSusSelector2,
-                dynamicPowerScalingRwsSelector0p9to1p1
-                ,
-                dynamicPowerScalingRwsSelector0p8to1p2
+//                dynamicPowerScalingRwsSelector0p9to1p1
+//                ,
+//                dynamicPowerScalingRwsSelector0p8to1p2
 //                ,
 //                dynamicPowerScalingSusSelector0p9to1p1,
 //                dynamicPowerScalingSusSelector0p8to1p2

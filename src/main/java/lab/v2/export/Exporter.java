@@ -119,6 +119,7 @@ public class Exporter {
         int exportRunQ = getExportRunQ(runConfiguration);
 
         for (int i = 0; i < exportRunQ && i < allRunStats.size(); i++) {
+            System.out.println("I = " + (i + 1) + "/" + exportRunQ);
             RunStats runStats = allRunStats.get(i);
 
             String plotExportPath = plotExportDir + (i + 1) + "/";
@@ -180,13 +181,38 @@ public class Exporter {
                 createIterationRows(sheet, freeIndex + 2, xIterations, rrs, tetas);
             }
 
+            // POSSIBLE DUPLICATE
             drawHistograms(runStats, plotExportPath, runConfiguration.function(), runConfiguration.populationSize());
 
             saveWorkbook(workbook, tablePath);
+            System.gc();
         }
     }
 
-    private int getExportRunQ(RunConfiguration runConfiguration) {
+    public void exportHistograms(List<RunStats> allRunStats, RunConfiguration runConfiguration) {
+        String plotFilepath = getPlotFilepath(runConfiguration);
+        String plotExportDir = PLOTS_PATH + plotFilepath;
+
+        File theDir1 = new File(plotExportDir);
+        if (!theDir1.exists()) {
+            theDir1.mkdirs();
+        }
+
+        int exportRunQ = getExportRunQ(runConfiguration);
+
+        for (int i = 0; i < exportRunQ && i < allRunStats.size(); i++) {
+            System.out.println("I = " + (i + 1) + "/" + exportRunQ);
+
+            RunStats runStats = allRunStats.get(i);
+            String plotExportPath = plotExportDir + (i + 1) + "/";
+
+            drawHistograms(runStats, plotExportPath, runConfiguration.function(), runConfiguration.populationSize());
+
+            System.gc();
+        }
+    }
+
+        private int getExportRunQ(RunConfiguration runConfiguration) {
         if (runConfiguration.operator().getOperatorType() == NONE) {
             return runConfiguration.populationSize() == 100
                     ? 4
@@ -202,9 +228,13 @@ public class Exporter {
         generationToIndMetrics.forEach((generation, individualMetrics) ->
                 drawGenerationHistograms(individualMetrics, plotExportPath, valueOf(generation), function, populationSize));
 
+        System.gc();
+
         Map<Homogeneity, List<IndividualMetrics>> homogeneityToIndMetrics = runStats.homogeneityToIndMetrics();
         homogeneityToIndMetrics.forEach((h, individualMetrics) ->
                 drawGenerationHistograms(individualMetrics, plotExportPath, "homo-" + h.getPercentage(), function, populationSize));
+
+        System.gc();
 
         exportHistogramTable(plotExportPath, generationToIndMetrics, homogeneityToIndMetrics, function.isConstant(), function.supportsDecoding());
     }
@@ -280,7 +310,9 @@ public class Exporter {
 
             long distinctF = fitnesses.stream().distinct().count();
             if (distinctF == 1) {
-                drawHistogram(fitnesses, plotExportPath + "fitness/", filename, minFitness, maxFitness, populationSize);
+                double actualMaxFitness = fitnesses.stream().max(Double::compareTo).orElseThrow();
+                double step = actualMaxFitness / 10;
+                drawHistogram(fitnesses, plotExportPath + "fitness/", filename, minFitness, maxFitness, step, populationSize);
             } else {
                 drawHistogramNoBins(fitnesses, plotExportPath + "fitness/", filename, minFitness, maxFitness, populationSize);
             }
