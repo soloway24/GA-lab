@@ -74,6 +74,11 @@ public class FConstAllFunction implements FitnessFunctionV2<Number, Integer> {
     }
 
     @Override
+    public Optional<Number> getOptimalX() {
+        return empty();
+    }
+
+    @Override
     public Optional<Individual> getOptimalIndividual(Encoding encoding) {
         return ofNullable(ENCODING_TO_OPTIMAL.get(encoding))
                 .map(Individual::new);

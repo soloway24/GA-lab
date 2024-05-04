@@ -3,10 +3,7 @@ package lab.v2;
 import lab.v2.convertor.FitnessToProbabilityConvertor;
 import lab.v2.convertor.ProbabilityToExpectedQuantityConvertor;
 import lab.v2.export.Exporter;
-import lab.v2.function.FConstAllFunction;
-import lab.v2.function.FhFunction;
-import lab.v2.function.FitnessFunctionV2;
-import lab.v2.function.PowerFunction;
+import lab.v2.function.*;
 import lab.v2.identifier.ConvergenceIdentifier;
 import lab.v2.operator.NoneOperator;
 import lab.v2.operator.Operator;
@@ -115,10 +112,13 @@ public class MainV2 {
         FitnessFunctionV2<?, ?> constAllFunction = FConstAllFunction.getInstance();
         FitnessFunctionV2<?, ?> fhFunction = FhFunction.getInstance();
         FitnessFunctionV2<?, ?> quadraticFunction = new PowerFunction(10, 0, 10.23, 2, 2);
+        FitnessFunctionV2<?, ?> quadratic512Function = new PowerFunction5_12(10, -5.12, 5.11, 2,
+                5.12, 2, 2);
 
 //        return List.of(constAllFunction);
 //        return List.of(fhFunction);
-        return List.of(quadraticFunction);
+//        return List.of(quadraticFunction);
+        return List.of(quadratic512Function);
 //        return List.of(constAllFunction, quadraticFunction);
     }
 
@@ -151,18 +151,18 @@ public class MainV2 {
         return List.of(
                 rwsSelector
                 ,
-//                susSelector
-//                ,
+                susSelector
+                ,
                 powerScalingRwsSelector,
-//                powerScalingRwsSelector2,
-//                powerScalingSusSelector,
-//                powerScalingSusSelector2,
+                powerScalingRwsSelector2,
+                powerScalingSusSelector,
+                powerScalingSusSelector2,
                 dynamicPowerScalingRwsSelector0p9to1p1
-//                ,
-//                dynamicPowerScalingRwsSelector0p8to1p2
-//                ,
-//                dynamicPowerScalingSusSelector0p9to1p1,
-//                dynamicPowerScalingSusSelector0p8to1p2
+                ,
+                dynamicPowerScalingRwsSelector0p8to1p2
+                ,
+                dynamicPowerScalingSusSelector0p9to1p1,
+                dynamicPowerScalingSusSelector0p8to1p2
         );
     }
 

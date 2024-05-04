@@ -21,10 +21,10 @@ import static lab.v2.operator.OperatorType.NONE;
 import static lab.v2.population.PopulationType.*;
 import static lab.v2.validators.EncodingSpaceValidator.validateEncodingSpace;
 
-public class PowerFunction implements FitnessFunctionV2<Double, Double> {
+public class PowerFunction5_12 implements FitnessFunctionV2<Double, Double> {
 
-    private static final Individual OPTIMAL_STANDARD_INDIVIDUAL = new Individual("1111111111", STANDARD);
-    private static final Individual OPTIMAL_GRAY_INDIVIDUAL = new Individual("1000000000", GRAY);
+    private static final Individual OPTIMAL_STANDARD_INDIVIDUAL = new Individual("1000000000", STANDARD);
+    private static final Individual OPTIMAL_GRAY_INDIVIDUAL = new Individual("1100000000", GRAY);
 
     private static final Map<Encoding, Individual> ENCODING_TO_OPTIMAL = Map.of(
             STANDARD, OPTIMAL_STANDARD_INDIVIDUAL,
@@ -35,20 +35,26 @@ public class PowerFunction implements FitnessFunctionV2<Double, Double> {
     private final Double minX;
     private final Double maxX;
     private final int argumentPrecision;
-    private final double exponent;
+    private final double b;
+    private final double bExponent;
+    private final double xExponent;
 
-    public PowerFunction(int chromosomeLength, double minX, double maxX, int argumentPrecision, double exponent) {
+    //  b ^ bExponent - x ^ xExponent;  b = 5.12, bExponent = 2, xExponent = 2
+    public PowerFunction5_12(int chromosomeLength, double minX, double maxX, int argumentPrecision,
+                             double b, double bExponent, double xExponent) {
         validateEncodingSpace(chromosomeLength, minX, maxX, argumentPrecision);
         this.chromosomeLength = chromosomeLength;
         this.minX = minX;
         this.maxX = maxX;
         this.argumentPrecision = argumentPrecision;
-        this.exponent = exponent;
+        this.b = b;
+        this.bExponent = bExponent;
+        this.xExponent = xExponent;
     }
 
     @Override
     public String getName() {
-        return "x^" + exponent;
+        return "(" + b + ")^" + bExponent + " - x^" + xExponent;
     }
 
     @Override
@@ -68,7 +74,7 @@ public class PowerFunction implements FitnessFunctionV2<Double, Double> {
 
     @Override
     public Double getMaxFitness() {
-        return pow(maxX, exponent);
+        return pow(b, bExponent);
     }
 
     @Override
@@ -83,7 +89,7 @@ public class PowerFunction implements FitnessFunctionV2<Double, Double> {
 
     @Override
     public Optional<Double> getOptimalX() {
-        return of(maxX);
+        return of(0.0);
     }
 
     @Override
@@ -95,7 +101,7 @@ public class PowerFunction implements FitnessFunctionV2<Double, Double> {
     @Override
     public Double evaluate(Individual individual) {
         Double x = decodeV2(individual, this);
-        return pow(x, exponent);
+        return pow(b, bExponent) - pow(x, xExponent);
     }
 
     @Override

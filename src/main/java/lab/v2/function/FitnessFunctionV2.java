@@ -26,6 +26,8 @@ public interface FitnessFunctionV2<ARG_T extends Number, RES_T extends Number> {
 
     Optional<ARG_T> getMaxX();
 
+    Optional<ARG_T> getOptimalX();
+
     Optional<Individual> getOptimalIndividual(Encoding encoding);
 
     RES_T evaluate(Individual individual);

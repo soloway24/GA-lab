@@ -76,6 +76,11 @@ public class FhFunction implements FitnessFunctionV2<Number, Long> {
     }
 
     @Override
+    public Optional<Number> getOptimalX() {
+        return empty();
+    }
+
+    @Override
     public Optional<Individual> getOptimalIndividual(Encoding encoding) {
         return ofNullable(ENCODING_TO_OPTIMAL.get(encoding))
                 .map(Individual::new);

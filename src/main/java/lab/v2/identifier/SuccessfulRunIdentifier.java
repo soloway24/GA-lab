@@ -24,13 +24,13 @@ public class SuccessfulRunIdentifier {
         double bestFitness = individualToFitness.get(best).doubleValue();
         double bestX = decodeV2(best, function).doubleValue();
 
-        double maxX = function.getMaxX()
+        double optimalX = function.getOptimalX()
                 .map(Number::doubleValue)
-                .orElseThrow(() -> new IllegalStateException("Cannot get function's maxX to verify successful run. Function = " + function));
+                .orElseThrow(() -> new IllegalStateException("Cannot get function's optimalX to verify successful run. Function = " + function));
         double maxFitness = function.getMaxFitness().doubleValue();
 
         double actualFitnessDelta = Math.abs(maxFitness - bestFitness);
-        double actualXSigma = Math.abs(maxX - bestX);
+        double actualXSigma = Math.abs(optimalX - bestX);
 
         return actualFitnessDelta <= ALLOWED_FITNESS_DELTA
                 && actualXSigma <= ALLOWED_X_SIGMA;
