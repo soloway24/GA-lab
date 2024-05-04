@@ -16,7 +16,6 @@ import org.apache.commons.lang3.time.StopWatch;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
@@ -157,12 +156,26 @@ public class MainV2 {
 
 //        return List.of(constAllFunction);
 //        return List.of(fhFunction);
-        return List.of(quadraticFunction);
+//        return List.of(quadraticFunction);
 //        return List.of(quadratic512Function);
 //        return List.of(exponent025);
 //        return List.of(exponent1);
 //        return List.of(exponent2);
-//        return List.of(constAllFunction, quadraticFunction);
+        return List.of(
+                constAllFunction
+                ,
+                fhFunction
+                ,
+                quadraticFunction
+//                ,
+//                quadratic512Function
+                ,
+                exponent025
+                ,
+                exponent1
+                ,
+                exponent2
+        );
     }
 
     private List<Selector> getSelectors() {
@@ -193,21 +206,21 @@ public class MainV2 {
 
         return List.of(
                 rwsSelector
-//                ,
-//                susSelector
-//                ,
-//                powerScalingRwsSelector
-//                ,
-//                powerScalingRwsSelector2
-//                ,
-//                powerScalingSusSelector,
-//                powerScalingSusSelector2,
-//                dynamicPowerScalingRwsSelector0p9to1p1
-//                ,
-//                dynamicPowerScalingRwsSelector0p8to1p2
-//                ,
-//                dynamicPowerScalingSusSelector0p9to1p1,
-//                dynamicPowerScalingSusSelector0p8to1p2
+                ,
+                susSelector
+                ,
+                powerScalingRwsSelector
+                ,
+                powerScalingRwsSelector2
+                ,
+                powerScalingSusSelector,
+                powerScalingSusSelector2,
+                dynamicPowerScalingRwsSelector0p9to1p1
+                ,
+                dynamicPowerScalingRwsSelector0p8to1p2
+                ,
+                dynamicPowerScalingSusSelector0p9to1p1,
+                dynamicPowerScalingSusSelector0p8to1p2
         );
     }
 

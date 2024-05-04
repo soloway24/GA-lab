@@ -66,7 +66,8 @@ public class PowerFunction5_12 implements FitnessFunctionV2<Double, Double> {
 
     @Override
     public List<Encoding> getSupportedEncodings() {
-        return List.of(STANDARD
+        return List.of(
+                STANDARD
                 ,
                 GRAY
         );
