@@ -281,153 +281,154 @@ public class RunPoolStatsCreator {
             }
 
             // successful runs
+            if (!sucRunStats.isEmpty()) {
+                // difference
+                List<Pair<Double, Integer>> sMinIterations = getMetricValueToIteration(sucRunStats, RunStats::sMin, RunStats::niSMin);
+                Pair<Double, Integer> minSMinIteration = getMinValueToIteration(sMinIterations);
+                minSMin = minSMinIteration.getKey();
+                niSMin = minSMinIteration.getValue();
 
-            // difference
-            List<Pair<Double, Integer>> sMinIterations = getMetricValueToIteration(sucRunStats, RunStats::sMin, RunStats::niSMin);
-            Pair<Double, Integer> minSMinIteration = getMinValueToIteration(sMinIterations);
-            minSMin = minSMinIteration.getKey();
-            niSMin = minSMinIteration.getValue();
+                List<Pair<Double, Integer>> sMaxIterations = getMetricValueToIteration(sucRunStats, RunStats::sMax, RunStats::niSMax);
+                Pair<Double, Integer> maxSMaxIteration = getMaxValueToIteration(sMaxIterations);
+                maxSMax = maxSMaxIteration.getKey();
+                niSMax = maxSMaxIteration.getValue();
 
-            List<Pair<Double, Integer>> sMaxIterations = getMetricValueToIteration(sucRunStats, RunStats::sMax, RunStats::niSMax);
-            Pair<Double, Integer> maxSMaxIteration = getMaxValueToIteration(sMaxIterations);
-            maxSMax = maxSMaxIteration.getKey();
-            niSMax = maxSMaxIteration.getValue();
+                avgSMin = getAverage(getDoubleValues(sucRunStats, RunStats::sMin));
+                avgSMax = getAverage(getDoubleValues(sucRunStats, RunStats::sMax));
+                avgSAvg = getAverage(getDoubleValues(sucRunStats, RunStats::sAvg));
+                List<Double> sStarts = getDoubleValues(sucRunStats, RunStats::sStart);
+                minSStart = getMinDouble(sStarts);
+                maxSStart = getMaxDouble(sStarts);
+                avgSStart = getAverage(sStarts);
+                sigmaSStart = getStandardDeviation(sStarts, avgSStart);
 
-            avgSMin = getAverage(getDoubleValues(sucRunStats, RunStats::sMin));
-            avgSMax = getAverage(getDoubleValues(sucRunStats, RunStats::sMax));
-            avgSAvg = getAverage(getDoubleValues(sucRunStats, RunStats::sAvg));
-            List<Double> sStarts = getDoubleValues(sucRunStats, RunStats::sStart);
-            minSStart = getMinDouble(sStarts);
-            maxSStart = getMaxDouble(sStarts);
-            avgSStart = getAverage(sStarts);
-            sigmaSStart = getStandardDeviation(sStarts, avgSStart);
+                // selection intensity
+                List<Pair<Double, Integer>> iMinIterations = getMetricValueToIteration(sucRunStats, RunStats::iMin, RunStats::niImin);
+                List<Pair<Double, Integer>> iMaxIterations = getMetricValueToIteration(sucRunStats, RunStats::iMax, RunStats::niImax);
+                Pair<Double, Integer> minIminIteration = getMinValueToIteration(iMinIterations);
+                Pair<Double, Integer> maxImaxIteration = getMaxValueToIteration(iMaxIterations);
+                minImin = minIminIteration.getKey();
+                niMinImin = minIminIteration.getValue();
+                maxImax = maxImaxIteration.getKey();
+                niMaxImax = maxImaxIteration.getValue();
 
-            // selection intensity
-            List<Pair<Double, Integer>> iMinIterations = getMetricValueToIteration(sucRunStats, RunStats::iMin, RunStats::niImin);
-            List<Pair<Double, Integer>> iMaxIterations = getMetricValueToIteration(sucRunStats, RunStats::iMax, RunStats::niImax);
-            Pair<Double, Integer> minIminIteration = getMinValueToIteration(iMinIterations);
-            Pair<Double, Integer> maxImaxIteration = getMaxValueToIteration(iMaxIterations);
-            minImin = minIminIteration.getKey();
-            niMinImin = minIminIteration.getValue();
-            maxImax = maxImaxIteration.getKey();
-            niMaxImax = maxImaxIteration.getValue();
+                List<Double> iMins = getDoubleValues(sucRunStats, RunStats::iMin);
+                List<Double> iMaxs = getDoubleValues(sucRunStats, RunStats::iMax);
+                List<Double> iAvgs = getDoubleValues(sucRunStats, RunStats::iAvg);
+                avgImin = getAverage(iMins);
+                avgImax = getAverage(iMaxs);
+                avgIavg = getAverage(iAvgs);
+                sigmaImin = getStandardDeviation(iMins, avgImin);
+                sigmaImax = getStandardDeviation(iMaxs, avgImax);
+                sigmaIavg = getStandardDeviation(iAvgs, avgIavg);
 
-            List<Double> iMins = getDoubleValues(sucRunStats, RunStats::iMin);
-            List<Double> iMaxs = getDoubleValues(sucRunStats, RunStats::iMax);
-            List<Double> iAvgs = getDoubleValues(sucRunStats, RunStats::iAvg);
-            avgImin = getAverage(iMins);
-            avgImax = getAverage(iMaxs);
-            avgIavg = getAverage(iAvgs);
-            sigmaImin = getStandardDeviation(iMins, avgImin);
-            sigmaImax = getStandardDeviation(iMaxs, avgImax);
-            sigmaIavg = getStandardDeviation(iAvgs, avgIavg);
+                List<Double> iStarts = getDoubleValues(sucRunStats, RunStats::iStart);
+                minIstart = getMinDouble(iStarts);
+                maxIstart = getMaxDouble(iStarts);
+                avgIstart = getAverage(iStarts);
+                sigmaIstart = getStandardDeviation(iStarts, avgIstart);
 
-            List<Double> iStarts = getDoubleValues(sucRunStats, RunStats::iStart);
-            minIstart = getMinDouble(iStarts);
-            maxIstart = getMaxDouble(iStarts);
-            avgIstart = getAverage(iStarts);
-            sigmaIstart = getStandardDeviation(iStarts, avgIstart);
+                // Growth rate
+                List<Double> grEarlys = getDoubleValues(sucRunStats, RunStats::grEarly);
+                List<Double> grLates = getDoubleValues(sucRunStats, RunStats::grLate);
+                List<Double> grAvgs = getDoubleValues(sucRunStats, RunStats::grAvg);
+                List<Double> grStarts = getDoubleValues(sucRunStats, RunStats::grStart);
 
-            // Growth rate
-            List<Double> grEarlys = getDoubleValues(sucRunStats, RunStats::grEarly);
-            List<Double> grLates = getDoubleValues(sucRunStats, RunStats::grLate);
-            List<Double> grAvgs = getDoubleValues(sucRunStats, RunStats::grAvg);
-            List<Double> grStarts = getDoubleValues(sucRunStats, RunStats::grStart);
+                minGrEarly = getMinDouble(grEarlys);
+                maxGrEarly = getMaxDouble(grEarlys);
+                avgGrEarly = getAverage(grEarlys);
 
-            minGrEarly = getMinDouble(grEarlys);
-            maxGrEarly = getMaxDouble(grEarlys);
-            avgGrEarly = getAverage(grEarlys);
+                minGrLate = getMinDouble(grLates);
+                maxGrLate = getMaxDouble(grLates);
+                avgGrLate = getAverage(grLates);
 
-            minGrLate = getMinDouble(grLates);
-            maxGrLate = getMaxDouble(grLates);
-            avgGrLate = getAverage(grLates);
+                minGrAvg = getMinDouble(grAvgs);
+                maxGrAvg = getMaxDouble(grAvgs);
+                avgGrAvg = getAverage(grAvgs);
 
-            minGrAvg = getMinDouble(grAvgs);
-            maxGrAvg = getMaxDouble(grAvgs);
-            avgGrAvg = getAverage(grAvgs);
+                minGrStart = getMinDouble(grStarts);
+                maxGrStart = getMaxDouble(grStarts);
+                avgGrStart = getAverage(grStarts);
+                sigmaGrStart = getStandardDeviation(grStarts, avgGrStart);
 
-            minGrStart = getMinDouble(grStarts);
-            maxGrStart = getMaxDouble(grStarts);
-            avgGrStart = getAverage(grStarts);
-            sigmaGrStart = getStandardDeviation(grStarts, avgGrStart);
+                // Selection pressure
+                List<Pair<Double, Integer>> prMinGenerations = getMetricValueToIteration(sucRunStats, RunStats::prMin, RunStats::niPrMin);
+                List<Pair<Double, Integer>> prMaxGenerations = getMetricValueToIteration(sucRunStats, RunStats::prMax, RunStats::niPrMax);
+                Pair<Double, Integer> minPrMinIteration = getMinValueToIteration(prMinGenerations);
+                Pair<Double, Integer> maxPrMaxIteration = getMaxValueToIteration(prMaxGenerations);
+                minPrMin = minPrMinIteration.getKey();
+                niMinPrMin = minPrMinIteration.getValue();
+                maxPrMax = maxPrMaxIteration.getKey();
+                niMaxPrMax = maxPrMaxIteration.getValue();
 
-            // Selection pressure
-            List<Pair<Double, Integer>> prMinGenerations = getMetricValueToIteration(sucRunStats, RunStats::prMin, RunStats::niPrMin);
-            List<Pair<Double, Integer>> prMaxGenerations = getMetricValueToIteration(sucRunStats, RunStats::prMax, RunStats::niPrMax);
-            Pair<Double, Integer> minPrMinIteration = getMinValueToIteration(prMinGenerations);
-            Pair<Double, Integer> maxPrMaxIteration = getMaxValueToIteration(prMaxGenerations);
-            minPrMin = minPrMinIteration.getKey();
-            niMinPrMin = minPrMinIteration.getValue();
-            maxPrMax = maxPrMaxIteration.getKey();
-            niMaxPrMax = maxPrMaxIteration.getValue();
+                List<Double> prMins = getDoubleValues(sucRunStats, RunStats::prMin);
+                List<Double> prMaxs = getDoubleValues(sucRunStats, RunStats::prMax);
+                List<Double> prAvgs = getDoubleValues(sucRunStats, RunStats::prAvg);
+                avgPrMin = getAverage(prMins);
+                avgPrMax = getAverage(prMaxs);
+                avgPrAvg = getAverage(prAvgs);
+                sigmaPrMin = getStandardDeviation(prMins, avgPrMin);
+                sigmaPrMax = getStandardDeviation(prMaxs, avgPrMax);
+                sigmaPrAvg = getStandardDeviation(prAvgs, avgPrAvg);
 
-            List<Double> prMins = getDoubleValues(sucRunStats, RunStats::prMin);
-            List<Double> prMaxs = getDoubleValues(sucRunStats, RunStats::prMax);
-            List<Double> prAvgs = getDoubleValues(sucRunStats, RunStats::prAvg);
-            avgPrMin = getAverage(prMins);
-            avgPrMax = getAverage(prMaxs);
-            avgPrAvg = getAverage(prAvgs);
-            sigmaPrMin = getStandardDeviation(prMins, avgPrMin);
-            sigmaPrMax = getStandardDeviation(prMaxs, avgPrMax);
-            sigmaPrAvg = getStandardDeviation(prAvgs, avgPrAvg);
+                List<Double> prStarts = getDoubleValues(sucRunStats, RunStats::prStart);
+                minPrStart = getMinDouble(prStarts);
+                maxPrStart = getMaxDouble(prStarts);
+                avgPrStart = getAverage(prStarts);
+                sigmaPrStart = getStandardDeviation(prStarts, avgPrStart);
 
-            List<Double> prStarts = getDoubleValues(sucRunStats, RunStats::prStart);
-            minPrStart = getMinDouble(prStarts);
-            maxPrStart = getMaxDouble(prStarts);
-            avgPrStart = getAverage(prStarts);
-            sigmaPrStart = getStandardDeviation(prStarts, avgPrStart);
+                // Fisher's Exact test
+                List<Pair<Double, Integer>> fishMinGenerations = getMetricValueToIteration(sucRunStats, RunStats::fishMin, RunStats::niFishMin);
+                List<Pair<Double, Integer>> fishMaxGenerations = getMetricValueToIteration(sucRunStats, RunStats::fishMax, RunStats::niFishMax);
+                Pair<Double, Integer> minfishMinIteration = getMinValueToIteration(fishMinGenerations);
+                Pair<Double, Integer> maxfishMaxIteration = getMaxValueToIteration(fishMaxGenerations);
+                minFishMin = minfishMinIteration.getKey();
+                niMinFishMin = minfishMinIteration.getValue();
+                maxFishMax = maxfishMaxIteration.getKey();
+                niMaxFishMax = maxfishMaxIteration.getValue();
 
-            // Fisher's Exact test
-            List<Pair<Double, Integer>> fishMinGenerations = getMetricValueToIteration(sucRunStats, RunStats::fishMin, RunStats::niFishMin);
-            List<Pair<Double, Integer>> fishMaxGenerations = getMetricValueToIteration(sucRunStats, RunStats::fishMax, RunStats::niFishMax);
-            Pair<Double, Integer> minfishMinIteration = getMinValueToIteration(fishMinGenerations);
-            Pair<Double, Integer> maxfishMaxIteration = getMaxValueToIteration(fishMaxGenerations);
-            minFishMin = minfishMinIteration.getKey();
-            niMinFishMin = minfishMinIteration.getValue();
-            maxFishMax = maxfishMaxIteration.getKey();
-            niMaxFishMax = maxfishMaxIteration.getValue();
+                List<Double> fishMins = getDoubleValues(sucRunStats, RunStats::fishMin);
+                List<Double> fishMaxs = getDoubleValues(sucRunStats, RunStats::fishMax);
+                List<Double> fishAvgs = getDoubleValues(sucRunStats, RunStats::fishAvg);
+                avgFishMin = getAverage(fishMins);
+                avgFishMax = getAverage(fishMaxs);
+                avgFishAvg = getAverage(fishAvgs);
+                sigmaFishMin = getStandardDeviation(fishMins, avgFishMin);
+                sigmaFishMax = getStandardDeviation(fishMaxs, avgFishMax);
+                sigmaFishAvg = getStandardDeviation(fishAvgs, avgFishAvg);
 
-            List<Double> fishMins = getDoubleValues(sucRunStats, RunStats::fishMin);
-            List<Double> fishMaxs = getDoubleValues(sucRunStats, RunStats::fishMax);
-            List<Double> fishAvgs = getDoubleValues(sucRunStats, RunStats::fishAvg);
-            avgFishMin = getAverage(fishMins);
-            avgFishMax = getAverage(fishMaxs);
-            avgFishAvg = getAverage(fishAvgs);
-            sigmaFishMin = getStandardDeviation(fishMins, avgFishMin);
-            sigmaFishMax = getStandardDeviation(fishMaxs, avgFishMax);
-            sigmaFishAvg = getStandardDeviation(fishAvgs, avgFishAvg);
+                List<Double> fishStarts = getDoubleValues(sucRunStats, RunStats::fishStart);
+                minFishStart = getMinDouble(fishStarts);
+                maxFishStart = getMaxDouble(fishStarts);
+                avgFishStart = getAverage(fishStarts);
+                sigmaFishStart = getStandardDeviation(fishStarts, avgFishStart);
 
-            List<Double> fishStarts = getDoubleValues(sucRunStats, RunStats::fishStart);
-            minFishStart = getMinDouble(fishStarts);
-            maxFishStart = getMaxDouble(fishStarts);
-            avgFishStart = getAverage(fishStarts);
-            sigmaFishStart = getStandardDeviation(fishStarts, avgFishStart);
+                // Kendall's Tau-B
+                List<Pair<Double, Integer>> kendallMinGenerations = getMetricValueToIteration(sucRunStats, RunStats::kendallMin, RunStats::niKendallMin);
+                List<Pair<Double, Integer>> kendallMaxGenerations = getMetricValueToIteration(sucRunStats, RunStats::kendallMax, RunStats::niKendallMax);
+                Pair<Double, Integer> minkendallMinIteration = getMinValueToIteration(kendallMinGenerations);
+                Pair<Double, Integer> maxkendallMaxIteration = getMaxValueToIteration(kendallMaxGenerations);
+                minKendallMin = minkendallMinIteration.getKey();
+                niMinKendallMin = minkendallMinIteration.getValue();
+                maxKendallMax = maxkendallMaxIteration.getKey();
+                niMaxKendallMax = maxkendallMaxIteration.getValue();
 
-            // Kendall's Tau-B
-            List<Pair<Double, Integer>> kendallMinGenerations = getMetricValueToIteration(sucRunStats, RunStats::kendallMin, RunStats::niKendallMin);
-            List<Pair<Double, Integer>> kendallMaxGenerations = getMetricValueToIteration(sucRunStats, RunStats::kendallMax, RunStats::niKendallMax);
-            Pair<Double, Integer> minkendallMinIteration = getMinValueToIteration(kendallMinGenerations);
-            Pair<Double, Integer> maxkendallMaxIteration = getMaxValueToIteration(kendallMaxGenerations);
-            minKendallMin = minkendallMinIteration.getKey();
-            niMinKendallMin = minkendallMinIteration.getValue();
-            maxKendallMax = maxkendallMaxIteration.getKey();
-            niMaxKendallMax = maxkendallMaxIteration.getValue();
+                List<Double> kendallMins = getDoubleValues(sucRunStats, RunStats::kendallMin);
+                List<Double> kendallMaxs = getDoubleValues(sucRunStats, RunStats::kendallMax);
+                List<Double> kendallAvgs = getDoubleValues(sucRunStats, RunStats::kendallAvg);
+                avgKendallMin = getAverage(kendallMins);
+                avgKendallMax = getAverage(kendallMaxs);
+                avgKendallAvg = getAverage(kendallAvgs);
+                sigmaKendallMin = getStandardDeviation(kendallMins, avgKendallMin);
+                sigmaKendallMax = getStandardDeviation(kendallMaxs, avgKendallMax);
+                sigmaKendallAvg = getStandardDeviation(kendallAvgs, avgKendallAvg);
 
-            List<Double> kendallMins = getDoubleValues(sucRunStats, RunStats::kendallMin);
-            List<Double> kendallMaxs = getDoubleValues(sucRunStats, RunStats::kendallMax);
-            List<Double> kendallAvgs = getDoubleValues(sucRunStats, RunStats::kendallAvg);
-            avgKendallMin = getAverage(kendallMins);
-            avgKendallMax = getAverage(kendallMaxs);
-            avgKendallAvg = getAverage(kendallAvgs);
-            sigmaKendallMin = getStandardDeviation(kendallMins, avgKendallMin);
-            sigmaKendallMax = getStandardDeviation(kendallMaxs, avgKendallMax);
-            sigmaKendallAvg = getStandardDeviation(kendallAvgs, avgKendallAvg);
-
-            List<Double> kendallStarts = getDoubleValues(sucRunStats, RunStats::kendallStart);
-            minKendallStart = getMinDouble(kendallStarts);
-            maxKendallStart = getMaxDouble(kendallStarts);
-            avgKendallStart = getAverage(kendallStarts);
-            sigmaKendallStart = getStandardDeviation(kendallStarts, avgKendallStart);
+                List<Double> kendallStarts = getDoubleValues(sucRunStats, RunStats::kendallStart);
+                minKendallStart = getMinDouble(kendallStarts);
+                maxKendallStart = getMaxDouble(kendallStarts);
+                avgKendallStart = getAverage(kendallStarts);
+                sigmaKendallStart = getStandardDeviation(kendallStarts, avgKendallStart);
+            }
 
             // all runs
             List<RunStats> runsStatsWithLoose = allRunStats.stream()
