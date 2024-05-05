@@ -114,9 +114,12 @@ public class MainV2 {
 
         ExecutorService plotsExecutorService = new ForkJoinPool();
         System.out.println("EXPORTING SINGLE RUN POOL PLOTS -----------------");
-        runPoolStats.forEach(stats -> plotsExecutorService.submit(() -> {
-            exporter.exportPlots(stats.allRunStats(), stats.runConfiguration());
-        }));
+        int size = runPoolStats.size();
+        IntStream.range(0, size)
+                .forEach(i -> {
+                    System.out.println("Plots " + (i + 1) + "/" + size);
+                    exporter.exportPlots(runPoolStats.get(i).allRunStats(), runPoolStats.get(i).runConfiguration());
+                });
 
         plotsExecutorService.shutdown();
         try {
@@ -162,19 +165,19 @@ public class MainV2 {
 //        return List.of(exponent1);
 //        return List.of(exponent2);
         return List.of(
-                constAllFunction
-                ,
-                fhFunction
-                ,
-                quadraticFunction
+//                constAllFunction
 //                ,
-//                quadratic512Function
-                ,
-                exponent025
-                ,
-                exponent1
-                ,
-                exponent2
+//                fhFunction
+//                ,
+//                quadraticFunction
+//                ,
+                quadratic512Function
+//                ,
+//                exponent025
+//                ,
+//                exponent1
+//                ,
+//                exponent2
         );
     }
 

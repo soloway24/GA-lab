@@ -121,6 +121,8 @@ public class PowerFunction5_12 implements FitnessFunctionV2<Double, Double> {
         if (operatorType == NONE) {
             return List.of(ONE_OPTIMAL, FIVE_PERCENT_OPTIMAL, TEN_PERCENT_OPTIMAL);
 //            return List.of(ONE_OPTIMAL);
+//            return List.of(FIVE_PERCENT_OPTIMAL);
+//            return List.of(TEN_PERCENT_OPTIMAL);
         }
 
         return List.of(ZERO_OPTIMAL, ONE_OPTIMAL, FIVE_PERCENT_OPTIMAL, TEN_PERCENT_OPTIMAL);

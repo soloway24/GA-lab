@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 import static java.lang.Math.max;
+import static java.util.Collections.shuffle;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toUnmodifiableMap;
@@ -156,6 +157,8 @@ public class RunPoolExecutor {
 
             individualToFitness = getIndividualToFitness(currentIndividuals, function);
             parentPool = selector.select(individualToFitness);
+            List<Individual> parentCopies = new ArrayList<>(parentPool);
+            shuffle(parentCopies);
             offsprings = operator.apply(parentPool);
 
             double avgF = getAverageFitness(individualToFitness);
