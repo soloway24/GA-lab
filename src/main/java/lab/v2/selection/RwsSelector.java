@@ -4,15 +4,12 @@ import lab.v2.Individual;
 import lab.v2.convertor.FitnessToProbabilityConvertor;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Random;
 import java.util.stream.IntStream;
 
+import static java.util.Collections.shuffle;
 import static lab.v2.selection.SelectorType.RWS;
-import static lab.v2.selection.SelectorType.SUS;
 
 @RequiredArgsConstructor
 public class RwsSelector implements Selector {
@@ -64,7 +61,9 @@ public class RwsSelector implements Selector {
         double spin = random.nextDouble();
         double currentPercentage = 0;
 
-        for (Entry<Individual, Double> entry : individualToPercentage.entrySet()) {
+        List<Entry<Individual, Double>> individualToPercentageShuffled = new ArrayList<>(individualToPercentage.entrySet());
+        shuffle(individualToPercentageShuffled);
+        for (Entry<Individual, Double> entry : individualToPercentageShuffled) {
             currentPercentage += entry.getValue();
             if (currentPercentage >= spin) {
                 return entry.getKey();

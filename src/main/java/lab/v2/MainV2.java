@@ -14,9 +14,11 @@ import lab.v2.run.*;
 import lab.v2.selection.*;
 import org.apache.commons.lang3.time.StopWatch;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
@@ -52,8 +54,8 @@ public class MainV2 {
         stopWatch.start();
 
 //        executeAllSingleThread(runPools);
-        executeAll(runPools);
-//        executeAllParallel(runPools);
+//        executeAll(runPools);
+        executeAllParallel(runPools);
 
         stopWatch.stop();
         System.out.println("Time Elapsed: " + stopWatch.getTime() / 1000.0);
@@ -132,15 +134,107 @@ public class MainV2 {
         exporter.exportAllRunPools(runPoolStats);
     }
 
-    private void executeAllParallel(List<RunPool> runPools) throws InterruptedException {
+    private void executeAllParallel(List<RunPool> runPools) {
         ExecutorService executorService = new ForkJoinPool();
-        runPools.forEach(runPool -> executorService.submit(() -> {
-//            RunPoolStats runPoolStats = runPoolExecutor.executeRunPool(runPool);
-            RunPoolStats runPoolStats = runPoolExecutor.executeRunPoolParallel(runPool);
-            exporter.exportSingleRunPoolStats(runPoolStats);
+
+        List<List<Future<RunStats>>> allFutures = new ArrayList<>();
+
+        for (RunPool runPool : runPools) {
+            List<Future<RunStats>> runPoolFutures = new ArrayList<>();
+            List<Run> runs = runPool.runs();
+            for (Run run : runs) {
+                Future<RunStats> future = executorService.submit(() -> runPoolExecutor.executeRun(run));
+                runPoolFutures.add(future);
+            }
+            allFutures.add(runPoolFutures);
+        }
+
+        List<List<RunStats>> allRunStats = new ArrayList<>();
+
+        System.out.println("WAITING FOR COMPLETION-----------------");
+
+        for (int i = 0; i < runPools.size(); i++) {
+            System.out.println("Waiting for run pool: " + runPools.get(i).runConfiguration());
+
+            List<RunStats> runPoolStats = new ArrayList<>();
+            List<Future<RunStats>> runPoolFutures = allFutures.get(i);
+            for (int j = 0; j < runPoolFutures.size(); j++) {
+                Future<RunStats> runFuture = runPoolFutures.get(j);
+                RunStats runStats;
+                System.out.println("Waiting for run pool " + (i + 1) + "/" + runPools.size() + ", run " + (j + 1) + "/" + runPoolFutures.size());
+                try {
+                    runStats = runFuture.get();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                runPoolStats.add(runStats);
+            }
+            allRunStats.add(runPoolStats);
+        }
+
+
+        if (allRunStats.size() != runPools.size()) {
+            throw new IllegalStateException("Incorrect number of allRunStats: " + allRunStats.size() + ". Should be " + runPools.size());
+        }
+        System.out.println("CREATING RUN POOL STATS-----------------");
+        List<Future<RunPoolStats>> runPoolStatsFutures = new ArrayList<>();
+        for (int i = 0; i < allRunStats.size(); i++) {
+            int finalI = i;
+            Future<RunPoolStats> future = executorService.submit(() ->
+                    runPoolStatsCreator.create(allRunStats.get(finalI), runPools.get(finalI).runConfiguration())
+            );
+            runPoolStatsFutures.add(future);
+        }
+
+        System.out.println("WAITING FOR RUN POOL STATS-----------------");
+        List<RunPoolStats> allRunPoolStats = new ArrayList<>();
+        for (Future<RunPoolStats> future : runPoolStatsFutures) {
+            RunPoolStats runPoolStats;
+            try {
+                runPoolStats = future.get();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            allRunPoolStats.add(runPoolStats);
+        }
+
+        if (allRunPoolStats.size() != runPools.size()) {
+            throw new IllegalStateException("Incorrect number of allRunPoolStats: " + allRunPoolStats.size() + ". Should be " + runPools.size());
+        }
+
+        System.out.println("EXPORTING SINGLE RUN POOLS -----------------");
+        allRunPoolStats.forEach(stats -> executorService.submit(() -> {
+            exporter.exportSingleRunPoolStats(stats);
         }));
+
         executorService.shutdown();
-        executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        try {
+            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        ExecutorService plotsExecutorService = new ForkJoinPool();
+        System.out.println("EXPORTING SINGLE RUN POOL PLOTS -----------------");
+        int size = allRunPoolStats.size();
+
+        IntStream.range(0, size)
+                .forEach(i -> {
+                    System.out.println("Plots " + (i + 1) + "/" + size);
+                    plotsExecutorService.submit(() -> {
+                        exporter.exportPlots(allRunPoolStats.get(i).allRunStats(), allRunPoolStats.get(i).runConfiguration());
+                    });
+                });
+
+        plotsExecutorService.shutdown();
+        try {
+            plotsExecutorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        System.out.println("EXPORTING ALL RUN POOLS -----------------");
+        exporter.exportAllRunPools(allRunPoolStats);
     }
 
     private List<Integer> getPopulationSizes() {
@@ -156,6 +250,7 @@ public class MainV2 {
         FitnessFunctionV2<?, ?> exponent025 = new ExponentialFunction(10, 0, 10.23, 2, 0.25);
         FitnessFunctionV2<?, ?> exponent1 = new ExponentialFunction(10, 0, 10.23, 2, 1);
         FitnessFunctionV2<?, ?> exponent2 = new ExponentialFunction(10, 0, 10.23, 2, 2);
+        FitnessFunctionV2<?, ?> rastriginFunction = new RastriginFunction(10, -5.12, 5.11, 2, 7);
 
 //        return List.of(constAllFunction);
 //        return List.of(fhFunction);
@@ -171,13 +266,15 @@ public class MainV2 {
 //                ,
 //                quadraticFunction
 //                ,
-                quadratic512Function
+//                quadratic512Function
 //                ,
 //                exponent025
 //                ,
 //                exponent1
 //                ,
 //                exponent2
+//                ,
+                rastriginFunction
         );
     }
 

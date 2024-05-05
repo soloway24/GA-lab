@@ -14,11 +14,18 @@ public class ConvergenceIdentifier {
 
     private static final double HOMOGENOUS_PERCENTAGE = 0.99;
 
-    public boolean hasConverged(List<Individual> individuals, OperatorType operatorType) {
+    public boolean hasConverged(Map<Individual, ? extends Number> individualToFitness, OperatorType operatorType) {
         if (operatorType == NONE) {
-            return areAllTheSame(individuals);
+            return areAllTheSame(individualToFitness.keySet()) || areAllTheSameDoubles(individualToFitness.values());
         }
-        return isHomogenous(individuals, HOMOGENOUS_PERCENTAGE);
+        return isHomogenous(individualToFitness.keySet(), HOMOGENOUS_PERCENTAGE);
+    }
+
+    private boolean areAllTheSameDoubles(Collection<? extends Number> values) {
+        long distinct = values.stream()
+                .distinct()
+                .count();
+        return distinct == 1;
     }
 
     public static boolean areTheSameWithPercentage(Collection<Individual> individuals, double samePercentage) {
@@ -56,7 +63,7 @@ public class ConvergenceIdentifier {
                 .size();
     }
 
-    public static boolean isHomogenous(List<Individual> individuals, double minPercentage) {
+    public static boolean isHomogenous(Collection<Individual> individuals, double minPercentage) {
         Map<Integer, List<Boolean>> indexToBits = new HashMap<>();
         individuals.stream()
                 .map(Individual::getBinaryCode)

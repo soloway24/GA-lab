@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static java.lang.Long.parseLong;
+import static java.lang.Math.*;
 import static lab.v2.util.MetricUtils.computeKendallTauB;
 import static lab.v2.util.MetricUtils.computePFET;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -32,5 +34,10 @@ class MetricUtilsTest {
         System.out.println("Ptau value: " + ptau);
 
         assertThat(ptau, equalTo(0.539163866017192));
+    }
+
+    @Test
+    public void wfesafa() {
+        System.out.println(abs(10 * cos(2 * PI * 7) - pow(7, 2)) + 10 * cos(2 * PI * 4.94) - pow(4.94, 2));
     }
 }

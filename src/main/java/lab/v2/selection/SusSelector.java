@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.*;
 import java.util.Map.Entry;
 
+import static java.util.Collections.shuffle;
 import static lab.v2.selection.SelectorType.SUS;
 
 @RequiredArgsConstructor
@@ -64,7 +65,9 @@ public class SusSelector implements Selector {
         double selectedQuantity = 0;
         List<Individual> selected = new ArrayList<>();
 
-        for (Entry<Individual, Double> entry : individualToExpectedQuantity.entrySet()) {
+        List<Entry<Individual, Double>> individualToExpectedQuantityShuffled = new ArrayList<>(individualToExpectedQuantity.entrySet());
+        shuffle(individualToExpectedQuantityShuffled);
+        for (Entry<Individual, Double> entry : individualToExpectedQuantityShuffled) {
             currentPercentage += entry.getValue();
             while (currentPercentage >= spin && selectedQuantity < populationSize) {
                 selected.add(new Individual(entry.getKey()));
