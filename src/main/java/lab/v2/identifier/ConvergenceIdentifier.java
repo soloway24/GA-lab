@@ -16,7 +16,11 @@ public class ConvergenceIdentifier {
 
     public boolean hasConverged(Map<Individual, ? extends Number> individualToFitness, OperatorType operatorType) {
         if (operatorType == NONE) {
-            return areAllTheSame(individualToFitness.keySet()) || areAllTheSameDoubles(individualToFitness.values());
+            return areAllTheSame(individualToFitness.keySet())
+                    // only for Rastrigin
+//                    || areAllTheSameDoubles(individualToFitness.values())
+                    ;
+
         }
         return isHomogenous(individualToFitness.keySet(), HOMOGENOUS_PERCENTAGE);
     }

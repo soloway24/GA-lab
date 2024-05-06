@@ -1,6 +1,6 @@
 package lab.v2.run;
 
-import lab.parameters.Encoding;
+import lab.v2.encoding.Encoding;
 import lab.v2.Individual;
 import lab.v2.export.Homogeneity;
 import lab.v2.function.FitnessFunctionV2;

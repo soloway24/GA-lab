@@ -6,6 +6,7 @@ import lab.v2.export.Exporter;
 import lab.v2.function.*;
 import lab.v2.identifier.ConvergenceIdentifier;
 import lab.v2.operator.NoneOperator;
+import lab.v2.operator.OnePointCrossoverOperator;
 import lab.v2.operator.Operator;
 import lab.v2.population.PopulationInitializer;
 import lab.v2.population.PopulationPoolInitializer;
@@ -251,6 +252,8 @@ public class MainV2 {
         FitnessFunctionV2<?, ?> exponent1 = new ExponentialFunction(10, 0, 10.23, 2, 1);
         FitnessFunctionV2<?, ?> exponent2 = new ExponentialFunction(10, 0, 10.23, 2, 2);
         FitnessFunctionV2<?, ?> rastriginFunction = new RastriginFunction(10, -5.12, 5.11, 2, 7);
+        FitnessFunctionV2<?, ?> deb2Function = new Deb2Function(10, 0, 1.023, 3);
+        FitnessFunctionV2<?, ?> deb4Function = new Deb4Function(10, 0, 1.023, 3);
 
 //        return List.of(constAllFunction);
 //        return List.of(fhFunction);
@@ -260,7 +263,7 @@ public class MainV2 {
 //        return List.of(exponent1);
 //        return List.of(exponent2);
         return List.of(
-//                constAllFunction
+                constAllFunction
 //                ,
 //                fhFunction
 //                ,
@@ -274,7 +277,11 @@ public class MainV2 {
 //                ,
 //                exponent2
 //                ,
-                rastriginFunction
+//                rastriginFunction
+//                ,
+//                deb2Function
+//                ,
+//                deb4Function
         );
     }
 
@@ -326,8 +333,10 @@ public class MainV2 {
 
     private List<Operator> getOperators() {
         Operator noneOperator = new NoneOperator();
+        Operator crossoverOperator = new OnePointCrossoverOperator(1);
 
         return List.of(noneOperator);
+//        return List.of(crossoverOperator);
     }
 
     private List<RunPoolConfiguration> getRunPoolConfigurations(List<FitnessFunctionV2<?, ?>> functions,

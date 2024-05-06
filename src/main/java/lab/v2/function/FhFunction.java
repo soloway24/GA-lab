@@ -1,6 +1,6 @@
 package lab.v2.function;
 
-import lab.parameters.Encoding;
+import lab.v2.encoding.Encoding;
 import lab.v2.Individual;
 import lab.v2.operator.OperatorType;
 import lab.v2.population.PopulationType;
@@ -11,7 +11,7 @@ import java.util.Optional;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
-import static lab.parameters.Encoding.STANDARD;
+import static lab.v2.encoding.Encoding.STANDARD;
 import static lab.v2.identifier.ConvergenceIdentifier.areAllEqualTo;
 import static lab.v2.identifier.ConvergenceIdentifier.areTheSameWithPercentage;
 import static lab.v2.operator.OperatorType.NONE;

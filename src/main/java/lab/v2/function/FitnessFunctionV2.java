@@ -1,6 +1,6 @@
 package lab.v2.function;
 
-import lab.parameters.Encoding;
+import lab.v2.encoding.Encoding;
 import lab.v2.Individual;
 import lab.v2.operator.OperatorType;
 import lab.v2.population.PopulationType;

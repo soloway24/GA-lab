@@ -1,6 +1,6 @@
 package lab.v2.function;
 
-import lab.parameters.Encoding;
+import lab.v2.encoding.Encoding;
 import lab.v2.Individual;
 import lab.v2.operator.OperatorType;
 import lab.v2.population.PopulationType;
@@ -13,8 +13,8 @@ import static java.lang.Math.exp;
 import static java.lang.Math.pow;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
-import static lab.parameters.Encoding.GRAY;
-import static lab.parameters.Encoding.STANDARD;
+import static lab.v2.encoding.Encoding.GRAY;
+import static lab.v2.encoding.Encoding.STANDARD;
 import static lab.utils.Constants.PRECISION_BASE;
 import static lab.v2.encoding.DecoderV2.decodeV2;
 import static lab.v2.identifier.SuccessfulRunIdentifier.isSuccessfulRealFunction;

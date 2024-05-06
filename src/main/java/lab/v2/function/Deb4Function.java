@@ -1,7 +1,7 @@
 package lab.v2.function;
 
-import lab.v2.Individual;
 import lab.v2.encoding.Encoding;
+import lab.v2.Individual;
 import lab.v2.operator.OperatorType;
 import lab.v2.population.PopulationType;
 
@@ -9,22 +9,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static java.lang.Math.pow;
+import static java.lang.Math.*;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
-import static lab.utils.Constants.PRECISION_BASE;
-import static lab.v2.encoding.DecoderV2.decodeV2;
 import static lab.v2.encoding.Encoding.GRAY;
 import static lab.v2.encoding.Encoding.STANDARD;
+import static lab.utils.Constants.PRECISION_BASE;
+import static lab.v2.encoding.DecoderV2.decodeV2;
 import static lab.v2.identifier.SuccessfulRunIdentifier.isSuccessfulRealFunction;
 import static lab.v2.operator.OperatorType.NONE;
 import static lab.v2.population.PopulationType.*;
 import static lab.v2.validators.EncodingSpaceValidator.validateEncodingSpace;
 
-public class PowerFunction implements FitnessFunctionV2<Double, Double> {
+public class Deb4Function implements FitnessFunctionV2<Double, Double> {
 
-    private static final Individual OPTIMAL_STANDARD_INDIVIDUAL = new Individual("1111111111", STANDARD);
-    private static final Individual OPTIMAL_GRAY_INDIVIDUAL = new Individual("1000000000", GRAY);
+    private static final Individual OPTIMAL_STANDARD_INDIVIDUAL = new Individual("0001010000", STANDARD);
+    private static final Individual OPTIMAL_GRAY_INDIVIDUAL = new Individual("0001111000", GRAY);
 
     private static final Map<Encoding, Individual> ENCODING_TO_OPTIMAL = Map.of(
             STANDARD, OPTIMAL_STANDARD_INDIVIDUAL,
@@ -35,20 +35,18 @@ public class PowerFunction implements FitnessFunctionV2<Double, Double> {
     private final Double minX;
     private final Double maxX;
     private final int argumentPrecision;
-    private final double exponent;
 
-    public PowerFunction(int chromosomeLength, double minX, double maxX, int argumentPrecision, double exponent) {
+    public Deb4Function(int chromosomeLength, double minX, double maxX, int argumentPrecision) {
         validateEncodingSpace(chromosomeLength, minX, maxX, argumentPrecision);
         this.chromosomeLength = chromosomeLength;
         this.minX = minX;
         this.maxX = maxX;
         this.argumentPrecision = argumentPrecision;
-        this.exponent = exponent;
     }
 
     @Override
     public String getName() {
-        return "x^" + exponent;
+        return "Deb4";
     }
 
     @Override
@@ -58,8 +56,8 @@ public class PowerFunction implements FitnessFunctionV2<Double, Double> {
 
     @Override
     public List<Encoding> getSupportedEncodings() {
-//        return List.of(STANDARD, GRAY);
-        return List.of(STANDARD);
+        return List.of(STANDARD, GRAY);
+//        return List.of(STANDARD);
 //        return List.of(GRAY);
     }
 
@@ -70,7 +68,7 @@ public class PowerFunction implements FitnessFunctionV2<Double, Double> {
 
     @Override
     public Double getMaxFitness() {
-        return pow(maxX, exponent);
+        return 1.0;
     }
 
     @Override
@@ -85,7 +83,7 @@ public class PowerFunction implements FitnessFunctionV2<Double, Double> {
 
     @Override
     public Optional<Double> getOptimalX() {
-        return of(maxX);
+        return of(0.08);
     }
 
     @Override
@@ -97,7 +95,8 @@ public class PowerFunction implements FitnessFunctionV2<Double, Double> {
     @Override
     public Double evaluate(Individual individual) {
         Double x = decodeV2(individual, this);
-        return pow(x, exponent);
+        double exponentPower = -2 * log(2) * pow((x - 0.08) / 0.854, 2);
+        return exp(exponentPower) * pow(sin(5 * PI * (pow(x, 0.75) - 0.05)), 6);
     }
 
     @Override
@@ -110,17 +109,23 @@ public class PowerFunction implements FitnessFunctionV2<Double, Double> {
     public List<PopulationType> getSupportedPopulationConfigurations(OperatorType operatorType) {
         if (operatorType == NONE) {
             return List.of(ONE_OPTIMAL, FIVE_PERCENT_OPTIMAL, TEN_PERCENT_OPTIMAL);
+//            return List.of(ONE_OPTIMAL);
+//            return List.of(FIVE_PERCENT_OPTIMAL, TEN_PERCENT_OPTIMAL);
+//            return List.of(TEN_PERCENT_OPTIMAL);
         }
 
-//        return List.of(ZERO_OPTIMAL, ONE_OPTIMAL, FIVE_PERCENT_OPTIMAL, TEN_PERCENT_OPTIMAL);
-//        return List.of(ZERO_OPTIMAL);
-        return List.of(ONE_OPTIMAL);
-//        return List.of(FIVE_PERCENT_OPTIMAL);
-//        return List.of(TEN_PERCENT_OPTIMAL);
+        return List.of(ZERO_OPTIMAL, ONE_OPTIMAL, FIVE_PERCENT_OPTIMAL, TEN_PERCENT_OPTIMAL);
     }
 
     @Override
     public boolean isSuccessful(Map<Individual, ? extends Number> individualToFitness, OperatorType operatorType, boolean hasConverged) {
         return isSuccessfulRealFunction(this, individualToFitness, hasConverged);
     }
+
+//    @Override
+//    public Optional<Integer> getCustomRunPoolSize(SelectorType selectorType) {
+//        return selectorType == SUS
+//                ? of(10)
+//                : empty();
+//    }
 }

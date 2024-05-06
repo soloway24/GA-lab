@@ -1,6 +1,6 @@
 package lab.v2;
 
-import lab.parameters.Encoding;
+import lab.v2.encoding.Encoding;
 import lombok.Getter;
 import lombok.Setter;
 

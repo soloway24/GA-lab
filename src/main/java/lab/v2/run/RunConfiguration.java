@@ -1,6 +1,6 @@
 package lab.v2.run;
 
-import lab.parameters.Encoding;
+import lab.v2.encoding.Encoding;
 import lab.v2.function.FitnessFunctionV2;
 import lab.v2.operator.Operator;
 import lab.v2.population.PopulationType;
