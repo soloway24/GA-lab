@@ -1,71 +1,58 @@
 package lab.function;
 
-import lab.model.Individual;
-import lab.parameters.Encoding;
-import lab.utils.GeneticUtils;
-import lombok.Getter;
+import lab.operator.OperatorType;
+import lab.population.PopulationType;
+import lab.selection.SelectorType;
+import lab.encoding.Encoding;
+import lab.Individual;
 
-import static lab.model.Individual.ALL_100_ZEROS_INDIVIDUAL;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
-@Getter
-public enum FitnessFunction {
+import static java.util.Optional.empty;
 
-    F_ALL_CONST(100, '0', "FConst",
-            0, 100, 0, 100,
-            ALL_100_ZEROS_INDIVIDUAL,
-            null,
-            true),
-    FHD(100, '0', "FHD",
-            0, 10000, 0, 100,
-            ALL_100_ZEROS_INDIVIDUAL,
-            null,
-            false),
-    QUAD(10, '1', "x^2",
-            0, 104.6529, 0, 10.23,
-            new Individual("1111111111"),
-            new Individual("1000000000"),
-            true),
-    QUAD_SYM(10, '0', "5.12^2 - x^2",
-            0, 26.2144, -5.12, 5.12,
-            new Individual("1000000000"),
-            new Individual("1100000000"),
-            true),
-    ;
+public interface FitnessFunction<ARG_T extends Number, RES_T extends Number> {
 
-    private final int length;
-    private final char optimal;
-    private final String outPath;
-    private final double min;
-    private final double max;
-    private final double minX;
-    private final double maxX;
-    private final Individual optimalStandard;
-    private final Individual optimalGray;
-    private final boolean applyOperators;
+    String getName();
 
-    FitnessFunction(int length, char optimal, String out,
-                    double min, double max, double minX, double maxX,
-                    Individual optimalStandard,
-                    Individual optimalGray,
-                    boolean applyOperators) {
-        this.length = length;
-        this.optimal = optimal;
-        this.outPath = out;
+    int getChromosomeLength();
 
-        this.min = min;
-        this.max = max;
-        this.minX = minX;
-        this.maxX = maxX;
+    List<Encoding> getSupportedEncodings();
 
-        this.optimalStandard = optimalStandard;
-        this.optimalGray = optimalGray;
+    RES_T getMinFitness();
 
-        this.applyOperators = applyOperators;
+    RES_T getMaxFitness();
+
+    Optional<ARG_T> getMinX();
+
+    Optional<ARG_T> getMaxX();
+
+    Optional<ARG_T> getOptimalX();
+
+    Optional<Individual> getOptimalIndividual(Encoding encoding);
+
+    RES_T evaluate(Individual individual);
+
+    Optional<ARG_T> convertToX(long decimalValue);
+    default boolean supportsDecoding() {
+        return true;
     }
 
-    public Individual getBest() {
-        if (optimalGray == null)
-            return optimalStandard;
-        return GeneticUtils.ENCODING == Encoding.STANDARD ? optimalStandard : optimalGray;
+    List<PopulationType> getSupportedPopulationConfigurations(OperatorType operatorType);
+
+    boolean isSuccessful(Map<Individual, ? extends Number> individualToFitness, OperatorType operatorType, boolean hasConverged);
+
+    default List<SelectorType> getUnsupportedSelectorTypes(OperatorType operatorType) {
+        return List.of();
     }
+
+    default boolean isConstant() {
+        return false;
+    }
+
+    default Optional<Integer> getCustomRunPoolSize(SelectorType selectorType) {
+        return empty();
+    }
+
 }
