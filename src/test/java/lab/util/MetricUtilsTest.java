@@ -39,8 +39,9 @@ class MetricUtilsTest {
     public void wfesafa() {
         System.out.println(abs(10 * cos(2 * PI * 7) - pow(7, 2)) + 10 * cos(2 * PI * 4.94) - pow(4.94, 2));
 
-        double exponentPower = -2 * log(2) * pow((0.1 - 0.1) / 0.8, 2);
-        System.out.println(exp(exponentPower) * pow(sin(5 * PI * 0.1), 6));
+        double exponentPower = -2 * log(2) * pow((0.101 - 0.1) / 0.8, 2);
+        System.out.println(exp(exponentPower) * pow(sin(5 * PI * 0.101), 6));
+
         System.out.println(sin(5 * PI * 0.2));
         System.out.println(sin(PI));
 

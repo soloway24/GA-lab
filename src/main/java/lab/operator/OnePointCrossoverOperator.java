@@ -12,6 +12,7 @@ import java.util.stream.IntStream;
 
 import static java.util.Collections.shuffle;
 import static lab.operator.OperatorType.CROSSOVER;
+import static lab.util.CalculationUtils.getIndexedIndividuals;
 
 public class OnePointCrossoverOperator implements Operator {
 
@@ -57,7 +58,7 @@ public class OnePointCrossoverOperator implements Operator {
         );
 
         shuffle(crossedIndividuals);
-        return CalculationUtils.getIndexedIndividuals(crossedIndividuals);
+        return getIndexedIndividuals(crossedIndividuals);
     }
 
     private List<Individual> crossover(Individual individual1, Individual individual2) {

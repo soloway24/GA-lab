@@ -16,7 +16,7 @@ public class ConvergenceIdentifier {
     public boolean hasConverged(Map<Individual, ? extends Number> individualToFitness, OperatorType operatorType) {
         if (operatorType == OperatorType.NONE) {
             return areAllTheSame(individualToFitness.keySet())
-                    // only for Rastrigin
+                    // only for Rastrigin without operators
 //                    || areAllTheSameDoubles(individualToFitness.values())
                     ;
 

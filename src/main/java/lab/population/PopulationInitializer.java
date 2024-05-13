@@ -1,9 +1,8 @@
 package lab.population;
 
 import lab.Individual;
-import lab.function.FitnessFunction;
-import lab.util.CalculationUtils;
 import lab.encoding.Encoding;
+import lab.function.FitnessFunction;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -17,6 +16,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.concat;
 import static lab.population.PopulationInitializationType.*;
+import static lab.util.CalculationUtils.getIndexedIndividuals;
 
 @RequiredArgsConstructor
 public class PopulationInitializer {
@@ -46,7 +46,7 @@ public class PopulationInitializer {
         List<Individual> individuals = createRandomIndividuals(populationConfig.function().getChromosomeLength(),
                 populationConfig.encoding(), populationConfig.populationSize())
                 .toList();
-        List<Individual> indexedIndividuals = CalculationUtils.getIndexedIndividuals(individuals);
+        List<Individual> indexedIndividuals = getIndexedIndividuals(individuals);
         return new Population(populationConfig, indexedIndividuals);
     }
 
@@ -82,7 +82,7 @@ public class PopulationInitializer {
         List<Individual> wholePopulation = concat(optimalIndividuals, restPopulation)
                 .collect(toList());
         shuffle(wholePopulation);
-        List<Individual> individuals = CalculationUtils.getIndexedIndividuals(wholePopulation);
+        List<Individual> individuals = getIndexedIndividuals(wholePopulation);
         return new Population(populationConfig, individuals);
     }
 
@@ -90,7 +90,8 @@ public class PopulationInitializer {
         List<Individual> individuals = createRandomNotOptimalIndividuals(populationConfiguration.function(),
                 populationConfiguration.encoding(), populationConfiguration.populationSize())
                 .toList();
-        return new Population(populationConfiguration, individuals);
+        List<Individual> indexedIndividuals = getIndexedIndividuals(individuals);
+        return new Population(populationConfiguration, indexedIndividuals);
     }
 
     private Stream<Individual> createRandomIndividuals(int chromosomeLength, Encoding encoding, int quantity) {

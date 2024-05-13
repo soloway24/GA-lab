@@ -140,11 +140,18 @@ public class MainV2 {
 
         List<List<Future<RunStats>>> allFutures = new ArrayList<>();
 
-        for (RunPool runPool : runPools) {
+        for (int i = 0; i < runPools.size(); i++) {
+            RunPool runPool = runPools.get(i);
+            int finalI = i;
+            System.out.println("Submitting run pool " + finalI + "/" + runPools.size() + " : " + runPool.runConfiguration());
             List<Future<RunStats>> runPoolFutures = new ArrayList<>();
             List<Run> runs = runPool.runs();
-            for (Run run : runs) {
-                Future<RunStats> future = executorService.submit(() -> runPoolExecutor.executeRun(run));
+            for (int j = 0; j < runs.size(); j++) {
+                Run run = runs.get(j);
+                int finalJ = j;
+
+                Future<RunStats> future = executorService.submit(() -> runPoolExecutor.executeRun(run,
+                        finalJ, runs.size(), finalI, runPools.size()));
                 runPoolFutures.add(future);
             }
             allFutures.add(runPoolFutures);
@@ -155,14 +162,10 @@ public class MainV2 {
         System.out.println("WAITING FOR COMPLETION-----------------");
 
         for (int i = 0; i < runPools.size(); i++) {
-            System.out.println("Waiting for run pool: " + runPools.get(i).runConfiguration());
-
             List<RunStats> runPoolStats = new ArrayList<>();
             List<Future<RunStats>> runPoolFutures = allFutures.get(i);
-            for (int j = 0; j < runPoolFutures.size(); j++) {
-                Future<RunStats> runFuture = runPoolFutures.get(j);
+            for (Future<RunStats> runFuture : runPoolFutures) {
                 RunStats runStats;
-                System.out.println("Waiting for run pool " + (i + 1) + "/" + runPools.size() + ", run " + (j + 1) + "/" + runPoolFutures.size());
                 try {
                     runStats = runFuture.get();
                 } catch (Exception e) {
@@ -181,8 +184,9 @@ public class MainV2 {
         List<Future<RunPoolStats>> runPoolStatsFutures = new ArrayList<>();
         for (int i = 0; i < allRunStats.size(); i++) {
             int finalI = i;
-            Future<RunPoolStats> future = executorService.submit(() ->
-                    runPoolStatsCreator.create(allRunStats.get(finalI), runPools.get(finalI).runConfiguration())
+            Future<RunPoolStats> future = executorService.submit(() -> {
+                        return runPoolStatsCreator.create(allRunStats.get(finalI), runPools.get(finalI).runConfiguration());
+                    }
             );
             runPoolStatsFutures.add(future);
         }
@@ -267,7 +271,7 @@ public class MainV2 {
 //                ,
 //                fhFunction
 //                ,
-                quadraticFunction
+//                quadraticFunction
 //                ,
 //                quadratic512Function
 //                ,
@@ -277,7 +281,7 @@ public class MainV2 {
 //                ,
 //                exponent2
 //                ,
-//                rastriginFunction
+                rastriginFunction
 //                ,
 //                deb2Function
 //                ,
@@ -312,22 +316,23 @@ public class MainV2 {
                 new DynamicPowerScalingSusSelector(dynamicPowerScalingSelector0p8to1p2, susSelector);
 
         return List.of(
-                rwsSelector
+//                rwsSelector
 //                ,
-//                susSelector
-//                ,
+                susSelector
+                ,
 //                powerScalingRwsSelector
 //                ,
 //                powerScalingRwsSelector2
 //                ,
-//                powerScalingSusSelector,
-//                powerScalingSusSelector2,
+                powerScalingSusSelector,
+                powerScalingSusSelector2
+                ,
 //                dynamicPowerScalingRwsSelector0p9to1p1
 //                ,
 //                dynamicPowerScalingRwsSelector0p8to1p2
 //                ,
-//                dynamicPowerScalingSusSelector0p9to1p1,
-//                dynamicPowerScalingSusSelector0p8to1p2
+                dynamicPowerScalingSusSelector0p9to1p1,
+                dynamicPowerScalingSusSelector0p8to1p2
         );
     }
 
@@ -335,8 +340,8 @@ public class MainV2 {
         Operator noneOperator = new NoneOperator();
         Operator crossoverOperator = new OnePointCrossoverOperator(1);
 
-        return List.of(noneOperator);
-//        return List.of(crossoverOperator);
+//        return List.of(noneOperator);
+        return List.of(crossoverOperator);
     }
 
     private List<RunPoolConfiguration> getRunPoolConfigurations(List<FitnessFunction<?, ?>> functions,

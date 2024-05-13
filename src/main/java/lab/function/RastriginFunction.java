@@ -2,10 +2,11 @@ package lab.function;
 
 import lab.Individual;
 import lab.encoding.Decoder;
+import lab.encoding.Encoding;
 import lab.identifier.SuccessfulRunIdentifier;
 import lab.operator.OperatorType;
 import lab.population.PopulationType;
-import lab.encoding.Encoding;
+import lab.selection.SelectorType;
 import lab.validators.EncodingSpaceValidator;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import static java.lang.Math.*;
 import static java.util.Optional.*;
 import static lab.encoding.Encoding.GRAY;
 import static lab.encoding.Encoding.STANDARD;
+import static lab.selection.SelectorType.SUS;
 import static lab.util.Constants.PRECISION_BASE;
 
 public class RastriginFunction implements FitnessFunction<Double, Double> {
@@ -56,8 +58,8 @@ public class RastriginFunction implements FitnessFunction<Double, Double> {
     @Override
     public List<Encoding> getSupportedEncodings() {
 //        return List.of(STANDARD, GRAY);
-//        return List.of(STANDARD);
-        return List.of(GRAY);
+        return List.of(STANDARD);
+//        return List.of(GRAY);
     }
 
     @Override
@@ -112,7 +114,11 @@ public class RastriginFunction implements FitnessFunction<Double, Double> {
 //            return List.of(TEN_PERCENT_OPTIMAL);
         }
 
-        return List.of(PopulationType.ZERO_OPTIMAL, PopulationType.ONE_OPTIMAL, PopulationType.FIVE_PERCENT_OPTIMAL, PopulationType.TEN_PERCENT_OPTIMAL);
+//        return List.of(PopulationType.ZERO_OPTIMAL, PopulationType.ONE_OPTIMAL, PopulationType.FIVE_PERCENT_OPTIMAL, PopulationType.TEN_PERCENT_OPTIMAL);
+//        return List.of(PopulationType.ZERO_OPTIMAL);
+//        return List.of(PopulationType.ONE_OPTIMAL);
+        return List.of(PopulationType.FIVE_PERCENT_OPTIMAL);
+//        return List.of(PopulationType.TEN_PERCENT_OPTIMAL);
     }
 
     @Override

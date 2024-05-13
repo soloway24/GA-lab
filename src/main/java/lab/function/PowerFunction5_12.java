@@ -15,6 +15,7 @@ import static java.lang.Math.pow;
 import static java.util.Optional.*;
 import static lab.encoding.Encoding.GRAY;
 import static lab.encoding.Encoding.STANDARD;
+import static lab.population.PopulationType.*;
 import static lab.util.Constants.PRECISION_BASE;
 import static lab.encoding.Decoder.decodeV2;
 import static lab.identifier.SuccessfulRunIdentifier.isSuccessfulRealFunction;
@@ -66,8 +67,8 @@ public class PowerFunction5_12 implements FitnessFunction<Double, Double> {
     public List<Encoding> getSupportedEncodings() {
         return List.of(
                 STANDARD
-                ,
-                GRAY
+//                ,
+//                GRAY
         );
     }
 
@@ -123,7 +124,7 @@ public class PowerFunction5_12 implements FitnessFunction<Double, Double> {
 //            return List.of(TEN_PERCENT_OPTIMAL);
         }
 
-        return List.of(PopulationType.ZERO_OPTIMAL, PopulationType.ONE_OPTIMAL, PopulationType.FIVE_PERCENT_OPTIMAL, PopulationType.TEN_PERCENT_OPTIMAL);
+        return List.of(ZERO_OPTIMAL, ONE_OPTIMAL, FIVE_PERCENT_OPTIMAL, TEN_PERCENT_OPTIMAL);
     }
 
     @Override
