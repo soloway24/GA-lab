@@ -1,7 +1,6 @@
 package lab.run;
 
 import lab.Individual;
-import lab.encoding.Decoder;
 import lab.encoding.Encoding;
 import lab.export.Homogeneity;
 import lab.function.FitnessFunction;
@@ -28,6 +27,7 @@ import static java.util.Collections.shuffle;
 import static java.util.Optional.ofNullable;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
+import static lab.encoding.Decoder.decode;
 import static lab.identifier.ConvergenceIdentifier.getEqualQuantity;
 import static lab.identifier.ConvergenceIdentifier.isHomogenous;
 import static lab.selection.SelectorType.SUS;
@@ -1008,7 +1008,7 @@ public class RunPoolExecutor {
         return function.isConstant()
                 ? new IndividualMetrics(individual, getOnesCount(individual), null, null)
                 : new IndividualMetrics(individual, getOnesCount(individual),
-                function.supportsDecoding() ? Decoder.decodeV2(individual, function).doubleValue() : null,
+                function.supportsDecoding() ? decode(individual, function).doubleValue() : null,
                 function.evaluate(individual).doubleValue());
     }
 

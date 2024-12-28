@@ -1,11 +1,10 @@
 package lab.function;
 
 import lab.Individual;
-import lab.encoding.Decoder;
+import lab.encoding.Encoding;
 import lab.identifier.SuccessfulRunIdentifier;
 import lab.operator.OperatorType;
 import lab.population.PopulationType;
-import lab.encoding.Encoding;
 import lab.validators.EncodingSpaceValidator;
 
 import java.util.List;
@@ -15,6 +14,7 @@ import java.util.Optional;
 import static java.lang.Math.*;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
+import static lab.encoding.Decoder.decode;
 import static lab.encoding.Encoding.GRAY;
 import static lab.encoding.Encoding.STANDARD;
 import static lab.util.Constants.PRECISION_BASE;
@@ -92,7 +92,7 @@ public class Deb4Function implements FitnessFunction<Double, Double> {
 
     @Override
     public Double evaluate(Individual individual) {
-        Double x = Decoder.decodeV2(individual, this);
+        Double x = decode(individual, this);
         double exponentPower = -2 * log(2) * pow((x - 0.08) / 0.854, 2);
         return exp(exponentPower) * pow(sin(5 * PI * (pow(x, 0.75) - 0.05)), 6);
     }

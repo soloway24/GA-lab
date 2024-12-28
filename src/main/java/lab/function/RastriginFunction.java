@@ -1,12 +1,10 @@
 package lab.function;
 
 import lab.Individual;
-import lab.encoding.Decoder;
 import lab.encoding.Encoding;
 import lab.identifier.SuccessfulRunIdentifier;
 import lab.operator.OperatorType;
 import lab.population.PopulationType;
-import lab.selection.SelectorType;
 import lab.validators.EncodingSpaceValidator;
 
 import java.util.List;
@@ -14,10 +12,11 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.Math.*;
-import static java.util.Optional.*;
+import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
+import static lab.encoding.Decoder.decode;
 import static lab.encoding.Encoding.GRAY;
 import static lab.encoding.Encoding.STANDARD;
-import static lab.selection.SelectorType.SUS;
 import static lab.util.Constants.PRECISION_BASE;
 
 public class RastriginFunction implements FitnessFunction<Double, Double> {
@@ -95,7 +94,7 @@ public class RastriginFunction implements FitnessFunction<Double, Double> {
 
     @Override
     public Double evaluate(Individual individual) {
-        Double x = Decoder.decodeV2(individual, this);
+        Double x = decode(individual, this);
         return abs(10 * cos(2 * PI * a) - pow(a, 2)) + 10 * cos(2 * PI * x) - pow(x, 2);
     }
 

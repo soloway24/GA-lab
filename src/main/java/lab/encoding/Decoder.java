@@ -15,18 +15,18 @@ public class Decoder {
 
     private static final Map<Encoding, Function<String, Long>> ENCODING_TO_DECODER =
             Map.of(
-                    Encoding.STANDARD, Decoder::decodeStandardV2,
-                    Encoding.GRAY, Decoder::decodeGrayV2
+                    Encoding.STANDARD, Decoder::decodeStandard,
+                    Encoding.GRAY, Decoder::decodeGray
             );
 
-    public static <ARG_T extends Number> ARG_T decodeV2(Individual individual, FitnessFunction<ARG_T, ?> fitnessFunction) {
-        long decimalValue = getDecimalValueV2(individual);
+    public static <ARG_T extends Number> ARG_T decode(Individual individual, FitnessFunction<ARG_T, ?> fitnessFunction) {
+        long decimalValue = getDecimalValue(individual);
         return fitnessFunction.convertToX(decimalValue)
                 .orElseThrow(() -> new IllegalStateException("Provided function " + fitnessFunction.getName()
                         + " does not support decoding of individuals."));
     }
 
-    private static long getDecimalValueV2(Individual individual) {
+    private static long getDecimalValue(Individual individual) {
         String binaryCode = individual.getBinaryCode();
         verifyBinaryCode(binaryCode);
 
@@ -36,11 +36,11 @@ public class Decoder {
                 .orElseThrow(() -> new IllegalStateException("No decoder exists for the provided Encoding type - " + encoding));
     }
 
-    private static long decodeStandardV2(String toDecode) {
+    private static long decodeStandard(String toDecode) {
         return parseLong(toDecode, BINARY_BASE);
     }
 
-    private static long decodeGrayV2(String toDecode) {
+    private static long decodeGray(String toDecode) {
         verifyBinaryCode(toDecode);
         long decimalValue = parseLong(toDecode, BINARY_BASE);
         long mask = decimalValue;

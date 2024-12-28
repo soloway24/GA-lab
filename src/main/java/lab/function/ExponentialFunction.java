@@ -1,7 +1,6 @@
 package lab.function;
 
 import lab.Individual;
-import lab.encoding.Decoder;
 import lab.encoding.Encoding;
 import lab.identifier.SuccessfulRunIdentifier;
 import lab.operator.OperatorType;
@@ -16,6 +15,7 @@ import static java.lang.Math.exp;
 import static java.lang.Math.pow;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
+import static lab.encoding.Decoder.decode;
 import static lab.encoding.Encoding.GRAY;
 import static lab.encoding.Encoding.STANDARD;
 import static lab.util.Constants.PRECISION_BASE;
@@ -95,7 +95,7 @@ public class ExponentialFunction implements FitnessFunction<Double, Double> {
 
     @Override
     public Double evaluate(Individual individual) {
-        Double x = Decoder.decodeV2(individual, this);
+        Double x = decode(individual, this);
         return exp(factor * x);
     }
 

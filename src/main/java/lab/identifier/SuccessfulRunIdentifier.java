@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 import static java.util.Map.entry;
 import static lab.Constants.ALLOWED_FITNESS_DELTA;
 import static lab.Constants.ALLOWED_X_SIGMA;
-import static lab.encoding.Decoder.decodeV2;
+import static lab.encoding.Decoder.decode;
 
 public class SuccessfulRunIdentifier {
 
@@ -22,7 +22,7 @@ public class SuccessfulRunIdentifier {
 
         Individual best = getBestIndividual(individualToFitness);
         double bestFitness = individualToFitness.get(best).doubleValue();
-        double bestX = decodeV2(best, function).doubleValue();
+        double bestX = decode(best, function).doubleValue();
 
         double optimalX = function.getOptimalX()
                 .map(Number::doubleValue)

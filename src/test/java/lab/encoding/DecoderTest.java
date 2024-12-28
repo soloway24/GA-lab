@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
+import static lab.encoding.Decoder.decode;
 import static lab.util.Constants.MAX_CHROMOSOME_LENGTH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,7 +35,7 @@ class DecoderTest {
         double expectedX = DECIMAL_STANDARD / 100.0;
         when(doubleFunction.convertToX(DECIMAL_STANDARD)).thenReturn(of(expectedX));
 
-        double actualX = Decoder.decodeV2(STANDARD_INDIVIDUAL, doubleFunction);
+        double actualX = decode(STANDARD_INDIVIDUAL, doubleFunction);
         assertEquals(expectedX, actualX);
     }
 
@@ -43,14 +44,14 @@ class DecoderTest {
         double expectedX = DECIMAL_GRAY / 100.0;
         when(doubleFunction.convertToX(DECIMAL_GRAY)).thenReturn(of(expectedX));
 
-        double actualX = Decoder.decodeV2(GRAY_INDIVIDUAL, doubleFunction);
+        double actualX = decode(GRAY_INDIVIDUAL, doubleFunction);
         assertEquals(expectedX, actualX);
     }
 
     @Test
     public void whenBinaryCodeIsTooLongThenFailure() {
         assertThrows(IllegalArgumentException.class,
-                () -> Decoder.decodeV2(Individual.ALL_100_ZEROS_INDIVIDUAL, doubleFunction),
+                () -> decode(Individual.ALL_100_ZEROS_INDIVIDUAL, doubleFunction),
                 "Decoding of individuals of the length greater than " + MAX_CHROMOSOME_LENGTH
                         + "is not supported!");
     }
@@ -58,7 +59,7 @@ class DecoderTest {
     @Test
     public void whenBinaryCodeContainsInvalidCharactersThenFailure() {
         assertThrows(IllegalArgumentException.class,
-                () -> Decoder.decodeV2(INVALID_INDIVIDUAL, doubleFunction),
+                () -> decode(INVALID_INDIVIDUAL, doubleFunction),
                 "String " + INVALID_INDIVIDUAL.getBinaryCode()
                         + " contains non-binary characters during binary decoding!");
     }
@@ -69,7 +70,7 @@ class DecoderTest {
         when(nonDecodableDoubleFunction.getName()).thenReturn("Non-Decodable Double Function");
 
         assertThrows(IllegalStateException.class,
-                () -> Decoder.decodeV2(STANDARD_INDIVIDUAL, nonDecodableDoubleFunction),
+                () -> decode(STANDARD_INDIVIDUAL, nonDecodableDoubleFunction),
                 "Provided function " + nonDecodableDoubleFunction.getName()
                         + " does not support decoding of individuals.");
     }

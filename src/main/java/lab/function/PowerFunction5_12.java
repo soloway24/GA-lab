@@ -17,7 +17,7 @@ import static lab.encoding.Encoding.GRAY;
 import static lab.encoding.Encoding.STANDARD;
 import static lab.population.PopulationType.*;
 import static lab.util.Constants.PRECISION_BASE;
-import static lab.encoding.Decoder.decodeV2;
+import static lab.encoding.Decoder.decode;
 import static lab.identifier.SuccessfulRunIdentifier.isSuccessfulRealFunction;
 import static lab.operator.OperatorType.NONE;
 
@@ -105,7 +105,7 @@ public class PowerFunction5_12 implements FitnessFunction<Double, Double> {
 
     @Override
     public Double evaluate(Individual individual) {
-        Double x = decodeV2(individual, this);
+        Double x = decode(individual, this);
         return pow(b, bExponent) - pow(x, xExponent);
     }
 

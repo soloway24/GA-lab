@@ -1,7 +1,6 @@
 package lab.convertor;
 
 import lab.Individual;
-import lab.util.CalculationUtils;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -9,6 +8,8 @@ import java.util.Map.Entry;
 import static java.lang.Math.abs;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 import static lab.convertor.ValuesAdjuster.getAdjustedIndividualToValue;
+import static lab.util.CalculationUtils.getDoubleValues;
+import static lab.util.CalculationUtils.getValueSum;
 
 public class FitnessToProbabilityConvertor {
 
@@ -17,17 +18,18 @@ public class FitnessToProbabilityConvertor {
     private static final String ERROR_PREFIX = "Fitness to probability calculation failed: ";
 
     public Map<Individual, Double> convertToSelectionProbabilities(Map<Individual, ? extends Number> individualToFitness) {
-        double fitnessSum = CalculationUtils.getValueSum(CalculationUtils.getDoubleValues(individualToFitness));
+        double fitnessSum = getValueSum(getDoubleValues(individualToFitness));
         verifyFitnessSum(fitnessSum, individualToFitness);
 
         return getIndividualToProbability(individualToFitness, fitnessSum);
     }
 
-    private Map<Individual, Double> getIndividualToProbability(Map<Individual, ? extends Number> individualToFitness, double fitnessSum) {
+    private Map<Individual, Double> getIndividualToProbability(Map<Individual, ? extends Number> individualToFitness,
+                                                               double fitnessSum) {
         Map<Individual, Double> individualToProbability = individualToFitness.entrySet().stream()
                 .collect(toUnmodifiableMap(Entry::getKey, entry -> getProbability(entry, fitnessSum)));
 
-        double probabilitySum = CalculationUtils.getValueSum(CalculationUtils.getDoubleValues(individualToProbability));
+        double probabilitySum = getValueSum(getDoubleValues(individualToProbability));
         verifyProbabilitySum(probabilitySum);
 
         return getAdjustedIndividualToValue(individualToProbability, probabilitySum, VALID_PROBABILITY_SUM);
