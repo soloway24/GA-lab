@@ -1,10 +1,10 @@
 package lab.function;
 
+import lab.Individual;
+import lab.encoding.Encoding;
 import lab.operator.OperatorType;
 import lab.population.PopulationType;
 import lab.selection.SelectorType;
-import lab.encoding.Encoding;
-import lab.Individual;
 
 import java.util.List;
 import java.util.Map;
@@ -35,6 +35,7 @@ public interface FitnessFunction<ARG_T extends Number, RES_T extends Number> {
     RES_T evaluate(Individual individual);
 
     Optional<ARG_T> convertToX(long decimalValue);
+
     default boolean supportsDecoding() {
         return true;
     }

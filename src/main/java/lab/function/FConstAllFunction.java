@@ -1,9 +1,9 @@
 package lab.function;
 
+import lab.Individual;
+import lab.encoding.Encoding;
 import lab.operator.OperatorType;
 import lab.population.PopulationType;
-import lab.encoding.Encoding;
-import lab.Individual;
 
 import java.util.List;
 import java.util.Map;

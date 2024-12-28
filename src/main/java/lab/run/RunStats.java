@@ -1,8 +1,8 @@
 package lab.run;
 
 import lab.Individual;
-import lab.metric.IndividualMetrics;
 import lab.export.Homogeneity;
+import lab.metric.IndividualMetrics;
 import lombok.Builder;
 
 import java.util.List;

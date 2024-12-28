@@ -1,7 +1,7 @@
 package lab.identifier;
 
-import lab.function.FitnessFunction;
 import lab.Individual;
+import lab.function.FitnessFunction;
 
 import java.util.Map;
 import java.util.Map.Entry;

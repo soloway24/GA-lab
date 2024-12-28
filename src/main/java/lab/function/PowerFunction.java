@@ -5,7 +5,6 @@ import lab.encoding.Encoding;
 import lab.identifier.SuccessfulRunIdentifier;
 import lab.operator.OperatorType;
 import lab.population.PopulationType;
-import lab.validators.EncodingSpaceValidator;
 
 import java.util.List;
 import java.util.Map;
@@ -18,6 +17,7 @@ import static lab.encoding.Decoder.decode;
 import static lab.encoding.Encoding.GRAY;
 import static lab.encoding.Encoding.STANDARD;
 import static lab.util.Constants.PRECISION_BASE;
+import static lab.validators.EncodingSpaceValidator.validateEncodingSpace;
 
 public class PowerFunction implements FitnessFunction<Double, Double> {
 
@@ -36,7 +36,7 @@ public class PowerFunction implements FitnessFunction<Double, Double> {
     private final double exponent;
 
     public PowerFunction(int chromosomeLength, double minX, double maxX, int argumentPrecision, double exponent) {
-        EncodingSpaceValidator.validateEncodingSpace(chromosomeLength, minX, maxX, argumentPrecision);
+        validateEncodingSpace(chromosomeLength, minX, maxX, argumentPrecision);
         this.chromosomeLength = chromosomeLength;
         this.minX = minX;
         this.maxX = maxX;

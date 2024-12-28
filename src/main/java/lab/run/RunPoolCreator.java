@@ -1,8 +1,8 @@
 package lab.run;
 
-import lab.population.PopulationPool;
 import lab.population.Population;
 import lab.population.PopulationConfiguration;
+import lab.population.PopulationPool;
 import lab.population.PopulationPoolInitializer;
 import lombok.RequiredArgsConstructor;
 

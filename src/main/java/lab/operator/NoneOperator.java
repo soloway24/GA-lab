@@ -1,7 +1,7 @@
 package lab.operator;
 
-import lab.util.CalculationUtils;
 import lab.Individual;
+import lab.util.CalculationUtils;
 
 import java.util.List;
 

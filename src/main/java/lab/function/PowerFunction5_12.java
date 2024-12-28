@@ -1,11 +1,10 @@
 package lab.function;
 
+import lab.Individual;
+import lab.encoding.Encoding;
+import lab.operator.OperatorType;
 import lab.population.PopulationType;
 import lab.selection.SelectorType;
-import lab.encoding.Encoding;
-import lab.Individual;
-import lab.operator.OperatorType;
-import lab.validators.EncodingSpaceValidator;
 
 import java.util.List;
 import java.util.Map;
@@ -13,13 +12,14 @@ import java.util.Optional;
 
 import static java.lang.Math.pow;
 import static java.util.Optional.*;
+import static lab.encoding.Decoder.decode;
 import static lab.encoding.Encoding.GRAY;
 import static lab.encoding.Encoding.STANDARD;
-import static lab.population.PopulationType.*;
-import static lab.util.Constants.PRECISION_BASE;
-import static lab.encoding.Decoder.decode;
 import static lab.identifier.SuccessfulRunIdentifier.isSuccessfulRealFunction;
 import static lab.operator.OperatorType.NONE;
+import static lab.population.PopulationType.*;
+import static lab.util.Constants.PRECISION_BASE;
+import static lab.validators.EncodingSpaceValidator.validateEncodingSpace;
 
 public class PowerFunction5_12 implements FitnessFunction<Double, Double> {
 
@@ -27,8 +27,7 @@ public class PowerFunction5_12 implements FitnessFunction<Double, Double> {
     private static final Individual OPTIMAL_GRAY_INDIVIDUAL = new Individual("1100000000", GRAY);
 
     private static final Map<Encoding, Individual> ENCODING_TO_OPTIMAL = Map.of(
-            STANDARD, OPTIMAL_STANDARD_INDIVIDUAL
-            ,
+            STANDARD, OPTIMAL_STANDARD_INDIVIDUAL,
             GRAY, OPTIMAL_GRAY_INDIVIDUAL
     );
 
@@ -43,7 +42,7 @@ public class PowerFunction5_12 implements FitnessFunction<Double, Double> {
     //  b ^ bExponent - x ^ xExponent;  b = 5.12, bExponent = 2, xExponent = 2
     public PowerFunction5_12(int chromosomeLength, double minX, double maxX, int argumentPrecision,
                              double b, double bExponent, double xExponent) {
-        EncodingSpaceValidator.validateEncodingSpace(chromosomeLength, minX, maxX, argumentPrecision);
+        validateEncodingSpace(chromosomeLength, minX, maxX, argumentPrecision);
         this.chromosomeLength = chromosomeLength;
         this.minX = minX;
         this.maxX = maxX;

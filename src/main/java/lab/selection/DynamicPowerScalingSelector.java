@@ -1,7 +1,7 @@
 package lab.selection;
 
-import lab.util.CalculationUtils;
 import lab.Individual;
+import lab.util.CalculationUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

@@ -1,6 +1,5 @@
 package lab.operator;
 
-import lab.util.CalculationUtils;
 import lab.Individual;
 import lab.encoding.Encoding;
 import org.apache.commons.lang3.tuple.Pair;
