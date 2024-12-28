@@ -1,7 +1,6 @@
 package lab.convertor;
 
 import lab.Individual;
-import lab.util.CalculationUtils;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -9,6 +8,8 @@ import java.util.Map.Entry;
 import static java.lang.Math.abs;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 import static lab.convertor.ValuesAdjuster.getAdjustedIndividualToValue;
+import static lab.util.CalculationUtils.getDoubleValues;
+import static lab.util.CalculationUtils.getValueSum;
 
 public class ProbabilityToExpectedQuantityConvertor {
 
@@ -19,7 +20,7 @@ public class ProbabilityToExpectedQuantityConvertor {
         int populationSize = individualToProbability.size();
         Map<Individual, Double> individualToExpectedQuantity = getIndividualToExpectedQuantity(individualToProbability);
 
-        double expectedQuantitySum = CalculationUtils.getValueSum(CalculationUtils.getDoubleValues(individualToExpectedQuantity));
+        double expectedQuantitySum = getValueSum(getDoubleValues(individualToExpectedQuantity));
         verifyExpectedQuantitySum(expectedQuantitySum, populationSize);
 
         return getAdjustedIndividualToValue(individualToExpectedQuantity, expectedQuantitySum, populationSize);

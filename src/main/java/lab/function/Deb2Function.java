@@ -2,10 +2,8 @@ package lab.function;
 
 import lab.Individual;
 import lab.encoding.Encoding;
-import lab.identifier.SuccessfulRunIdentifier;
 import lab.operator.OperatorType;
 import lab.population.PopulationType;
-import lab.validators.EncodingSpaceValidator;
 
 import java.util.List;
 import java.util.Map;
@@ -15,16 +13,22 @@ import static java.lang.Math.*;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static lab.encoding.Decoder.decode;
+import static lab.encoding.Encoding.GRAY;
+import static lab.encoding.Encoding.STANDARD;
+import static lab.identifier.SuccessfulRunIdentifier.isSuccessfulRealFunction;
+import static lab.operator.OperatorType.NONE;
+import static lab.population.PopulationType.*;
 import static lab.util.Constants.PRECISION_BASE;
+import static lab.validators.EncodingSpaceValidator.validateEncodingSpace;
 
 public class Deb2Function implements FitnessFunction<Double, Double> {
 
-    private static final Individual OPTIMAL_STANDARD_INDIVIDUAL = new Individual("0001100100", Encoding.STANDARD);
-    private static final Individual OPTIMAL_GRAY_INDIVIDUAL = new Individual("0001010110", Encoding.GRAY);
+    private static final Individual OPTIMAL_STANDARD_INDIVIDUAL = new Individual("0001100100", STANDARD);
+    private static final Individual OPTIMAL_GRAY_INDIVIDUAL = new Individual("0001010110", GRAY);
 
     private static final Map<Encoding, Individual> ENCODING_TO_OPTIMAL = Map.of(
-            Encoding.STANDARD, OPTIMAL_STANDARD_INDIVIDUAL,
-            Encoding.GRAY, OPTIMAL_GRAY_INDIVIDUAL
+            STANDARD, OPTIMAL_STANDARD_INDIVIDUAL,
+            GRAY, OPTIMAL_GRAY_INDIVIDUAL
     );
 
     private final Integer chromosomeLength;
@@ -33,7 +37,7 @@ public class Deb2Function implements FitnessFunction<Double, Double> {
     private final int argumentPrecision;
 
     public Deb2Function(int chromosomeLength, double minX, double maxX, int argumentPrecision) {
-        EncodingSpaceValidator.validateEncodingSpace(chromosomeLength, minX, maxX, argumentPrecision);
+        validateEncodingSpace(chromosomeLength, minX, maxX, argumentPrecision);
         this.chromosomeLength = chromosomeLength;
         this.minX = minX;
         this.maxX = maxX;
@@ -52,7 +56,7 @@ public class Deb2Function implements FitnessFunction<Double, Double> {
 
     @Override
     public List<Encoding> getSupportedEncodings() {
-        return List.of(Encoding.STANDARD, Encoding.GRAY);
+        return List.of(STANDARD, GRAY);
 //        return List.of(STANDARD);
 //        return List.of(GRAY);
     }
@@ -103,19 +107,21 @@ public class Deb2Function implements FitnessFunction<Double, Double> {
 
     @Override
     public List<PopulationType> getSupportedPopulationConfigurations(OperatorType operatorType) {
-        if (operatorType == OperatorType.NONE) {
+        if (operatorType == NONE) {
 //            return List.of(ONE_OPTIMAL, FIVE_PERCENT_OPTIMAL, TEN_PERCENT_OPTIMAL);
 //            return List.of(ONE_OPTIMAL);
-            return List.of(PopulationType.FIVE_PERCENT_OPTIMAL, PopulationType.TEN_PERCENT_OPTIMAL);
+            return List.of(FIVE_PERCENT_OPTIMAL, TEN_PERCENT_OPTIMAL);
 //            return List.of(TEN_PERCENT_OPTIMAL);
         }
 
-        return List.of(PopulationType.ZERO_OPTIMAL, PopulationType.ONE_OPTIMAL, PopulationType.FIVE_PERCENT_OPTIMAL, PopulationType.TEN_PERCENT_OPTIMAL);
+        return List.of(ZERO_OPTIMAL, ONE_OPTIMAL, FIVE_PERCENT_OPTIMAL, TEN_PERCENT_OPTIMAL);
     }
 
     @Override
-    public boolean isSuccessful(Map<Individual, ? extends Number> individualToFitness, OperatorType operatorType, boolean hasConverged) {
-        return SuccessfulRunIdentifier.isSuccessfulRealFunction(this, individualToFitness, hasConverged);
+    public boolean isSuccessful(Map<Individual, ? extends Number> individualToFitness,
+                                OperatorType operatorType,
+                                boolean hasConverged) {
+        return isSuccessfulRealFunction(this, individualToFitness, hasConverged);
     }
 
 //    @Override
