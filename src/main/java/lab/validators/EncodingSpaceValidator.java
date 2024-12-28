@@ -10,14 +10,14 @@ public class EncodingSpaceValidator {
 
     public static void validateEncodingSpace(int chromosomeLength, double minX, double maxX, int argumentPrecision) {
         if (maxX < minX) {
-            throw new IllegalArgumentException("Provided min x " + minX + " is greater than max x " + maxX + " !");
+            throw new IllegalArgumentException("Provided min x " + minX + " is greater than max x " + maxX + ".");
         }
 
         BigDecimal encodingSpace = adjustScaleIfInteger(BigDecimal.valueOf(maxX - minX));
         int encodingSpacePrecision = encodingSpace.scale();
         if (encodingSpacePrecision > argumentPrecision) {
             throw new IllegalArgumentException("Provided argument precision " + argumentPrecision
-                    + " is greater than actual encoding space precision " + encodingSpacePrecision + " !"
+                    + " is less than actual encoding space precision " + encodingSpacePrecision + "."
                     + " Verify the precision of minX = " + minX + " and maxX = " + maxX + ".");
         }
 
@@ -29,8 +29,8 @@ public class EncodingSpaceValidator {
         BigInteger actualEncodingsNumber = BigInteger.valueOf(BINARY_BASE).pow(chromosomeLength);
         if (!expectedEncodingsNumber.equals(actualEncodingsNumber)) {
             throw new IllegalArgumentException("Chromosome with the provided length " + chromosomeLength
-                    + " encodes " + actualEncodingsNumber + " arguments with the precision of " + argumentPrecision
-                    + " while the expected number is " + expectedEncodingsNumber + " !");
+                    + " can encode " + actualEncodingsNumber + " arguments with the precision of " + argumentPrecision
+                    + " while the required number is " + expectedEncodingsNumber + ".");
         }
     }
 
