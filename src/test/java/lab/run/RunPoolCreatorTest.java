@@ -1,15 +1,11 @@
 package lab.run;
 
-import lab.convertor.FitnessToProbabilityConvertor;
-import lab.convertor.ProbabilityToExpectedQuantityConvertor;
 import lab.function.FitnessFunction;
 import lab.operator.NoneOperator;
 import lab.operator.OnePointCrossoverOperator;
 import lab.operator.Operator;
 import lab.population.*;
-import lab.selection.RwsSelector;
 import lab.selection.Selector;
-import lab.selection.SusSelector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,13 +28,13 @@ class RunPoolCreatorTest {
     private static final int RUN_POOL_SIZE = 2;
     private static final int POPULATION_SIZE = 10;
 
-    private final FitnessToProbabilityConvertor fitnessToProbabilityConvertor = new FitnessToProbabilityConvertor();
-    private final ProbabilityToExpectedQuantityConvertor probabilityToExpectedQuantityConvertor = new ProbabilityToExpectedQuantityConvertor();
-    private final Selector rwsSelector = new RwsSelector(fitnessToProbabilityConvertor);
-    private final Selector susSelector = new SusSelector(fitnessToProbabilityConvertor, probabilityToExpectedQuantityConvertor);
     private final Operator noneOperator = new NoneOperator();
     private final Operator onePointCrossover = new OnePointCrossoverOperator(1.0);
 
+    @Mock
+    private Selector rwsSelector;
+    @Mock
+    private Selector susSelector;
     @Mock
     private FitnessFunction<Integer, Integer> function1;
     @Mock

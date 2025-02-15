@@ -3,14 +3,15 @@ package lab.selection;
 import lab.Individual;
 import lab.convertor.FitnessToProbabilityConvertor;
 import lab.convertor.ProbabilityToExpectedQuantityConvertor;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import static lab.selection.SelectionTestEntities.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -24,18 +25,16 @@ class SusSelectorTest {
     private FitnessToProbabilityConvertor fitnessToProbabilityConvertor;
     @Mock
     private ProbabilityToExpectedQuantityConvertor probabilityToExpectedQuantityConvertor;
-
+    @Mock
+    private Random random;
+    @InjectMocks
     private SusSelector susSelector;
-
-    @BeforeEach
-    public void init() {
-        susSelector = new SusSelector(fitnessToProbabilityConvertor, probabilityToExpectedQuantityConvertor);
-    }
 
     @Test
     public void whenSelectWithIntFitnessThenSuccess() {
         when(fitnessToProbabilityConvertor.convertToSelectionProbabilities(INDIVIDUAL_TO_FITNESS_INT)).thenReturn(INDIVIDUAL_TO_PROBABILITY);
         when(probabilityToExpectedQuantityConvertor.convertToExpectedQuantities(INDIVIDUAL_TO_PROBABILITY)).thenReturn(INDIVIDUAL_TO_EXPECTED_QUANTITY);
+        when(random.nextDouble()).thenReturn(0.5);
 
         List<Individual> selected = susSelector.select(INDIVIDUAL_TO_FITNESS_INT);
         assertThat(selected, hasSize(INDIVIDUAL_TO_FITNESS_INT.size()));
@@ -52,6 +51,7 @@ class SusSelectorTest {
     public void whenSelectWithDoubleFitnessThenSuccess() {
         when(fitnessToProbabilityConvertor.convertToSelectionProbabilities(INDIVIDUAL_TO_FITNESS_DOUBLE)).thenReturn(INDIVIDUAL_TO_PROBABILITY);
         when(probabilityToExpectedQuantityConvertor.convertToExpectedQuantities(INDIVIDUAL_TO_PROBABILITY)).thenReturn(INDIVIDUAL_TO_EXPECTED_QUANTITY);
+        when(random.nextDouble()).thenReturn(0.5);
 
         List<Individual> selected = susSelector.select(INDIVIDUAL_TO_FITNESS_DOUBLE);
         assertThat(selected, hasSize(INDIVIDUAL_TO_FITNESS_DOUBLE.size()));

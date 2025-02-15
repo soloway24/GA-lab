@@ -1,11 +1,13 @@
 package lab.selection;
 
 import lab.Individual;
-import lab.convertor.FitnessToProbabilityConvertor;
-import lab.convertor.ProbabilityToExpectedQuantityConvertor;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Map;
@@ -14,18 +16,24 @@ import static lab.selection.SelectionTestEntities.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
+@SpringBootTest
+@ActiveProfiles(value = "test")
 @ExtendWith(MockitoExtension.class)
 class DynamicPowerScalingSusSelectorIntegrationTest {
 
-    private final FitnessToProbabilityConvertor fitnessToProbabilityConvertor = new FitnessToProbabilityConvertor();
-    private final ProbabilityToExpectedQuantityConvertor probabilityToExpectedQuantityConvertor = new ProbabilityToExpectedQuantityConvertor();
+    @Autowired
+    private SusSelector susSelector;
+    @Autowired
+    private ScalingSelector scalingSelector;
 
-    private final SusSelector susSelector = new SusSelector(fitnessToProbabilityConvertor, probabilityToExpectedQuantityConvertor);
-    private final ScalingSelector scalingSelector = new ScalingSelector();
-    private final DynamicPowerScalingSelector dynamicPowerScalingSelector =
-            new DynamicPowerScalingSelector(scalingSelector, POWER_SCALING_POWER_START, POWER_SCALING_POWER_END);
-    private final DynamicPowerScalingSusSelector dynamicPowerScalingSusSelector =
-            new DynamicPowerScalingSusSelector(dynamicPowerScalingSelector, susSelector);
+    private DynamicPowerScalingSusSelector dynamicPowerScalingSusSelector;
+
+    @BeforeEach
+    void setUp() {
+        DynamicPowerScalingSelector dynamicPowerScalingSelector = new DynamicPowerScalingSelector(scalingSelector, POWER_SCALING_POWER_START, POWER_SCALING_POWER_END);
+        dynamicPowerScalingSusSelector =
+                new DynamicPowerScalingSusSelector(dynamicPowerScalingSelector, susSelector);
+    }
 
     @Test
     public void whenSelectWithMedianGreaterThanAverageThenSuccess() {

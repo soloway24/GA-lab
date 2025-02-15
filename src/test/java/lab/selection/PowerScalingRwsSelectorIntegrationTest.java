@@ -1,27 +1,38 @@
 package lab.selection;
 
 import lab.Individual;
-import lab.convertor.FitnessToProbabilityConvertor;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 
+@SpringBootTest
+@ActiveProfiles(value = "test")
 @ExtendWith(MockitoExtension.class)
 class PowerScalingRwsSelectorIntegrationTest {
 
-    private final FitnessToProbabilityConvertor fitnessToProbabilityConvertor = new FitnessToProbabilityConvertor();
+    @Autowired
+    private RwsSelector rwsSelector;
+    @Autowired
+    private ScalingSelector scalingSelector;
 
-    private final RwsSelector rwsSelector = new RwsSelector(fitnessToProbabilityConvertor);
-    private final ScalingSelector scalingSelector = new ScalingSelector();
-    private final PowerScalingSelector powerScalingSelector = new PowerScalingSelector(scalingSelector, SelectionTestEntities.POWER_SCALING_POWER);
-    private final PowerScalingRwsSelector powerScalingRwsSelector = new PowerScalingRwsSelector(powerScalingSelector, rwsSelector);
+    private PowerScalingRwsSelector powerScalingRwsSelector;
+
+    @BeforeEach
+    void setUp() {
+        PowerScalingSelector powerScalingSelector = new PowerScalingSelector(scalingSelector, SelectionTestEntities.POWER_SCALING_POWER);
+        powerScalingRwsSelector = new PowerScalingRwsSelector(powerScalingSelector, rwsSelector);
+    }
 
     @Test
     public void whenSelectWithDoubleFitnessThenSuccess() {

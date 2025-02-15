@@ -9,7 +9,7 @@ class PopulationTypeValidatorTest {
 
     private static final int POPULATION_SIZE = 100;
 
-    private final PopulationTypeValidator populationTypeValidator = PopulationTypeValidator.getInstance();
+    private final PopulationTypeValidator populationTypeValidator = new PopulationTypeValidator();
 
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 100})

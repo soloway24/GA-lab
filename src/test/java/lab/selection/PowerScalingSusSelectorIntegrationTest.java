@@ -1,29 +1,38 @@
 package lab.selection;
 
 import lab.Individual;
-import lab.convertor.FitnessToProbabilityConvertor;
-import lab.convertor.ProbabilityToExpectedQuantityConvertor;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 
+@SpringBootTest
+@ActiveProfiles(value = "test")
 @ExtendWith(MockitoExtension.class)
 class PowerScalingSusSelectorIntegrationTest {
 
-    private final FitnessToProbabilityConvertor fitnessToProbabilityConvertor = new FitnessToProbabilityConvertor();
-    private final ProbabilityToExpectedQuantityConvertor probabilityToExpectedQuantityConvertor = new ProbabilityToExpectedQuantityConvertor();
+    @Autowired
+    private SusSelector susSelector;
+    @Autowired
+    private ScalingSelector scalingSelector;
 
-    private final SusSelector susSelector = new SusSelector(fitnessToProbabilityConvertor, probabilityToExpectedQuantityConvertor);
-    private final ScalingSelector scalingSelector = new ScalingSelector();
-    private final PowerScalingSelector powerScalingSelector = new PowerScalingSelector(scalingSelector, SelectionTestEntities.POWER_SCALING_POWER);
-    private final PowerScalingSusSelector powerScalingSusSelector = new PowerScalingSusSelector(powerScalingSelector, susSelector);
+    private PowerScalingSusSelector powerScalingSusSelector;
+
+    @BeforeEach
+    void setUp() {
+        PowerScalingSelector powerScalingSelector = new PowerScalingSelector(scalingSelector, SelectionTestEntities.POWER_SCALING_POWER);
+        powerScalingSusSelector = new PowerScalingSusSelector(powerScalingSelector, susSelector);
+    }
 
     @Test
     public void whenSelectWithDoubleFitnessThenSuccess() {

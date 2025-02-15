@@ -6,27 +6,14 @@ import lab.population.PopulationType;
 import lab.selection.Selector;
 import lab.selection.SelectorType;
 import lombok.Getter;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Stream;
 
-import static java.util.Optional.ofNullable;
-
+@Component
 @Getter
 public class RunConfigurationFactory {
-
-    private static RunConfigurationFactory instance;
-
-    private RunConfigurationFactory() {
-    }
-
-    public static RunConfigurationFactory getInstance() {
-        return ofNullable(instance)
-                .orElseGet(() -> {
-                    instance = new RunConfigurationFactory();
-                    return instance;
-                });
-    }
 
     public List<RunPoolConfiguration> createPoolConfigurations(List<FitnessFunction<?, ?>> functions,
                                                                List<Selector> selectors,

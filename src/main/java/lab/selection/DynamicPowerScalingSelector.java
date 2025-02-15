@@ -1,7 +1,6 @@
 package lab.selection;
 
 import lab.Individual;
-import lab.util.CalculationUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -12,6 +11,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static java.lang.Math.pow;
+import static lab.util.CalculationUtils.getAverage;
+import static lab.util.CalculationUtils.getMedian;
 
 @RequiredArgsConstructor
 public class DynamicPowerScalingSelector {
@@ -35,9 +36,10 @@ public class DynamicPowerScalingSelector {
         return (T fitness, Map<Individual, T> individualToFitness) -> scaleFitness(fitness, individualToFitness.values());
     }
 
+    // TODO optimize by passing ready values for avg and median
     private <T extends Number> double scaleFitness(T fitness, Collection<T> fitnesses) {
-        double averageFitness = CalculationUtils.getAverage(fitnesses);
-        double medianFitness = CalculationUtils.getMedian(fitnesses);
+        double averageFitness = getAverage(fitnesses);
+        double medianFitness = getMedian(fitnesses);
 
         if (medianFitness >= averageFitness) {
             return pow(fitness.doubleValue(), endPower);

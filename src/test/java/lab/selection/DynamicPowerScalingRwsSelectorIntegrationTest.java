@@ -1,12 +1,15 @@
 package lab.selection;
 
 import lab.Individual;
-import lab.convertor.FitnessToProbabilityConvertor;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Map;
@@ -14,16 +17,25 @@ import java.util.Map;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 
+// TODO change to mocked test
+@SpringBootTest
+@ActiveProfiles(value = "test")
 @ExtendWith(MockitoExtension.class)
 class DynamicPowerScalingRwsSelectorIntegrationTest {
 
-    private final FitnessToProbabilityConvertor fitnessToProbabilityConvertor = new FitnessToProbabilityConvertor();
-    private final RwsSelector rwsSelector = new RwsSelector(fitnessToProbabilityConvertor);
-    private final ScalingSelector scalingSelector = new ScalingSelector();
-    private final DynamicPowerScalingSelector dynamicPowerScalingSelector =
-            new DynamicPowerScalingSelector(scalingSelector, SelectionTestEntities.POWER_SCALING_POWER_START, SelectionTestEntities.POWER_SCALING_POWER_END);
-    private final DynamicPowerScalingRwsSelector dynamicPowerScalingRwsSelector =
-            new DynamicPowerScalingRwsSelector(dynamicPowerScalingSelector, rwsSelector);
+    @Autowired
+    private RwsSelector rwsSelector;
+    @Autowired
+    private ScalingSelector scalingSelector;
+
+    private DynamicPowerScalingRwsSelector dynamicPowerScalingRwsSelector;
+
+    @BeforeEach
+    void setUp() {
+        DynamicPowerScalingSelector dynamicPowerScalingSelector = new DynamicPowerScalingSelector(scalingSelector, SelectionTestEntities.POWER_SCALING_POWER_START, SelectionTestEntities.POWER_SCALING_POWER_END);
+        dynamicPowerScalingRwsSelector =
+                new DynamicPowerScalingRwsSelector(dynamicPowerScalingSelector, rwsSelector);
+    }
 
     @Test
     public void whenSelectWithMedianGreaterThanAverageThenSuccess() {

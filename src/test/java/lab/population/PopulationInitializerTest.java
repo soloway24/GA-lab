@@ -25,7 +25,9 @@ class PopulationInitializerTest {
     private static final int CHROMOSOME_LENGTH = 10;
     private static final Individual OPTIMAL = new Individual("1111011110");
 
-    private final PopulationInitializer populationInitializer = new PopulationInitializer(PopulationTypeValidator.getInstance());
+    // TODO replace with mock
+    private final PopulationTypeValidator populationTypeValidator = new PopulationTypeValidator();
+    private final PopulationInitializer populationInitializer = new PopulationInitializer(populationTypeValidator);
 
     @Mock
     private FitnessFunction<Double, Double> function;

@@ -2,6 +2,7 @@ package lab.identifier;
 
 import lab.Individual;
 import lab.operator.OperatorType;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.IntStream;
@@ -9,6 +10,7 @@ import java.util.stream.IntStream;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
 
+@Component
 public class ConvergenceIdentifier {
 
     private static final double HOMOGENOUS_PERCENTAGE = 0.99;

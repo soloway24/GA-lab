@@ -4,11 +4,13 @@ import lab.metric.KendallMetrics;
 import lab.util.CalculationUtils;
 import lab.util.MetricUtils;
 import org.apache.commons.math3.util.Pair;
+import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
+@Component
 public class RunPoolStatsCreator {
 
     public RunPoolStats create(List<RunStats> allRunStats, RunConfiguration runConfiguration) {

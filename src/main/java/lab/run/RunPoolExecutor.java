@@ -14,6 +14,7 @@ import lab.selection.Selector;
 import lab.util.CalculationUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -33,6 +34,7 @@ import static lab.identifier.ConvergenceIdentifier.isHomogenous;
 import static lab.selection.SelectorType.SUS;
 import static lab.util.MetricUtils.*;
 
+@Component
 @RequiredArgsConstructor
 public class RunPoolExecutor {
 

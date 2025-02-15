@@ -1,6 +1,7 @@
 package lab.convertor;
 
 import lab.Individual;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -11,6 +12,7 @@ import static lab.convertor.ValuesAdjuster.getAdjustedIndividualToValue;
 import static lab.util.CalculationUtils.getDoubleValues;
 import static lab.util.CalculationUtils.getValueSum;
 
+@Component
 public class FitnessToProbabilityConvertor {
 
     private static final double VALID_PROBABILITY_SUM = 1;

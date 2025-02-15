@@ -1,19 +1,15 @@
 package lab;
 
-import lab.convertor.FitnessToProbabilityConvertor;
-import lab.convertor.ProbabilityToExpectedQuantityConvertor;
 import lab.export.Exporter;
 import lab.function.*;
-import lab.identifier.ConvergenceIdentifier;
 import lab.operator.NoneOperator;
 import lab.operator.OnePointCrossoverOperator;
 import lab.operator.Operator;
-import lab.population.PopulationInitializer;
-import lab.population.PopulationPoolInitializer;
-import lab.population.PopulationTypeValidator;
 import lab.run.*;
 import lab.selection.*;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.time.StopWatch;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,25 +19,19 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
-public class MainV2 {
+@Component
+@RequiredArgsConstructor
+public class Main {
 
-    private final FitnessToProbabilityConvertor fitnessToProbabilityConvertor = new FitnessToProbabilityConvertor();
-    private final ProbabilityToExpectedQuantityConvertor probabilityToExpectedQuantityConvertor = new ProbabilityToExpectedQuantityConvertor();
-    private final RunConfigurationFactory runConfigurationFactory = RunConfigurationFactory.getInstance();
-    private final PopulationInitializer populationInitializer = new PopulationInitializer(PopulationTypeValidator.getInstance());
-    private final PopulationPoolInitializer populationPoolInitializer = new PopulationPoolInitializer(populationInitializer);
-    private final RunPoolCreator runPoolCreator = new RunPoolCreator(populationPoolInitializer);
-    private final ConvergenceIdentifier convergenceIdentifier = new ConvergenceIdentifier();
-    private final RunPoolStatsCreator runPoolStatsCreator = new RunPoolStatsCreator();
-    private final RunPoolExecutor runPoolExecutor = new RunPoolExecutor(convergenceIdentifier, runPoolStatsCreator);
+    private final RunConfigurationFactory runConfigurationFactory;
+    private final RunPoolCreator runPoolCreator;
+    private final RunPoolStatsCreator runPoolStatsCreator;
+    private final RunPoolExecutor runPoolExecutor;
     private final Exporter exporter = new Exporter();
+    private final RwsSelector rwsSelector;
+    private final SusSelector susSelector;
 
-    public static void main(String[] args) throws InterruptedException {
-        MainV2 mainV2 = new MainV2();
-        mainV2.run();
-    }
-
-    private void run() throws InterruptedException {
+    public void run() throws InterruptedException {
         List<Integer> populationSizes = getPopulationSizes();
         List<FitnessFunction<?, ?>> functions = getFunctions();
         List<Selector> selectors = getSelectors();
@@ -184,9 +174,7 @@ public class MainV2 {
         List<Future<RunPoolStats>> runPoolStatsFutures = new ArrayList<>();
         for (int i = 0; i < allRunStats.size(); i++) {
             int finalI = i;
-            Future<RunPoolStats> future = executorService.submit(() -> {
-                        return runPoolStatsCreator.create(allRunStats.get(finalI), runPools.get(finalI).runConfiguration());
-                    }
+            Future<RunPoolStats> future = executorService.submit(() -> runPoolStatsCreator.create(allRunStats.get(finalI), runPools.get(finalI).runConfiguration())
             );
             runPoolStatsFutures.add(future);
         }
@@ -208,9 +196,7 @@ public class MainV2 {
         }
 
         System.out.println("EXPORTING SINGLE RUN POOLS -----------------");
-        allRunPoolStats.forEach(stats -> executorService.submit(() -> {
-            exporter.exportSingleRunPoolStats(stats);
-        }));
+        allRunPoolStats.forEach(stats -> executorService.submit(() -> exporter.exportSingleRunPoolStats(stats)));
 
         executorService.shutdown();
         try {
@@ -267,7 +253,7 @@ public class MainV2 {
 //        return List.of(exponent1);
 //        return List.of(exponent2);
         return List.of(
-//                constAllFunction
+                constAllFunction
 //                ,
 //                fhFunction
 //                ,
@@ -281,7 +267,7 @@ public class MainV2 {
 //                ,
 //                exponent2
 //                ,
-                rastriginFunction
+//                rastriginFunction
 //                ,
 //                deb2Function
 //                ,
@@ -290,9 +276,6 @@ public class MainV2 {
     }
 
     private List<Selector> getSelectors() {
-        RwsSelector rwsSelector = new RwsSelector(fitnessToProbabilityConvertor);
-        SusSelector susSelector = new SusSelector(fitnessToProbabilityConvertor, probabilityToExpectedQuantityConvertor);
-
         ScalingSelector scalingSelector = new ScalingSelector();
         PowerScalingSelector powerScalingSelector = new PowerScalingSelector(scalingSelector, 1.1);
         PowerScalingSelector powerScalingSelector2 = new PowerScalingSelector(scalingSelector, 2);
@@ -316,23 +299,23 @@ public class MainV2 {
                 new DynamicPowerScalingSusSelector(dynamicPowerScalingSelector0p8to1p2, susSelector);
 
         return List.of(
-//                rwsSelector
+                rwsSelector
 //                ,
-                susSelector
-                ,
+//                susSelector
+//                ,
 //                powerScalingRwsSelector
 //                ,
 //                powerScalingRwsSelector2
 //                ,
-                powerScalingSusSelector,
-                powerScalingSusSelector2
-                ,
+//                powerScalingSusSelector,
+//                powerScalingSusSelector2
+//                ,
 //                dynamicPowerScalingRwsSelector0p9to1p1
 //                ,
 //                dynamicPowerScalingRwsSelector0p8to1p2
 //                ,
-                dynamicPowerScalingSusSelector0p9to1p1,
-                dynamicPowerScalingSusSelector0p8to1p2
+//                dynamicPowerScalingSusSelector0p9to1p1,
+//                dynamicPowerScalingSusSelector0p8to1p2
         );
     }
 
@@ -340,8 +323,8 @@ public class MainV2 {
         Operator noneOperator = new NoneOperator();
         Operator crossoverOperator = new OnePointCrossoverOperator(1);
 
-//        return List.of(noneOperator);
-        return List.of(crossoverOperator);
+        return List.of(noneOperator);
+//        return List.of(crossoverOperator);
     }
 
     private List<RunPoolConfiguration> getRunPoolConfigurations(List<FitnessFunction<?, ?>> functions,

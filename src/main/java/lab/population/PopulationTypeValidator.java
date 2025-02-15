@@ -1,20 +1,11 @@
 package lab.population;
 
+import org.springframework.stereotype.Component;
+
 import java.math.BigDecimal;
 
-import static java.util.Optional.ofNullable;
-
+@Component
 public class PopulationTypeValidator {
-
-    private static PopulationTypeValidator instance;
-
-    private PopulationTypeValidator() {
-    }
-
-    public static PopulationTypeValidator getInstance() {
-        return ofNullable(instance)
-                .orElse(new PopulationTypeValidator());
-    }
 
     public void verifyOptimalQuantity(int optimalQuantity, int populationSize) {
         if (optimalQuantity < 0) {

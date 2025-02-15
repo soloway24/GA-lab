@@ -4,6 +4,7 @@ import lab.Individual;
 import lab.encoding.Encoding;
 import lab.function.FitnessFunction;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import static java.util.stream.Stream.concat;
 import static lab.population.PopulationInitializationType.*;
 import static lab.util.CalculationUtils.getIndexedIndividuals;
 
+@Component
 @RequiredArgsConstructor
 public class PopulationInitializer {
 

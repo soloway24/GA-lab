@@ -5,6 +5,7 @@ import lab.population.PopulationConfiguration;
 import lab.population.PopulationPool;
 import lab.population.PopulationPoolInitializer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.Map;
 
 import static java.util.Optional.ofNullable;
 
+@Component
 @RequiredArgsConstructor
 public class RunPoolCreator {
 

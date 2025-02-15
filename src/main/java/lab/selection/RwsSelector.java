@@ -3,6 +3,7 @@ package lab.selection;
 import lab.Individual;
 import lab.convertor.FitnessToProbabilityConvertor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -10,11 +11,12 @@ import java.util.stream.IntStream;
 
 import static java.util.Collections.shuffle;
 
+@Component
 @RequiredArgsConstructor
 public class RwsSelector implements Selector {
 
     private final FitnessToProbabilityConvertor fitnessToProbabilityConvertor;
-    private final Random random = new Random();
+    private final Random random;
 
     @Override
     public SelectorType getSelectorType() {

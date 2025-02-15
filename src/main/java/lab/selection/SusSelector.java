@@ -4,6 +4,7 @@ import lab.Individual;
 import lab.convertor.FitnessToProbabilityConvertor;
 import lab.convertor.ProbabilityToExpectedQuantityConvertor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -11,13 +12,14 @@ import java.util.Map.Entry;
 import static java.util.Collections.shuffle;
 import static lab.selection.SelectorType.SUS;
 
+@Component
 @RequiredArgsConstructor
 public class SusSelector implements Selector {
 
     private static final int SPIN_STEP = 1;
     private final FitnessToProbabilityConvertor fitnessToProbabilityConvertor;
     private final ProbabilityToExpectedQuantityConvertor probabilityToExpectedQuantityConvertor;
-    private final Random random = new Random();
+    private final Random random;
 
     @Override
     public SelectorType getSelectorType() {
@@ -61,15 +63,15 @@ public class SusSelector implements Selector {
     private List<Individual> selectAll(Map<Individual, Double> individualToExpectedQuantity) {
         int populationSize = individualToExpectedQuantity.size();
         double spin = random.nextDouble();
-        double currentPercentage = 0;
+        double currentQuantity = 0;
         double selectedQuantity = 0;
         List<Individual> selected = new ArrayList<>();
 
         List<Entry<Individual, Double>> individualToExpectedQuantityShuffled = new ArrayList<>(individualToExpectedQuantity.entrySet());
         shuffle(individualToExpectedQuantityShuffled);
         for (Entry<Individual, Double> entry : individualToExpectedQuantityShuffled) {
-            currentPercentage += entry.getValue();
-            while (currentPercentage >= spin && selectedQuantity < populationSize) {
+            currentQuantity += entry.getValue();
+            while (currentQuantity >= spin && selectedQuantity < populationSize) {
                 selected.add(new Individual(entry.getKey()));
                 selectedQuantity++;
                 spin += SPIN_STEP;

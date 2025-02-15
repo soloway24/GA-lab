@@ -2,6 +2,7 @@ package lab.selection;
 
 import lab.Individual;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -16,6 +17,7 @@ import static java.util.Collections.unmodifiableMap;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 
+@Component
 @RequiredArgsConstructor
 public class ScalingSelector {
 
