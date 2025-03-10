@@ -118,7 +118,7 @@ class RunPoolExecutorIntegrationTest {
         Run run = new Run(runConfiguration, population);
 
         System.out.println("Population = " + population);
-        RunStats runStats = runPoolExecutor.executeRun(run);
+        RunStats runStats = runPoolExecutor.executeRun(run, 1, 1, 1, 1);
         System.out.println("Result = " + runStats);
 
         assertThat(runStats.isSuc(), equalTo(true));
