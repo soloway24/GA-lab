@@ -15,6 +15,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,6 +36,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 import static lab.export.Homogeneity.*;
 
+@Component
 public class Exporter {
 
     private static final int COLUMN_NUMBER = 81;
@@ -48,20 +50,6 @@ public class Exporter {
     private static final String TABLES_PATH = STATS_PATH + "tables/";
     private static final String PLOTS_PATH = STATS_PATH + "plots/";
     private static final String ALL_STATS_TABLE_NAME = "all_stats.xlsx";
-
-    private String getFileName(RunConfiguration runConfiguration) {
-        String functionName = runConfiguration.function().getName();
-        String selectorName = runConfiguration.selector().getFullName();
-        String operatorName = runConfiguration.operator().getName();
-        String populationType = runConfiguration.populationType().name();
-        String encoding = runConfiguration.encoding().name();
-
-        return functionName + "_" +
-                selectorName + "_" +
-                operatorName + "_" +
-                populationType + "_" +
-                encoding;
-    }
 
     public void exportSingleRunPoolStats(RunPoolStats runPoolStats) {
         RunConfiguration runConfiguration = runPoolStats.runConfiguration();
@@ -210,6 +198,20 @@ public class Exporter {
 
             System.gc();
         }
+    }
+
+    private String getFileName(RunConfiguration runConfiguration) {
+        String functionName = runConfiguration.function().getName();
+        String selectorName = runConfiguration.selector().getFullName();
+        String operatorName = runConfiguration.operator().getName();
+        String populationType = runConfiguration.populationType().name();
+        String encoding = runConfiguration.encoding().name();
+
+        return functionName + "_" +
+                selectorName + "_" +
+                operatorName + "_" +
+                populationType + "_" +
+                encoding;
     }
 
     private int getExportRunQ(RunConfiguration runConfiguration) {

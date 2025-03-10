@@ -16,11 +16,8 @@ public class Application {
     }
 
     @Bean
-    @Profile("!test") // This means this runner will not be executed when the 'test' profile is active
+    @Profile("!test")
     public CommandLineRunner run(Main processor) {
-        return args -> {
-            // Your custom logic goes here
-            processor.run();
-        };
+        return args -> processor.run();
     }
 }

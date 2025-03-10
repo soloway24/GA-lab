@@ -1,23 +1,19 @@
 package lab;
 
-import lab.export.Exporter;
 import lab.function.*;
 import lab.operator.NoneOperator;
 import lab.operator.OnePointCrossoverOperator;
 import lab.operator.Operator;
-import lab.run.*;
+import lab.run.RunConfigurationFactory;
+import lab.run.RunPool;
+import lab.run.RunPoolConfiguration;
+import lab.run.RunPoolCreator;
 import lab.selection.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
 
 @Component
 @RequiredArgsConstructor
@@ -25,9 +21,7 @@ public class Main {
 
     private final RunConfigurationFactory runConfigurationFactory;
     private final RunPoolCreator runPoolCreator;
-    private final RunPoolStatsCreator runPoolStatsCreator;
-    private final RunPoolExecutor runPoolExecutor;
-    private final Exporter exporter = new Exporter();
+    private final Executor executor;
     private final RwsSelector rwsSelector;
     private final SusSelector susSelector;
 
@@ -44,188 +38,12 @@ public class Main {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
-//        executeAllSingleThread(runPools);
-//        executeAll(runPools);
-        executeAllParallel(runPools);
+//        executor.executeAllSingleThread(runPools);
+//        executor.executeAll(runPools);
+        executor.executeAllParallel(runPools);
 
         stopWatch.stop();
         System.out.println("Time Elapsed: " + stopWatch.getTime() / 1000.0);
-    }
-
-    private void executeAllSingleThread(List<RunPool> runPools) throws InterruptedException {
-        List<RunPoolStats> runPoolStats = runPoolExecutor.executeAllRunPools(runPools);
-
-        System.gc();
-
-        System.out.println("EXPORTING SINGLE RUN POOLS -----------------");
-        runPoolStats.forEach(exporter::exportSingleRunPoolStats);
-
-        System.gc();
-
-        System.out.println("EXPORTING SINGLE RUN POOL PLOTS -----------------");
-
-        int size = runPoolStats.size();
-        IntStream.range(0, size)
-                .forEach(i -> {
-                    System.out.println("Plots " + (i + 1) + "/" + size);
-                    exporter.exportPlots(runPoolStats.get(i).allRunStats(), runPoolStats.get(i).runConfiguration());
-                });
-
-        System.gc();
-
-        // POSSIBLE DUPLICATE
-        System.out.println("EXPORTING SINGLE RUN POOL HISTOGRAMS -----------------");
-        IntStream.range(0, size)
-                .forEach(i -> {
-                    System.out.println("Histograms " + (i + 1) + "/" + size);
-                    exporter.exportHistograms(runPoolStats.get(i).allRunStats(), runPoolStats.get(i).runConfiguration());
-                });
-
-        System.gc();
-
-        System.out.println("EXPORTING ALL RUN POOLS -----------------");
-        exporter.exportAllRunPools(runPoolStats);
-    }
-
-    private void executeAll(List<RunPool> runPools) {
-        List<RunPoolStats> runPoolStats = runPoolExecutor.executeAllRunPoolsParallel(runPools);
-        ExecutorService executorService = new ForkJoinPool();
-
-        System.out.println("EXPORTING SINGLE RUN POOLS -----------------");
-        runPoolStats.forEach(stats -> executorService.submit(() -> {
-            exporter.exportSingleRunPoolStats(stats);
-        }));
-
-        executorService.shutdown();
-        try {
-            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        System.gc();
-
-        ExecutorService plotsExecutorService = new ForkJoinPool();
-        System.out.println("EXPORTING SINGLE RUN POOL PLOTS -----------------");
-        int size = runPoolStats.size();
-        IntStream.range(0, size)
-                .forEach(i -> {
-                    System.out.println("Plots " + (i + 1) + "/" + size);
-                    exporter.exportPlots(runPoolStats.get(i).allRunStats(), runPoolStats.get(i).runConfiguration());
-                });
-
-        plotsExecutorService.shutdown();
-        try {
-            plotsExecutorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        System.out.println("EXPORTING ALL RUN POOLS -----------------");
-        exporter.exportAllRunPools(runPoolStats);
-    }
-
-    private void executeAllParallel(List<RunPool> runPools) {
-        ExecutorService executorService = new ForkJoinPool();
-
-        List<List<Future<RunStats>>> allFutures = new ArrayList<>();
-
-        for (int i = 0; i < runPools.size(); i++) {
-            RunPool runPool = runPools.get(i);
-            int finalI = i;
-            System.out.println("Submitting run pool " + finalI + "/" + runPools.size() + " : " + runPool.runConfiguration());
-            List<Future<RunStats>> runPoolFutures = new ArrayList<>();
-            List<Run> runs = runPool.runs();
-            for (int j = 0; j < runs.size(); j++) {
-                Run run = runs.get(j);
-                int finalJ = j;
-
-                Future<RunStats> future = executorService.submit(() -> runPoolExecutor.executeRun(run,
-                        finalJ, runs.size(), finalI, runPools.size()));
-                runPoolFutures.add(future);
-            }
-            allFutures.add(runPoolFutures);
-        }
-
-        List<List<RunStats>> allRunStats = new ArrayList<>();
-
-        System.out.println("WAITING FOR COMPLETION-----------------");
-
-        for (int i = 0; i < runPools.size(); i++) {
-            List<RunStats> runPoolStats = new ArrayList<>();
-            List<Future<RunStats>> runPoolFutures = allFutures.get(i);
-            for (Future<RunStats> runFuture : runPoolFutures) {
-                RunStats runStats;
-                try {
-                    runStats = runFuture.get();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                runPoolStats.add(runStats);
-            }
-            allRunStats.add(runPoolStats);
-        }
-
-
-        if (allRunStats.size() != runPools.size()) {
-            throw new IllegalStateException("Incorrect number of allRunStats: " + allRunStats.size() + ". Should be " + runPools.size());
-        }
-        System.out.println("CREATING RUN POOL STATS-----------------");
-        List<Future<RunPoolStats>> runPoolStatsFutures = new ArrayList<>();
-        for (int i = 0; i < allRunStats.size(); i++) {
-            int finalI = i;
-            Future<RunPoolStats> future = executorService.submit(() -> runPoolStatsCreator.create(allRunStats.get(finalI), runPools.get(finalI).runConfiguration())
-            );
-            runPoolStatsFutures.add(future);
-        }
-
-        System.out.println("WAITING FOR RUN POOL STATS-----------------");
-        List<RunPoolStats> allRunPoolStats = new ArrayList<>();
-        for (Future<RunPoolStats> future : runPoolStatsFutures) {
-            RunPoolStats runPoolStats;
-            try {
-                runPoolStats = future.get();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            allRunPoolStats.add(runPoolStats);
-        }
-
-        if (allRunPoolStats.size() != runPools.size()) {
-            throw new IllegalStateException("Incorrect number of allRunPoolStats: " + allRunPoolStats.size() + ". Should be " + runPools.size());
-        }
-
-        System.out.println("EXPORTING SINGLE RUN POOLS -----------------");
-        allRunPoolStats.forEach(stats -> executorService.submit(() -> exporter.exportSingleRunPoolStats(stats)));
-
-        executorService.shutdown();
-        try {
-            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        ExecutorService plotsExecutorService = new ForkJoinPool();
-        System.out.println("EXPORTING SINGLE RUN POOL PLOTS -----------------");
-        int size = allRunPoolStats.size();
-
-        IntStream.range(0, size)
-                .forEach(i -> {
-                    System.out.println("Plots " + (i + 1) + "/" + size);
-                    plotsExecutorService.submit(() -> {
-                        exporter.exportPlots(allRunPoolStats.get(i).allRunStats(), allRunPoolStats.get(i).runConfiguration());
-                    });
-                });
-
-        plotsExecutorService.shutdown();
-        try {
-            plotsExecutorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        System.out.println("EXPORTING ALL RUN POOLS -----------------");
-        exporter.exportAllRunPools(allRunPoolStats);
     }
 
     private List<Integer> getPopulationSizes() {
@@ -253,25 +71,16 @@ public class Main {
 //        return List.of(exponent1);
 //        return List.of(exponent2);
         return List.of(
-                constAllFunction
-//                ,
-//                fhFunction
-//                ,
-//                quadraticFunction
-//                ,
-//                quadratic512Function
-//                ,
-//                exponent025
-//                ,
-//                exponent1
-//                ,
-//                exponent2
-//                ,
-//                rastriginFunction
-//                ,
-//                deb2Function
-//                ,
-//                deb4Function
+                fhFunction
+//                .constAllFunction
+//                , quadraticFunction
+//                , quadratic512Function
+//                , exponent025
+//                , exponent1
+//                , exponent2
+//                , rastriginFunction
+//                , deb2Function
+//                , deb4Function
         );
     }
 
@@ -300,22 +109,15 @@ public class Main {
 
         return List.of(
                 rwsSelector
-//                ,
-//                susSelector
-//                ,
-//                powerScalingRwsSelector
-//                ,
-//                powerScalingRwsSelector2
-//                ,
-//                powerScalingSusSelector,
-//                powerScalingSusSelector2
-//                ,
-//                dynamicPowerScalingRwsSelector0p9to1p1
-//                ,
-//                dynamicPowerScalingRwsSelector0p8to1p2
-//                ,
-//                dynamicPowerScalingSusSelector0p9to1p1,
-//                dynamicPowerScalingSusSelector0p8to1p2
+//                , susSelector
+//                , powerScalingRwsSelector
+//                , powerScalingRwsSelector2
+//                , powerScalingSusSelector
+//                , powerScalingSusSelector2
+//                , dynamicPowerScalingRwsSelector0p9to1p1
+//                , dynamicPowerScalingRwsSelector0p8to1p2
+//                , dynamicPowerScalingSusSelector0p9to1p1
+//                , dynamicPowerScalingSusSelector0p8to1p2
         );
     }
 
