@@ -3,6 +3,8 @@ package lab.run;
 import lab.Individual;
 import lab.export.Homogeneity;
 import lab.metric.IndividualMetrics;
+import lab.population.PopulationSnapshot;
+import lab.population.PopulationTimingType;
 import lombok.Builder;
 
 import java.util.List;
@@ -102,6 +104,7 @@ public record RunStats(Map<Individual, ? extends Number> finalPopulation,
                        List<Double> fishes,
                        List<Double> kendalls,
                        Map<Integer, List<IndividualMetrics>> generationToIndMetrics,
-                       Map<Homogeneity, List<IndividualMetrics>> homogeneityToIndMetrics
+                       Map<Homogeneity, List<IndividualMetrics>> homogeneityToIndMetrics,
+                       Map<PopulationTimingType, PopulationSnapshot> timingTypeToPopulationSnapshot
 ) {
 }

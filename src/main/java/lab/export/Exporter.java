@@ -6,6 +6,8 @@ import com.github.sh0nk.matplotlib4j.builder.HistBuilder;
 import lab.function.FitnessFunction;
 import lab.metric.IndividualMetrics;
 import lab.operator.OperatorType;
+import lab.population.PopulationSnapshot;
+import lab.population.PopulationTimingType;
 import lab.run.RunConfiguration;
 import lab.run.RunPoolStats;
 import lab.run.RunStats;
@@ -35,6 +37,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 import static lab.export.Homogeneity.*;
+import static lab.population.PopulationTimingType.*;
 
 @Component
 public class Exporter {
@@ -172,6 +175,7 @@ public class Exporter {
 
             // POSSIBLE DUPLICATE
             drawHistograms(runStats, plotExportPath, runConfiguration.function(), runConfiguration.populationSize());
+            exportPopulationSnapshotsTable(plotExportPath, runStats.timingTypeToPopulationSnapshot());
 
             System.gc();
         }
@@ -322,6 +326,30 @@ public class Exporter {
                 drawHistogramNoBins(fitnesses, plotExportPath + "fitness/", filename, minFitness, maxFitness, populationSize);
             }
         }
+    }
+
+    private void exportPopulationSnapshotsTable(String plotExportPath, Map<PopulationTimingType, PopulationSnapshot> timingTypeToPopulationSnapshot) {
+        List<PopulationTimingType> exportedTimingTypes = List.of(INITIAL, AVERAGE, CONVERGING);
+        exportedTimingTypes.stream()
+                .map(timingType -> Pair.create(timingType, timingTypeToPopulationSnapshot.get(timingType)))
+                .filter(pair -> pair.getValue() != null)
+                .forEach(pair ->
+                        exportSinglePopulationSnapshotData(
+                                plotExportPath,
+                                "snapshot-" + pair.getKey().name(),
+                                pair.getValue())
+                );
+    }
+
+    private void exportSinglePopulationSnapshotData(String plotExportPath, String fileName, PopulationSnapshot populationSnapshot) {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Population snapshot");
+        String tablePath = plotExportPath + "population_snapshots/" + fileName + ".xlsx";
+
+        createPopulationSnapshotDataHeader(sheet);
+        createPopulationSnapshotDataRow(sheet, 1, populationSnapshot);
+
+        saveWorkbook(workbook, tablePath);
     }
 
     private List<Long> getOnes(List<IndividualMetrics> individualMetrics) {
@@ -593,6 +621,30 @@ public class Exporter {
             createRunPoolHeaderRow(sheet, 0);
             workbook.write(outputStream);
         }
+    }
+
+    private void createPopulationSnapshotDataHeader(Sheet sheet) {
+        Row row = sheet.createRow(0);
+        int i = 0;
+
+        row.createCell(i++).setCellValue("Index");
+        row.createCell(i++).setCellValue("Individual");
+        row.createCell(i++).setCellValue("Fitness");
+    }
+
+    private void createPopulationSnapshotDataRow(Sheet sheet, int index, PopulationSnapshot populationSnapshot) {
+        AtomicInteger rowIndex = new AtomicInteger(index);
+
+        AtomicInteger individualIndex = new AtomicInteger();
+        populationSnapshot.individualToFitness().entrySet().stream()
+                .forEach(entry -> {
+                    Row row = sheet.createRow(rowIndex.getAndIncrement());
+
+                    AtomicInteger columnIndex = new AtomicInteger();
+                    row.createCell(columnIndex.getAndIncrement()).setCellValue(individualIndex.getAndIncrement() + 1);
+                    row.createCell(columnIndex.getAndIncrement()).setCellValue(entry.getKey().getBinaryCode());
+                    row.createCell(columnIndex.getAndIncrement()).setCellValue(entry.getValue());
+                });
     }
 
     private void createHistogramDataHeader(Sheet sheet, boolean supportsDecoding) {

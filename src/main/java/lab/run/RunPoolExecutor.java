@@ -9,7 +9,7 @@ import lab.identifier.SuccessfulRunIdentifier;
 import lab.metric.IndividualMetrics;
 import lab.operator.Operator;
 import lab.operator.OperatorType;
-import lab.population.Population;
+import lab.population.*;
 import lab.selection.Selector;
 import lab.util.CalculationUtils;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +43,7 @@ public class RunPoolExecutor {
 
     private final ConvergenceIdentifier convergenceIdentifier;
     private final RunPoolStatsCreator runPoolStatsCreator;
+    private final PopulationTimingTypeIdentifier timingTypeIdentifier;
 
     public List<RunPoolStats> executeAllRunPools(List<RunPool> runPools) {
         return IntStream.range(0, runPools.size())
@@ -154,6 +155,7 @@ public class RunPoolExecutor {
 
             Map<Integer, List<IndividualMetrics>> generationToIndMetrics = new HashMap<>();
             Map<Homogeneity, List<IndividualMetrics>> homogeneityToIndMetrics = new HashMap<>();
+            Map<PopulationTimingType, PopulationSnapshot> timingTypeToPopulationSnapshot = new HashMap<>();
 
             int maxIterations = getMaxIterations(function, selector);
             individualToFitness = getIndividualToFitness(currentIndividuals, function);
@@ -253,6 +255,7 @@ public class RunPoolExecutor {
                 }
 
                 populateHistogramData(function, currentIndividuals, i, generationToIndMetrics, homogeneityToIndMetrics);
+                populateSnapshotData(population.populationConfiguration(), individualToFitness, timingTypeToPopulationSnapshot, i, avgF, maxF);
 
                 previousBestF = maxF;
                 previousBestQ = bestQ;
@@ -514,6 +517,7 @@ public class RunPoolExecutor {
 
                     .withGenerationToIndMetrics(generationToIndMetrics)
                     .withHomogeneityToIndMetrics(homogeneityToIndMetrics)
+                    .withTimingTypeToPopulationSnapshot(timingTypeToPopulationSnapshot)
 
                     .build();
         } catch (Exception e) {
@@ -569,19 +573,43 @@ public class RunPoolExecutor {
                 });
     }
 
-//    private void populateSnapshotData(FitnessFunction<?, ? extends Number> function, List<Individual> currentIndividuals, int i, Map<Integer, List<IndividualMetrics>> generationToIndMetrics, Map<Homogeneity, List<IndividualMetrics>> homogeneityToIndMetrics) {
-//        if (i == 0 || (i + 1) % 500000 == 0) {
-//            List<IndividualMetrics> individualMetrics = buildAllIndividualMetrics(currentIndividuals, function);
-//            generationToIndMetrics.put(i + 1, individualMetrics);
-//        }
-//
-//        Arrays.stream(Homogeneity.values())
-//                .forEach(h -> {
-//                    if (!homogeneityToIndMetrics.containsKey(h) && isHomogenous(currentIndividuals, h.getPercentage())) {
-//                        homogeneityToIndMetrics.put(h, buildAllIndividualMetrics(currentIndividuals, function));
-//                    }
-//                });
-//    }
+    private void populateSnapshotData(PopulationConfiguration populationConfiguration,
+                                      Map<Individual, ? extends Number> individualToFitness,
+                                      Map<PopulationTimingType, PopulationSnapshot> timingTypeToPopulationSnapshot,
+                                      int iteration,
+                                      double avgF,
+                                      double maxF) {
+        Arrays.stream(PopulationTimingType.values())
+                .forEach(timingType -> {
+                    if (shouldAddTiming(timingType, timingTypeToPopulationSnapshot, iteration, avgF, maxF)) {
+                        addTiming(populationConfiguration, timingType, individualToFitness, timingTypeToPopulationSnapshot, iteration, avgF, maxF);
+                    }
+                });
+    }
+
+    private boolean shouldAddTiming(PopulationTimingType timingType,
+                                    Map<PopulationTimingType, PopulationSnapshot> timingTypeToPopulationSnapshot,
+                                    int iteration,
+                                    double avgF,
+                                    double maxF) {
+        return !timingTypeToPopulationSnapshot.containsKey(timingType)
+                && timingTypeIdentifier.isTiming(timingType, iteration, avgF, maxF);
+    }
+
+    private void addTiming(PopulationConfiguration populationConfiguration,
+                           PopulationTimingType timingType,
+                           Map<Individual, ? extends Number> individualToFitness,
+                           Map<PopulationTimingType, PopulationSnapshot> timingTypeToPopulationSnapshot,
+                           int iteration,
+                           double avgF,
+                           double maxF) {
+        PopulationTiming populationTiming = new PopulationTiming(iteration, avgF / maxF);
+        Map<Individual, Double> sortedIndividualToFitness = individualToFitness.entrySet().stream()
+                .map(entry -> Pair.of(entry.getKey(), entry.getValue().doubleValue()))
+                .sorted(Map.Entry.comparingByValue())
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, LinkedHashMap::new));
+        timingTypeToPopulationSnapshot.put(timingType, new PopulationSnapshot(populationTiming, populationConfiguration, sortedIndividualToFitness));
+    }
 
     private List<IndividualMetrics> buildAllIndividualMetrics(List<Individual> individuals, FitnessFunction<?, ?> function) {
         return individuals.stream()
