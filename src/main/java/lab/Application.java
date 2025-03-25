@@ -17,7 +17,7 @@ public class Application {
 
     @Bean
     @Profile("!test")
-    public CommandLineRunner run(Main processor) {
-        return args -> processor.run();
+    public CommandLineRunner run(Main processor, SnapshotRunner snapshotRunner) {
+        return args -> snapshotRunner.run();
     }
 }
