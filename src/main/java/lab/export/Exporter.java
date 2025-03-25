@@ -336,7 +336,7 @@ public class Exporter {
                 .forEach(pair ->
                         exportSinglePopulationSnapshotData(
                                 plotExportPath,
-                                "snapshot-" + pair.getKey().name(),
+                                pair.getKey().name(),
                                 pair.getValue())
                 );
     }

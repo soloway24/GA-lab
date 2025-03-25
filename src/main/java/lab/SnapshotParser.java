@@ -1,5 +1,6 @@
 package lab;
 
+import lab.population.PopulationTimingType;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -33,15 +34,15 @@ public class SnapshotParser {
         int populationSize = 100;
         SnapshotParser snapshotParser = new SnapshotParser();
 
-        Map<String, Map<Individual, Double>> timingToFitnessMap = snapshotParser.getTimingToIndividualToFitness(basePath, populationSize);
+        Map<PopulationTimingType, Map<Individual, Double>> timingToFitnessMap = snapshotParser.getTimingToIndividualToFitness(basePath, populationSize);
         printFitnessMap(timingToFitnessMap);
     }
 
     /**
      * Walks through all .xlsx files in the directory and extracts individual-fitness mappings from each.
      */
-    public Map<String, Map<Individual, Double>> getTimingToIndividualToFitness(Path basePath, int populationSize) {
-        Map<String, Map<Individual, Double>> result = new HashMap<>();
+    public Map<PopulationTimingType, Map<Individual, Double>> getTimingToIndividualToFitness(Path basePath, int populationSize) {
+        Map<PopulationTimingType, Map<Individual, Double>> result = new HashMap<>();
 
         try (Stream<Path> files = Files.walk(basePath)) {
             files.filter(Files::isRegularFile)
@@ -49,7 +50,11 @@ public class SnapshotParser {
                     .forEach(file -> {
                         try {
                             Map<Individual, Double> individualToFitness = parseExcelFile(file.toFile(), populationSize);
-                            result.put(file.getFileName().toString(), individualToFitness);
+                            String fileName = file.getFileName().toString();
+                            String fileNameWithoutExtension = fileName.contains(".")
+                                    ? fileName.substring(0, fileName.lastIndexOf('.'))
+                                    : fileName;
+                            result.put(PopulationTimingType.valueOf(fileNameWithoutExtension), individualToFitness);
                         } catch (IOException e) {
                             System.err.printf("Failed to read '%s': %s%n", file, e.getMessage());
                         }
@@ -135,9 +140,9 @@ public class SnapshotParser {
     /**
      * Nicely prints the full map of files → (individual → fitness).
      */
-    private static void printFitnessMap(Map<String, Map<Individual, Double>> fitnessMap) {
-        fitnessMap.forEach((filename, map) -> {
-            System.out.println("File: " + filename);
+    private static void printFitnessMap(Map<PopulationTimingType, Map<Individual, Double>> fitnessMap) {
+        fitnessMap.forEach((timingType, map) -> {
+            System.out.println("File: " + timingType.name());
             map.forEach((individual, fitness) ->
                     System.out.println("  " + individual + " -> " + fitness + "\n")
             );
