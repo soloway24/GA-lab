@@ -16,7 +16,7 @@ import static lab.identifier.ConvergenceIdentifier.areAllEqualTo;
 import static lab.identifier.ConvergenceIdentifier.areTheSameWithPercentage;
 import static lab.util.MetricUtils.getZeroCount;
 
-public class FhFunction implements FitnessFunction<Number, Long> {
+public class FhdFunction implements FitnessFunction<Number, Long> {
 
     private static final double SAME_PERCENTAGE = 0.9;
     private static final Individual OPTIMAL_INDIVIDUAL = new Individual("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", STANDARD);
@@ -25,22 +25,17 @@ public class FhFunction implements FitnessFunction<Number, Long> {
             STANDARD, OPTIMAL_INDIVIDUAL
     );
 
-    private static FhFunction instance;
+    private static FhdFunction instance;
 
-    private FhFunction() {
-    }
+    private final int selectiveAdvantage;
 
-    public static FhFunction getInstance() {
-        return ofNullable(instance)
-                .orElseGet(() -> {
-                    instance = new FhFunction();
-                    return instance;
-                });
+    public FhdFunction(int selectiveAdvantage) {
+        this.selectiveAdvantage = selectiveAdvantage;
     }
 
     @Override
     public String getName() {
-        return "FH";
+        return "FHD";
     }
 
     @Override
@@ -60,7 +55,7 @@ public class FhFunction implements FitnessFunction<Number, Long> {
 
     @Override
     public Long getMaxFitness() {
-        return 100L;
+        return (long) selectiveAdvantage * getChromosomeLength();
     }
 
     @Override
@@ -86,7 +81,8 @@ public class FhFunction implements FitnessFunction<Number, Long> {
 
     @Override
     public Long evaluate(Individual individual) {
-        return getZeroCount(individual);
+        long zeroCount = getZeroCount(individual);
+        return getChromosomeLength() - zeroCount + zeroCount * selectiveAdvantage;
     }
 
     @Override

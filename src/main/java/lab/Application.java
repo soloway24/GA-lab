@@ -19,8 +19,8 @@ public class Application {
     @Profile("!test")
     public CommandLineRunner run(Main processor, SnapshotRunner snapshotRunner) {
         return args -> {
-//            processor.run();
-            snapshotRunner.run();
+            processor.run();
+//            snapshotRunner.run();
         };
     }
 }

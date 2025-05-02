@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static java.lang.Math.pow;
+import static java.lang.Math.*;
 import static java.util.Optional.*;
 import static lab.encoding.Decoder.decode;
 import static lab.encoding.Encoding.GRAY;
@@ -21,7 +21,7 @@ import static lab.population.PopulationType.*;
 import static lab.util.Constants.PRECISION_BASE;
 import static lab.validators.EncodingSpaceValidator.validateEncodingSpace;
 
-public class PowerFunction5_12 implements FitnessFunction<Double, Double> {
+public class PowerFunctionSqrt5_12 implements FitnessFunction<Double, Double> {
 
     private static final Individual OPTIMAL_STANDARD_INDIVIDUAL = new Individual("1000000000", STANDARD);
     private static final Individual OPTIMAL_GRAY_INDIVIDUAL = new Individual("1100000000", GRAY);
@@ -36,25 +36,20 @@ public class PowerFunction5_12 implements FitnessFunction<Double, Double> {
     private final Double maxX;
     private final int argumentPrecision;
     private final double b;
-    private final double bExponent;
-    private final double xExponent;
 
-    //  b ^ bExponent - x ^ xExponent;  b = 5.12, bExponent = 2, xExponent = 2
-    public PowerFunction5_12(int chromosomeLength, double minX, double maxX, int argumentPrecision,
-                             double b, double bExponent, double xExponent) {
+    //  sqrt(b) - sqrt(|x|); b = 5.12
+    public PowerFunctionSqrt5_12(int chromosomeLength, double minX, double maxX, int argumentPrecision, double b) {
         validateEncodingSpace(chromosomeLength, minX, maxX, argumentPrecision);
         this.chromosomeLength = chromosomeLength;
         this.minX = minX;
         this.maxX = maxX;
         this.argumentPrecision = argumentPrecision;
         this.b = b;
-        this.bExponent = bExponent;
-        this.xExponent = xExponent;
     }
 
     @Override
     public String getName() {
-        return "(" + b + ")^" + bExponent + " - x^" + xExponent;
+        return "sqrt(" + b + ")" + " - sqrt(|x|)";
     }
 
     @Override
@@ -78,7 +73,7 @@ public class PowerFunction5_12 implements FitnessFunction<Double, Double> {
 
     @Override
     public Double getMaxFitness() {
-        return pow(b, bExponent);
+        return sqrt(b);
     }
 
     @Override
@@ -105,7 +100,7 @@ public class PowerFunction5_12 implements FitnessFunction<Double, Double> {
     @Override
     public Double evaluate(Individual individual) {
         Double x = decode(individual, this);
-        return pow(b, bExponent) - pow(x, xExponent);
+        return sqrt(b) - sqrt(abs(x));
     }
 
     @Override

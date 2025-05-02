@@ -107,14 +107,12 @@ public class PowerFunction implements FitnessFunction<Double, Double> {
     @Override
     public List<PopulationType> getSupportedPopulationConfigurations(OperatorType operatorType) {
         if (operatorType == OperatorType.NONE) {
-            return List.of(PopulationType.ONE_OPTIMAL, PopulationType.FIVE_PERCENT_OPTIMAL, PopulationType.TEN_PERCENT_OPTIMAL);
+            return List.of(PopulationType.ONE_OPTIMAL);
+//            return List.of(PopulationType.ONE_OPTIMAL, PopulationType.FIVE_PERCENT_OPTIMAL, PopulationType.TEN_PERCENT_OPTIMAL);
         }
 
-//        return List.of(ZERO_OPTIMAL, ONE_OPTIMAL, FIVE_PERCENT_OPTIMAL, TEN_PERCENT_OPTIMAL);
-//        return List.of(ZERO_OPTIMAL);
-        return List.of(PopulationType.ONE_OPTIMAL);
-//        return List.of(FIVE_PERCENT_OPTIMAL);
-//        return List.of(TEN_PERCENT_OPTIMAL);
+        return List.of(PopulationType.ZERO_OPTIMAL, PopulationType.ONE_OPTIMAL);
+//        return List.of(PopulationType.ZERO_OPTIMAL, PopulationType.ONE_OPTIMAL, PopulationType.FIVE_PERCENT_OPTIMAL, PopulationType.TEN_PERCENT_OPTIMAL);
     }
 
     @Override

@@ -108,17 +108,12 @@ public class ExponentialFunction implements FitnessFunction<Double, Double> {
     @Override
     public List<PopulationType> getSupportedPopulationConfigurations(OperatorType operatorType) {
         if (operatorType == OperatorType.NONE) {
-            return List.of(PopulationType.ONE_OPTIMAL, PopulationType.FIVE_PERCENT_OPTIMAL, PopulationType.TEN_PERCENT_OPTIMAL);
-//            return List.of(ONE_OPTIMAL);
-//            return List.of(FIVE_PERCENT_OPTIMAL);
-//            return List.of(TEN_PERCENT_OPTIMAL);
+            return List.of(PopulationType.ONE_OPTIMAL);
+//            return List.of(PopulationType.ONE_OPTIMAL, PopulationType.FIVE_PERCENT_OPTIMAL, PopulationType.TEN_PERCENT_OPTIMAL);
         }
 
-        return List.of(PopulationType.ZERO_OPTIMAL, PopulationType.ONE_OPTIMAL, PopulationType.FIVE_PERCENT_OPTIMAL, PopulationType.TEN_PERCENT_OPTIMAL);
-//        return List.of(PopulationType.ZERO_OPTIMAL);
-//        return List.of(PopulationType.ONE_OPTIMAL);
-//        return List.of(PopulationType.FIVE_PERCENT_OPTIMAL);
-//        return List.of(PopulationType.TEN_PERCENT_OPTIMAL);
+        return List.of(PopulationType.ZERO_OPTIMAL, PopulationType.ONE_OPTIMAL);
+//        return List.of(PopulationType.ZERO_OPTIMAL, PopulationType.ONE_OPTIMAL, PopulationType.FIVE_PERCENT_OPTIMAL, PopulationType.TEN_PERCENT_OPTIMAL);
     }
 
     @Override
