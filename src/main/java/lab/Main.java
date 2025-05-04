@@ -59,6 +59,7 @@ public class Main {
         FitnessFunction<?, ?> quadraticFunction = new PowerFunction(10, 0, 10.23, 2, 2);
         FitnessFunction<?, ?> quadratic512Function = new PowerFunction5_12(10, -5.12, 5.11, 2,
                 5.12, 2, 2);
+        FitnessFunction<?, ?> quadraticSqrt512Function = new PowerFunctionSqrt5_12(10, -5.12, 5.11, 2, 5.12);
         FitnessFunction<?, ?> exponent025 = new ExponentialFunction(10, 0, 10.23, 2, 0.25);
         FitnessFunction<?, ?> exponent1 = new ExponentialFunction(10, 0, 10.23, 2, 1);
         FitnessFunction<?, ?> exponent2 = new ExponentialFunction(10, 0, 10.23, 2, 2);
@@ -75,16 +76,17 @@ public class Main {
 //        return List.of(exponent2);
         return List.of(
 //                fhFunction
-                fhd2Function
+//                fhd2Function
 //                fhd10Function,
 //                fhd100Function
 //                .constAllFunction
 //                , quadraticFunction
 //                , quadratic512Function
+//                quadraticSqrt512Function
 //                , exponent025
 //                , exponent1
 //                , exponent2
-//                , rastriginFunction
+                 rastriginFunction
 //                , deb2Function
 //                , deb4Function
         );

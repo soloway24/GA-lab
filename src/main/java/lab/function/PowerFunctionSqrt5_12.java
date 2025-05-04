@@ -49,7 +49,7 @@ public class PowerFunctionSqrt5_12 implements FitnessFunction<Double, Double> {
 
     @Override
     public String getName() {
-        return "sqrt(" + b + ")" + " - sqrt(|x|)";
+        return "sqrt(" + b + ")" + " - sqrt(abs(x))";
     }
 
     @Override
