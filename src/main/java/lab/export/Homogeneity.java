@@ -3,12 +3,13 @@ package lab.export;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Arrays;
+
 @RequiredArgsConstructor
 @Getter
 public enum Homogeneity {
 
-    SEVENTY(0.7),
-    EIGHTY(0.8),
+    SEVENTY_FIVE(0.75),
     NINETY(0.9),
     NINETY_FIVE(0.95),
     NINETY_NINE(0.99),

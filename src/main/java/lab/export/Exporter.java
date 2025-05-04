@@ -261,7 +261,7 @@ public class Exporter {
                 .max(comparingByKey())
                 .ifPresent(entry -> exportSingleHistogramData(plotExportPath, valueOf(entry.getKey()), entry.getValue(), isConst, supportsDecoding));
 
-        List<Homogeneity> exportedHomogeneities = List.of(NINETY, NINETY_FIVE, NINETY_NINE);
+        List<Homogeneity> exportedHomogeneities = List.of(SEVENTY_FIVE, NINETY, NINETY_FIVE, NINETY_NINE);
         exportedHomogeneities.stream()
                 .map(h -> Pair.create(h, homogeneityToIndMetrics.get(h)))
                 .filter(pair -> pair.getValue() != null)

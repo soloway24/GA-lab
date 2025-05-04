@@ -29,6 +29,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 import static lab.encoding.Decoder.decode;
+import static lab.export.Homogeneity.*;
 import static lab.identifier.ConvergenceIdentifier.getEqualQuantity;
 import static lab.identifier.ConvergenceIdentifier.isHomogenous;
 import static lab.selection.SelectorType.SUS;
@@ -266,6 +267,8 @@ public class RunPoolExecutor {
 
 
             individualToFitness = getIndividualToFitness(currentIndividuals, function);
+
+            populateHistogramData(function, currentIndividuals, i, generationToIndMetrics, homogeneityToIndMetrics);
 
             // metrics for all functions
             int ni = i;
@@ -559,13 +562,18 @@ public class RunPoolExecutor {
         return count;
     }
 
-    private void populateHistogramData(FitnessFunction<?, ? extends Number> function, List<Individual> currentIndividuals, int i, Map<Integer, List<IndividualMetrics>> generationToIndMetrics, Map<Homogeneity, List<IndividualMetrics>> homogeneityToIndMetrics) {
-        if (i < 3 || (i + 1) % 500000 == 0) {
+    private void populateHistogramData(FitnessFunction<?, ? extends Number> function,
+                                       List<Individual> currentIndividuals,
+                                       int i,
+                                       Map<Integer, List<IndividualMetrics>> generationToIndMetrics,
+                                       Map<Homogeneity, List<IndividualMetrics>> homogeneityToIndMetrics) {
+        if (i < 3 || (i) % 10000 == 0) {
             List<IndividualMetrics> individualMetrics = buildAllIndividualMetrics(currentIndividuals, function);
-            generationToIndMetrics.put(i + 1, individualMetrics);
+            generationToIndMetrics.put(i, individualMetrics);
         }
 
-        Arrays.stream(Homogeneity.values())
+        List<Homogeneity> exportedHomogeneities = List.of(SEVENTY_FIVE, NINETY, NINETY_FIVE, NINETY_NINE);
+        exportedHomogeneities
                 .forEach(h -> {
                     if (!homogeneityToIndMetrics.containsKey(h) && isHomogenous(currentIndividuals, h.getPercentage())) {
                         homogeneityToIndMetrics.put(h, buildAllIndividualMetrics(currentIndividuals, function));
