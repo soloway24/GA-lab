@@ -66,6 +66,8 @@ public class Main {
         FitnessFunction<?, ?> rastriginFunction = new RastriginFunction(10, -5.12, 5.11, 2, 7);
         FitnessFunction<?, ?> deb2Function = new Deb2Function(10, 0, 1.023, 3);
         FitnessFunction<?, ?> deb4Function = new Deb4Function(10, 0, 1.023, 3);
+        FitnessFunction<?, ?> testSin2 = new TestSin2Function(10, 0, 10.23, 2);
+        FitnessFunction<?, ?> testSin500 = new TestSin500Function(10, 0, 10.23, 2);
 
 //        return List.of(constAllFunction);
 //        return List.of(fhFunction);
@@ -86,9 +88,11 @@ public class Main {
 //                , exponent025
 //                , exponent1
 //                , exponent2
-                 rastriginFunction
+//                 rastriginFunction
 //                , deb2Function
 //                , deb4Function
+//                testSin2,
+                testSin500
         );
     }
 
@@ -116,16 +120,16 @@ public class Main {
                 new DynamicPowerScalingSusSelector(dynamicPowerScalingSelector0p8to1p2, susSelector);
 
         return List.of(
-                rwsSelector
-//                , susSelector
-//                , powerScalingRwsSelector
-//                , powerScalingRwsSelector2
-//                , powerScalingSusSelector
-//                , powerScalingSusSelector2
-//                , dynamicPowerScalingRwsSelector0p9to1p1
-//                , dynamicPowerScalingRwsSelector0p8to1p2
-//                , dynamicPowerScalingSusSelector0p9to1p1
-//                , dynamicPowerScalingSusSelector0p8to1p2
+                rwsSelector,
+                susSelector
+                , powerScalingRwsSelector
+                , powerScalingRwsSelector2
+                , powerScalingSusSelector
+                , powerScalingSusSelector2
+                , dynamicPowerScalingRwsSelector0p9to1p1
+                , dynamicPowerScalingRwsSelector0p8to1p2
+                , dynamicPowerScalingSusSelector0p9to1p1
+                , dynamicPowerScalingSusSelector0p8to1p2
         );
     }
 

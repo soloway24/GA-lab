@@ -29,7 +29,7 @@ public class SuccessfulRunIdentifier {
                 .orElseThrow(() -> new IllegalStateException("Cannot get function's optimalX to verify successful run. Function = " + function));
         double maxFitness = function.getMaxFitness().doubleValue();
 
-        double actualFitnessDelta = Math.abs(maxFitness - bestFitness);
+        double actualFitnessDelta = maxFitness - bestFitness;
         double actualXSigma = Math.abs(optimalX - bestX);
 
         return actualFitnessDelta <= ALLOWED_FITNESS_DELTA
