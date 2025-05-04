@@ -5,7 +5,6 @@ import com.github.sh0nk.matplotlib4j.PythonExecutionException;
 import com.github.sh0nk.matplotlib4j.builder.HistBuilder;
 import lab.function.FitnessFunction;
 import lab.metric.IndividualMetrics;
-import lab.operator.OperatorType;
 import lab.population.PopulationSnapshot;
 import lab.population.PopulationTimingType;
 import lab.run.RunConfiguration;
@@ -42,6 +41,7 @@ import static lab.population.PopulationTimingType.*;
 @Component
 public class Exporter {
 
+    private static final int EXPORT_RUN_Q = 5;
     private static final int COLUMN_NUMBER = 81;
     private static final String STATS_PATH = Paths.get(".")
             .toAbsolutePath()
@@ -107,10 +107,8 @@ public class Exporter {
             theDir1.mkdirs();
         }
 
-        int exportRunQ = getExportRunQ(runConfiguration);
-
-        for (int i = 0; i < exportRunQ && i < allRunStats.size(); i++) {
-            System.out.println("I = " + (i + 1) + "/" + exportRunQ);
+        for (int i = 0; i < EXPORT_RUN_Q && i < allRunStats.size(); i++) {
+            System.out.println("I = " + (i + 1) + "/" + EXPORT_RUN_Q);
             RunStats runStats = allRunStats.get(i);
 
             String plotExportPath = plotExportDir + (i + 1) + "/";
@@ -190,10 +188,8 @@ public class Exporter {
             theDir1.mkdirs();
         }
 
-        int exportRunQ = getExportRunQ(runConfiguration);
-
-        for (int i = 0; i < exportRunQ && i < allRunStats.size(); i++) {
-            System.out.println("I = " + (i + 1) + "/" + exportRunQ);
+        for (int i = 0; i < EXPORT_RUN_Q && i < allRunStats.size(); i++) {
+            System.out.println("I = " + (i + 1) + "/" + EXPORT_RUN_Q);
 
             RunStats runStats = allRunStats.get(i);
             String plotExportPath = plotExportDir + (i + 1) + "/";
@@ -216,17 +212,6 @@ public class Exporter {
                 operatorName + "_" +
                 populationType + "_" +
                 encoding;
-    }
-
-    private int getExportRunQ(RunConfiguration runConfiguration) {
-        if (runConfiguration.operator().getOperatorType() == OperatorType.NONE) {
-            return runConfiguration.populationSize() == 100
-                    ? 4
-                    : 2;
-        }
-        return runConfiguration.populationSize() == 100
-                ? 2
-                : 0;
     }
 
     private void drawHistograms(RunStats runStats, String plotExportPath, FitnessFunction<?, ? extends Number> function, int populationSize) {

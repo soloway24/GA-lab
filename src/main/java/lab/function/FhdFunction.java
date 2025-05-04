@@ -35,7 +35,7 @@ public class FhdFunction implements FitnessFunction<Number, Long> {
 
     @Override
     public String getName() {
-        return "FHD";
+        return "FHD " + selectiveAdvantage;
     }
 
     @Override

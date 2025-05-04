@@ -53,6 +53,9 @@ public class Main {
     private List<FitnessFunction<?, ?>> getFunctions() {
         FitnessFunction<?, ?> constAllFunction = FConstAllFunction.getInstance();
         FitnessFunction<?, ?> fhFunction = FhFunction.getInstance();
+        FitnessFunction<?, ?> fhd2Function = new FhdFunction(2);
+        FitnessFunction<?, ?> fhd10Function = new FhdFunction(10);
+        FitnessFunction<?, ?> fhd100Function = new FhdFunction(100);
         FitnessFunction<?, ?> quadraticFunction = new PowerFunction(10, 0, 10.23, 2, 2);
         FitnessFunction<?, ?> quadratic512Function = new PowerFunction5_12(10, -5.12, 5.11, 2,
                 5.12, 2, 2);
@@ -71,7 +74,10 @@ public class Main {
 //        return List.of(exponent1);
 //        return List.of(exponent2);
         return List.of(
-                fhFunction
+//                fhFunction
+                fhd2Function
+//                fhd10Function,
+//                fhd100Function
 //                .constAllFunction
 //                , quadraticFunction
 //                , quadratic512Function
