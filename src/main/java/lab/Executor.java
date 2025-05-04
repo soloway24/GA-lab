@@ -7,10 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.stream.IntStream;
 
 @Component
@@ -172,22 +169,38 @@ public class Executor {
             throw new RuntimeException(e);
         }
 
-        ExecutorService plotsExecutorService = new ForkJoinPool();
+        int parallelism = Runtime.getRuntime().availableProcessors();
+        ExecutorService plotsExecutorService = Executors.newFixedThreadPool(parallelism);
+
         System.out.println("EXPORTING SINGLE RUN POOL PLOTS -----------------");
         int size = allRunPoolStats.size();
 
-        IntStream.range(0, size)
-                .forEach(i -> {
+        List<Callable<Void>> tasks = IntStream.range(0, size)
+                .mapToObj(i -> (Callable<Void>) () -> {
                     System.out.println("Plots " + (i + 1) + "/" + size);
-                    plotsExecutorService.submit(() -> exporter.exportPlots(allRunPoolStats.get(i).allRunStats(), allRunPoolStats.get(i).runConfiguration()));
-                });
+                    exporter.exportPlots(
+                            allRunPoolStats.get(i).allRunStats(),
+                            allRunPoolStats.get(i).runConfiguration()
+                    );
+                    return null;
+                })
+                .toList();
 
-        plotsExecutorService.shutdown();
         try {
-            plotsExecutorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            plotsExecutorService.invokeAll(tasks);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Plot export interrupted", e);
+        } finally {
+            plotsExecutorService.shutdown();
+            try {
+                if (!plotsExecutorService.awaitTermination(1, TimeUnit.HOURS)) {
+                    System.err.println("Timeout waiting for tasks to complete.");
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
+
 
         System.out.println("EXPORTING ALL RUN POOLS -----------------");
         exporter.exportAllRunPools(allRunPoolStats);

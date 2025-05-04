@@ -27,6 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
@@ -107,75 +110,93 @@ public class Exporter {
             theDir1.mkdirs();
         }
 
-        for (int i = 0; i < EXPORT_RUN_Q && i < allRunStats.size(); i++) {
-            System.out.println("I = " + (i + 1) + "/" + EXPORT_RUN_Q);
-            RunStats runStats = allRunStats.get(i);
+        int threads = Math.min(EXPORT_RUN_Q, Runtime.getRuntime().availableProcessors());
+        ExecutorService perRunExecutor = Executors.newFixedThreadPool(threads);
 
-            String plotExportPath = plotExportDir + (i + 1) + "/";
-            XSSFWorkbook workbook = new XSSFWorkbook();
-            Sheet sheet = workbook.createSheet("Plots data");
-            String tablePath = plotExportPath + "plots_data" + ".xlsx";
+        List<Callable<Void>> runTasks = IntStream.range(0, EXPORT_RUN_Q)
+                .mapToObj(i -> (Callable<Void>) () -> {
+                    System.out.println("Run I = " + (i + 1) + "/" + EXPORT_RUN_Q);
+                    RunStats runStats = allRunStats.get(i);
 
-            List<Integer> xIterations = IntStream.rangeClosed(1, runStats.ni())
-                    .boxed().toList();
-            List<Integer> xGenerations = IntStream.rangeClosed(0, runStats.ni())
-                    .boxed().toList();
+                    String plotExportPath = plotExportDir + (i + 1) + "/";
 
-            List<Double> rrs = runStats.rrs();
-            List<Double> tetas = runStats.tetas();
-            List<Integer> uniques = runStats.uniques();
+                    XSSFWorkbook workbook = new XSSFWorkbook();
+                    Sheet sheet = workbook.createSheet("Plots data");
+                    String tablePath = plotExportPath + "plots_data.xlsx";
 
-            drawPlot(xIterations, rrs, tetas, plotExportPath, "rr and teta", "rr", "teta", -0.1, 1.1);
-            drawPlot(xGenerations, uniques, plotExportPath, "uniques");
+                    List<Integer> xIterations = IntStream.rangeClosed(1, runStats.ni()).boxed().toList();
+                    List<Integer> xGenerations = IntStream.rangeClosed(0, runStats.ni()).boxed().toList();
 
-            if (!runConfiguration.function().isConstant()) {
-                List<Double> avgFs = runStats.avgFs();
-                List<Double> maxFs = runStats.maxFs();
-                List<Double> sigmaFs = runStats.sigmaFs();
-                List<Double> optimalRatios = runStats.optimalRatios();
-                List<Double> bestRatios = runStats.bestRatios();
-                List<Double> ss = runStats.ss();
-                List<Double> is = runStats.is();
-                List<Double> prs = runStats.prs();
-                List<Double> grs = runStats.grs();
-                List<Double> fishes = runStats.fishes();
-                List<Double> kendalls = runStats.kendalls();
+                    List<Double> rrs = runStats.rrs();
+                    List<Double> tetas = runStats.tetas();
+                    List<Integer> uniques = runStats.uniques();
 
-                drawPlot(xGenerations, avgFs, plotExportPath, "avgFs");
-                drawPlot(xGenerations, maxFs, plotExportPath, "maxFs");
-                drawPlot(xGenerations, sigmaFs, plotExportPath, "sigmaFs");
-                drawPlot(xGenerations, optimalRatios, plotExportPath, "optimalRatios", -0.1, 1.1);
-                drawPlot(xGenerations, bestRatios, plotExportPath, "bestRatios", -0.1, 1.1);
-                drawPlot(xIterations, ss, plotExportPath, "difference");
-                drawPlot(xIterations, is, plotExportPath, "intensity");
-                drawPlot(xGenerations, prs, plotExportPath, "Pr");
-                drawPlot(xIterations, grs, plotExportPath, "Gr");
-                drawPlot(xIterations, fishes, plotExportPath, "Fisher's Exact Test");
-                drawPlot(xIterations, kendalls, plotExportPath, "Kendall's Tau-B", -1.1, 1.1);
-                drawPlot(xGenerations, prs, sigmaFs, plotExportPath, "Pr and sigmaF", "Pr", "SigmaF");
+                    List<Runnable> plotTasks = List.of(
+                            () -> drawPlot(xIterations, rrs, tetas, plotExportPath, "rr and teta", "rr", "teta", -0.1, 1.1),
+                            () -> drawPlot(xGenerations, uniques, plotExportPath, "uniques")
+                    );
+                    plotTasks.parallelStream().forEach(Runnable::run);
+
+                    if (!runConfiguration.function().isConstant()) {
+                        List<Double> avgFs = runStats.avgFs();
+                        List<Double> maxFs = runStats.maxFs();
+                        List<Double> sigmaFs = runStats.sigmaFs();
+                        List<Double> optimalRatios = runStats.optimalRatios();
+                        List<Double> bestRatios = runStats.bestRatios();
+                        List<Double> ss = runStats.ss();
+                        List<Double> is = runStats.is();
+                        List<Double> prs = runStats.prs();
+                        List<Double> grs = runStats.grs();
+                        List<Double> fishes = runStats.fishes();
+                        List<Double> kendalls = runStats.kendalls();
+
+                        List<Runnable> nonConstantPlotTasks = List.of(
+                                () -> drawPlot(xGenerations, avgFs, plotExportPath, "avgFs"),
+                                () -> drawPlot(xGenerations, maxFs, plotExportPath, "maxFs"),
+                                () -> drawPlot(xGenerations, sigmaFs, plotExportPath, "sigmaFs"),
+                                () -> drawPlot(xGenerations, optimalRatios, plotExportPath, "optimalRatios", -0.1, 1.1),
+                                () -> drawPlot(xGenerations, bestRatios, plotExportPath, "bestRatios", -0.1, 1.1),
+                                () -> drawPlot(xIterations, ss, plotExportPath, "difference"),
+                                () -> drawPlot(xIterations, is, plotExportPath, "intensity"),
+                                () -> drawPlot(xGenerations, prs, plotExportPath, "Pr"),
+                                () -> drawPlot(xIterations, grs, plotExportPath, "Gr"),
+                                () -> drawPlot(xIterations, fishes, plotExportPath, "Fisher's Exact Test"),
+                                () -> drawPlot(xIterations, kendalls, plotExportPath, "Kendall's Tau-B", -1.1, 1.1),
+                                () -> drawPlot(xGenerations, prs, sigmaFs, plotExportPath, "Pr and sigmaF", "Pr", "SigmaF")
+                        );
+                        nonConstantPlotTasks.parallelStream().forEach(Runnable::run);
 
 
-                createPlotsGenerationDataHeader(sheet);
-                createGenerationRows(sheet, 1, xGenerations, avgFs, maxFs, sigmaFs, optimalRatios, bestRatios, uniques, prs);
+                        createPlotsGenerationDataHeader(sheet);
+                        createGenerationRows(sheet, 1, xGenerations, avgFs, maxFs, sigmaFs, optimalRatios, bestRatios, uniques, prs);
 
-                int freeIndex = getFirstNullRowIndex(sheet);
-                createPlotsIterationDataHeader(sheet, freeIndex + 1);
-                createIterationRows(sheet, freeIndex + 2, xIterations, rrs, tetas, ss, is, grs, fishes, kendalls);
-            } else {
-                createPlotsGenerationDataHeaderConst(sheet);
-                createGenerationRows(sheet, 1, xGenerations, uniques);
+                        int freeIndex = getFirstNullRowIndex(sheet);
+                        createPlotsIterationDataHeader(sheet, freeIndex + 1);
+                        createIterationRows(sheet, freeIndex + 2, xIterations, rrs, tetas, ss, is, grs, fishes, kendalls);
+                    } else {
+                        createPlotsGenerationDataHeaderConst(sheet);
+                        createGenerationRows(sheet, 1, xGenerations, uniques);
 
-                int freeIndex = getFirstNullRowIndex(sheet);
-                createPlotsIterationDataHeader(sheet, freeIndex + 1);
-                createIterationRows(sheet, freeIndex + 2, xIterations, rrs, tetas);
-            }
-            saveWorkbook(workbook, tablePath);
+                        int freeIndex = getFirstNullRowIndex(sheet);
+                        createPlotsIterationDataHeader(sheet, freeIndex + 1);
+                        createIterationRows(sheet, freeIndex + 2, xIterations, rrs, tetas);
+                    }
 
-            // POSSIBLE DUPLICATE
-            drawHistograms(runStats, plotExportPath, runConfiguration.function(), runConfiguration.populationSize());
-            exportPopulationSnapshotsTable(plotExportPath, runStats.timingTypeToPopulationSnapshot());
+                    saveWorkbook(workbook, tablePath);
 
-            System.gc();
+                    drawHistograms(runStats, plotExportPath, runConfiguration.function(), runConfiguration.populationSize());
+                    exportPopulationSnapshotsTable(plotExportPath, runStats.timingTypeToPopulationSnapshot());
+
+                    return null;
+                })
+                .toList();
+
+        try {
+            perRunExecutor.invokeAll(runTasks);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Run export interrupted", e);
+        } finally {
+            perRunExecutor.shutdown();
         }
     }
 
