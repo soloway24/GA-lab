@@ -2,6 +2,8 @@ package lab.run;
 
 import lab.metric.KendallMetrics;
 import lab.metric.NiOfMetrics;
+import lab.metric.RunPoolHomogeneityMetrics;
+import lab.metric.SingleHomogeneityMetrics;
 import lab.util.CalculationUtils;
 import lab.util.MetricUtils;
 import org.apache.commons.math3.util.Pair;
@@ -264,6 +266,53 @@ public class RunPoolStatsCreator {
         double avgNi90of = 0;
         double sigmaNi90of = 0;
 
+        int minNi75h = 0;
+        int maxNi75h = 0;
+        double avgNi75h = 0;
+        double sigmaNi75h = 0;
+
+        double minAvg75h = 0;
+        double maxAvg75h = 0;
+        double avgAvg75h = 0;
+        double sigmaAvg75h = 0;
+
+        int minNumOpt75h = 0;
+        int maxNumOpt75h = 0;
+        double avgNumOpt75h = 0;
+        double sigmaNumOpt75h = 0;
+
+
+        int minNi90h = 0;
+        int maxNi90h = 0;
+        double avgNi90h = 0;
+        double sigmaNi90h = 0;
+
+        double minAvg90h = 0;
+        double maxAvg90h = 0;
+        double avgAvg90h = 0;
+        double sigmaAvg90h = 0;
+
+        int minNumOpt90h = 0;
+        int maxNumOpt90h = 0;
+        double avgNumOpt90h = 0;
+        double sigmaNumOpt90h = 0;
+
+
+        int minNi95h = 0;
+        int maxNi95h = 0;
+        double avgNi95h = 0;
+        double sigmaNi95h = 0;
+
+        double minAvg95h = 0;
+        double maxAvg95h = 0;
+        double avgAvg95h = 0;
+        double sigmaAvg95h = 0;
+
+        int minNumOpt95h = 0;
+        int maxNumOpt95h = 0;
+        double avgNumOpt95h = 0;
+        double sigmaNumOpt95h = 0;
+
         double minFishMin = 0;
         int niMinFishMin = 0;
         double maxFishMax = 0;
@@ -521,6 +570,62 @@ public class RunPoolStatsCreator {
             maxNi90of = CalculationUtils.getMaxInt(ni90ofs);
             avgNi90of = CalculationUtils.getAverage(ni90ofs);
             sigmaNi90of = MetricUtils.getStandardDeviation(ni90ofs, avgNi90of);
+
+            List<Integer> ni75hs = getHomogeneityIntValues(allRunStats, SingleHomogeneityMetrics::ni75h);
+            minNi75h = CalculationUtils.getMinInt(ni75hs);
+            maxNi75h = CalculationUtils.getMaxInt(ni75hs);
+            avgNi75h = CalculationUtils.getAverage(ni75hs);
+            sigmaNi75h = MetricUtils.getStandardDeviation(ni75hs, avgNi75h);
+
+            List<Double> avg75hs = getHomogeneityDoubleValues(allRunStats, SingleHomogeneityMetrics::avg75h);
+            minAvg75h = CalculationUtils.getMinDouble(avg75hs);
+            maxAvg75h = CalculationUtils.getMaxDouble(avg75hs);
+            avgAvg75h = CalculationUtils.getAverage(avg75hs);
+            sigmaAvg75h = MetricUtils.getStandardDeviation(avg75hs, avgAvg75h);
+            
+            List<Integer> numOpt75hs = getHomogeneityIntValues(allRunStats, SingleHomogeneityMetrics::numOpt75h);
+            minNumOpt75h = CalculationUtils.getMinInt(numOpt75hs);
+            maxNumOpt75h = CalculationUtils.getMaxInt(numOpt75hs);
+            avgNumOpt75h = CalculationUtils.getAverage(numOpt75hs);
+            sigmaNumOpt75h = MetricUtils.getStandardDeviation(numOpt75hs, avgNumOpt75h);
+
+            
+            List<Integer> ni90hs = getHomogeneityIntValues(allRunStats, SingleHomogeneityMetrics::ni90h);
+            minNi90h = CalculationUtils.getMinInt(ni90hs);
+            maxNi90h = CalculationUtils.getMaxInt(ni90hs);
+            avgNi90h = CalculationUtils.getAverage(ni90hs);
+            sigmaNi90h = MetricUtils.getStandardDeviation(ni90hs, avgNi90h);
+
+            List<Double> avg90hs = getHomogeneityDoubleValues(allRunStats, SingleHomogeneityMetrics::avg90h);
+            minAvg90h = CalculationUtils.getMinDouble(avg90hs);
+            maxAvg90h = CalculationUtils.getMaxDouble(avg90hs);
+            avgAvg90h = CalculationUtils.getAverage(avg90hs);
+            sigmaAvg90h = MetricUtils.getStandardDeviation(avg90hs, avgAvg90h);
+
+            List<Integer> numOpt90hs = getHomogeneityIntValues(allRunStats, SingleHomogeneityMetrics::numOpt90h);
+            minNumOpt90h = CalculationUtils.getMinInt(numOpt90hs);
+            maxNumOpt90h = CalculationUtils.getMaxInt(numOpt90hs);
+            avgNumOpt90h = CalculationUtils.getAverage(numOpt90hs);
+            sigmaNumOpt90h = MetricUtils.getStandardDeviation(numOpt90hs, avgNumOpt90h);
+
+            
+            List<Integer> ni95hs = getHomogeneityIntValues(allRunStats, SingleHomogeneityMetrics::ni95h);
+            minNi95h = CalculationUtils.getMinInt(ni95hs);
+            maxNi95h = CalculationUtils.getMaxInt(ni95hs);
+            avgNi95h = CalculationUtils.getAverage(ni95hs);
+            sigmaNi95h = MetricUtils.getStandardDeviation(ni95hs, avgNi95h);
+
+            List<Double> avg95hs = getHomogeneityDoubleValues(allRunStats, SingleHomogeneityMetrics::avg95h);
+            minAvg95h = CalculationUtils.getMinDouble(avg95hs);
+            maxAvg95h = CalculationUtils.getMaxDouble(avg95hs);
+            avgAvg95h = CalculationUtils.getAverage(avg95hs);
+            sigmaAvg95h = MetricUtils.getStandardDeviation(avg95hs, avgAvg95h);
+
+            List<Integer> numOpt95hs = getHomogeneityIntValues(allRunStats, SingleHomogeneityMetrics::numOpt95h);
+            minNumOpt95h = CalculationUtils.getMinInt(numOpt95hs);
+            maxNumOpt95h = CalculationUtils.getMaxInt(numOpt95hs);
+            avgNumOpt95h = CalculationUtils.getAverage(numOpt95hs);
+            sigmaNumOpt95h = MetricUtils.getStandardDeviation(numOpt95hs, avgNumOpt95h);
         }
 
 
@@ -730,6 +835,55 @@ public class RunPoolStatsCreator {
                                 .withSigmaNi90of(sigmaNi90of)
                                 .build())
 
+                .withHomogeneityMetrics(RunPoolHomogeneityMetrics.builder()
+                        .withMinNi75h(minNi75h)
+                        .withMaxNi75h(maxNi75h)
+                        .withAvgNi75h(avgNi75h)
+                        .withSigmaNi75h(sigmaNi75h)
+                        
+                        .withMinAvg75h(minAvg75h)
+                        .withMaxAvg75h(maxAvg75h)
+                        .withAvgAvg75h(avgAvg75h)
+                        .withSigmaAvg75h(sigmaAvg75h)
+                        
+                        .withMinNumOpt75h(minNumOpt75h)
+                        .withMaxNumOpt75h(maxNumOpt75h)
+                        .withAvgNumOpt75h(avgNumOpt75h)
+                        .withSigmaNumOpt75h(sigmaNumOpt75h)
+
+
+                        .withMinNi90h(minNi90h)
+                        .withMaxNi90h(maxNi90h)
+                        .withAvgNi90h(avgNi90h)
+                        .withSigmaNi90h(sigmaNi90h)
+
+                        .withMinAvg90h(minAvg90h)
+                        .withMaxAvg90h(maxAvg90h)
+                        .withAvgAvg90h(avgAvg90h)
+                        .withSigmaAvg90h(sigmaAvg90h)
+
+                        .withMinNumOpt90h(minNumOpt90h)
+                        .withMaxNumOpt90h(maxNumOpt90h)
+                        .withAvgNumOpt90h(avgNumOpt90h)
+                        .withSigmaNumOpt90h(sigmaNumOpt90h)
+
+
+                        .withMinNi95h(minNi95h)
+                        .withMaxNi95h(maxNi95h)
+                        .withAvgNi95h(avgNi95h)
+                        .withSigmaNi95h(sigmaNi95h)
+
+                        .withMinAvg95h(minAvg95h)
+                        .withMaxAvg95h(maxAvg95h)
+                        .withAvgAvg95h(avgAvg95h)
+                        .withSigmaAvg95h(sigmaAvg95h)
+
+                        .withMinNumOpt95h(minNumOpt95h)
+                        .withMaxNumOpt95h(maxNumOpt95h)
+                        .withAvgNumOpt95h(avgNumOpt95h)
+                        .withSigmaNumOpt95h(sigmaNumOpt95h)
+                        .build())
+
                 .build();
     }
 
@@ -788,6 +942,20 @@ public class RunPoolStatsCreator {
 
     private List<Integer> getIntValues(List<RunStats> runStats, Function<? super RunStats, Integer> mapper) {
         return runStats.stream()
+                .map(mapper)
+                .toList();
+    }
+
+    private List<Integer> getHomogeneityIntValues(List<RunStats> runStats, Function<SingleHomogeneityMetrics, Integer> mapper) {
+        return runStats.stream()
+                .map(RunStats::singleHomogeneityMetrics)
+                .map(mapper)
+                .toList();
+    }
+
+    private List<Double> getHomogeneityDoubleValues(List<RunStats> runStats, Function<SingleHomogeneityMetrics, Double> mapper) {
+        return runStats.stream()
+                .map(RunStats::singleHomogeneityMetrics)
                 .map(mapper)
                 .toList();
     }

@@ -815,7 +815,7 @@ public class Exporter {
         row.createCell(i++).setCellValue("NI_95h");
         row.createCell(i++).setCellValue("Avg_95h");
         row.createCell(i++).setCellValue("NumOpt_95h");
-        
+
         row.createCell(i++).setCellValue("Fish_start");
         row.createCell(i++).setCellValue("Fish_min");
         row.createCell(i++).setCellValue("NI_Fish_min");
@@ -906,7 +906,7 @@ public class Exporter {
             row.createCell(i++).setCellValue(runStats.ni50of());
             row.createCell(i++).setCellValue(runStats.ni75of());
             row.createCell(i++).setCellValue(runStats.ni90of());
-            
+
             row.createCell(i++).setCellValue(runStats.singleHomogeneityMetrics().ni75h());
             row.createCell(i++).setCellValue(runStats.singleHomogeneityMetrics().avg75h());
             row.createCell(i++).setCellValue(runStats.singleHomogeneityMetrics().numOpt75h());
@@ -918,7 +918,7 @@ public class Exporter {
             row.createCell(i++).setCellValue(runStats.singleHomogeneityMetrics().ni95h());
             row.createCell(i++).setCellValue(runStats.singleHomogeneityMetrics().avg95h());
             row.createCell(i++).setCellValue(runStats.singleHomogeneityMetrics().numOpt95h());
-            
+
             row.createCell(i++).setCellValue(runStats.fishStart());
             row.createCell(i++).setCellValue(runStats.fishMin());
             row.createCell(i++).setCellValue(runStats.niFishMin());
@@ -1144,6 +1144,54 @@ public class Exporter {
         row.createCell(i++).setCellValue("Max_NI_90of");
         row.createCell(i++).setCellValue("Avg_NI_90of");
         row.createCell(i++).setCellValue("Sigma_NI_90of");
+
+
+        row.createCell(i++).setCellValue("Min_NI_75h");
+        row.createCell(i++).setCellValue("Max_NI_75h");
+        row.createCell(i++).setCellValue("Avg_NI_75h");
+        row.createCell(i++).setCellValue("Sigma_NI_75h");
+
+        row.createCell(i++).setCellValue("Min_Avg_75h");
+        row.createCell(i++).setCellValue("Max_Avg_75h");
+        row.createCell(i++).setCellValue("Avg_Avg_75h");
+        row.createCell(i++).setCellValue("Sigma_Avg_75h");
+
+        row.createCell(i++).setCellValue("Min_NumOpt_75h");
+        row.createCell(i++).setCellValue("Max_NumOpt_75h");
+        row.createCell(i++).setCellValue("Avg_NumOpt_75h");
+        row.createCell(i++).setCellValue("Sigma_NumOpt_75h");
+
+
+        row.createCell(i++).setCellValue("Min_NI_90h");
+        row.createCell(i++).setCellValue("Max_NI_90h");
+        row.createCell(i++).setCellValue("Avg_NI_90h");
+        row.createCell(i++).setCellValue("Sigma_NI_90h");
+
+        row.createCell(i++).setCellValue("Min_Avg_90h");
+        row.createCell(i++).setCellValue("Max_Avg_90h");
+        row.createCell(i++).setCellValue("Avg_Avg_90h");
+        row.createCell(i++).setCellValue("Sigma_Avg_90h");
+
+        row.createCell(i++).setCellValue("Min_NumOpt_90h");
+        row.createCell(i++).setCellValue("Max_NumOpt_90h");
+        row.createCell(i++).setCellValue("Avg_NumOpt_90h");
+        row.createCell(i++).setCellValue("Sigma_NumOpt_90h");
+
+
+        row.createCell(i++).setCellValue("Min_NI_95h");
+        row.createCell(i++).setCellValue("Max_NI_95h");
+        row.createCell(i++).setCellValue("Avg_NI_95h");
+        row.createCell(i++).setCellValue("Sigma_NI_95h");
+
+        row.createCell(i++).setCellValue("Min_Avg_95h");
+        row.createCell(i++).setCellValue("Max_Avg_95h");
+        row.createCell(i++).setCellValue("Avg_Avg_95h");
+        row.createCell(i++).setCellValue("Sigma_Avg_95h");
+
+        row.createCell(i++).setCellValue("Min_NumOpt_95h");
+        row.createCell(i++).setCellValue("Max_NumOpt_95h");
+        row.createCell(i++).setCellValue("Avg_NumOpt_95h");
+        row.createCell(i++).setCellValue("Sigma_NumOpt_95h");
     }
 
     private void createRunPoolRow(Sheet sheet, int index, int configNumber, RunPoolStats runPoolStats) {
@@ -1369,6 +1417,54 @@ public class Exporter {
             row.createCell(i++).setCellValue(runPoolStats.niOfMetrics().maxNi90of());
             row.createCell(i++).setCellValue(runPoolStats.niOfMetrics().avgNi90of());
             row.createCell(i++).setCellValue(runPoolStats.niOfMetrics().sigmaNi90of());
+
+
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().minNi75h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().maxNi75h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().avgNi75h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().sigmaNi75h());
+
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().minAvg75h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().maxAvg75h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().avgAvg75h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().sigmaAvg75h());
+
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().minNumOpt75h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().maxNumOpt75h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().avgNumOpt75h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().sigmaNumOpt75h());
+
+
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().minNi90h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().maxNi90h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().avgNi90h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().sigmaNi90h());
+
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().minAvg90h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().maxAvg90h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().avgAvg90h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().sigmaAvg90h());
+
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().minNumOpt90h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().maxNumOpt90h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().avgNumOpt90h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().sigmaNumOpt90h());
+
+
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().minNi95h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().maxNi95h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().avgNi95h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().sigmaNi95h());
+
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().minAvg95h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().maxAvg95h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().avgAvg95h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().sigmaAvg95h());
+
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().minNumOpt95h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().maxNumOpt95h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().avgNumOpt95h());
+            row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().sigmaNumOpt95h());
         }
     }
 

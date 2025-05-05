@@ -2,6 +2,7 @@ package lab.run;
 
 import lab.metric.KendallMetrics;
 import lab.metric.NiOfMetrics;
+import lab.metric.RunPoolHomogeneityMetrics;
 import lombok.Builder;
 
 import java.util.List;
@@ -171,7 +172,8 @@ public record RunPoolStats(RunConfiguration runConfiguration,
                            double avgNiFHSM,
                            double sigmaNiFHSM,
 
-                           NiOfMetrics niOfMetrics
+                           NiOfMetrics niOfMetrics,
+                           RunPoolHomogeneityMetrics homogeneityMetrics
 ) {
 
     @Override
