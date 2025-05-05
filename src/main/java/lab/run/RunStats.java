@@ -84,6 +84,9 @@ public record RunStats(Map<Individual, ? extends Number> finalPopulation,
                        int ni75of,
                        int ni90of,
 
+                       int niAlH,
+                       double fAlH,
+
                        double fishStart,
                        double fishMin,
                        int niFishMin,

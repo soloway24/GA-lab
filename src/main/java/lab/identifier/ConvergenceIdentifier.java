@@ -76,6 +76,14 @@ public class ConvergenceIdentifier {
         return isHomogenous(indexToBits, minPercentage);
     }
 
+    public static boolean isAtLeastOneAlleleHomogenous(Collection<Individual> individuals) {
+        Map<Integer, List<Boolean>> indexToBits = new HashMap<>();
+        individuals.stream()
+                .map(Individual::getBinaryCode)
+                .forEach(binaryCode -> putBits(binaryCode, indexToBits));
+        return isAtLeastOneAlleleHomogenous(indexToBits);
+    }
+
     private static boolean isHomogenous(Map<Integer, List<Boolean>> indexToBits, double minPercentage) {
         for (Map.Entry<Integer, List<Boolean>> entry : indexToBits.entrySet()) {
             if (isNotHomogenous(entry.getValue(), minPercentage)) {
@@ -83,6 +91,15 @@ public class ConvergenceIdentifier {
             }
         }
         return true;
+    }
+
+    private static boolean isAtLeastOneAlleleHomogenous(Map<Integer, List<Boolean>> indexToBits) {
+        for (Map.Entry<Integer, List<Boolean>> entry : indexToBits.entrySet()) {
+            if (isHomogenous(entry.getValue())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean isNotHomogenous(List<Boolean> bits, double minPercentage) {
@@ -98,6 +115,12 @@ public class ConvergenceIdentifier {
         double zeroPercentage = (double) zeroCount / bits.size();
 
         return onePercentage < minPercentage && zeroPercentage < minPercentage;
+    }
+
+    private static boolean isHomogenous(List<Boolean> bits) {
+        return bits.stream()
+                .distinct()
+                .count() == 1;
     }
 
     private static void putBits(String binaryCode, Map<Integer, List<Boolean>> indexToBits) {

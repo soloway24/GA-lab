@@ -33,8 +33,7 @@ import static lab.encoding.Decoder.decode;
 import static lab.export.Homogeneity.NINETY_FIVE;
 import static lab.export.Homogeneity.NINETY_NINE;
 import static lab.export.Optimality.*;
-import static lab.identifier.ConvergenceIdentifier.getEqualQuantity;
-import static lab.identifier.ConvergenceIdentifier.isHomogenous;
+import static lab.identifier.ConvergenceIdentifier.*;
 import static lab.identifier.SuccessfulRunIdentifier.getBestIndividual;
 import static lab.selection.SelectorType.SUS;
 import static lab.util.CalculationUtils.getAverageFitness;
@@ -152,6 +151,9 @@ public class RunPoolExecutor {
             double grLate = Double.MIN_VALUE;
             int niGrLate = Integer.MIN_VALUE;
 
+            int niAlH = -1;
+            double fAlH = -1;
+
             Map<Integer, Double> generationToAvgF = new HashMap<>();
             Map<Integer, Double> generationToMaxF = new HashMap<>();
             Map<Integer, Double> generationToSigmaF = new HashMap<>();
@@ -266,6 +268,11 @@ public class RunPoolExecutor {
 
                     currentKendall = computeKendallTauB(individualToFitness, parentPool);
                     iterationToKendall.put(i + 1, currentKendall);
+                }
+
+                if (isAtLeastOneAlleleHomogenous(currentIndividuals) && niAlH == -1) {
+                    niAlH = i;
+                    fAlH = avgF;
                 }
 
                 populateHomogeneityToGeneration(currentIndividuals, i, homogeneityToGeneration);
@@ -466,6 +473,11 @@ public class RunPoolExecutor {
             double avg95h = ofNullable(generationToAvgF.get(ni95h)).orElse(-1.0);
             int numOpt95h = ofNullable(generationToOptimalQ.get(ni95h)).orElse(-1);
 
+            if (isAtLeastOneAlleleHomogenous(currentIndividuals) && niAlH == -1) {
+                niAlH = ni;
+                fAlH = fAvg;
+            }
+
             return RunStats.builder()
                     .withFinalPopulation(individualToFitness)
 
@@ -537,6 +549,9 @@ public class RunPoolExecutor {
                     .withNi50of(ni50of)
                     .withNi75of(ni75of)
                     .withNi90of(ni90of)
+
+                    .withNiAlH(niAlH)
+                    .withFAlH(fAlH)
 
                     .withFishStart(fishStart)
                     .withFishMin(fishMin)

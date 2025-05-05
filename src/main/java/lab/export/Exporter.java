@@ -804,6 +804,9 @@ public class Exporter {
         row.createCell(i++).setCellValue("NI_75of");
         row.createCell(i++).setCellValue("NI_95of");
 
+        row.createCell(i++).setCellValue("NI_AlH");
+        row.createCell(i++).setCellValue("F_AlH");
+
         row.createCell(i++).setCellValue("NI_75h");
         row.createCell(i++).setCellValue("Avg_75h");
         row.createCell(i++).setCellValue("NumOpt_75h");
@@ -906,6 +909,9 @@ public class Exporter {
             row.createCell(i++).setCellValue(runStats.ni50of());
             row.createCell(i++).setCellValue(runStats.ni75of());
             row.createCell(i++).setCellValue(runStats.ni90of());
+
+            row.createCell(i++).setCellValue(runStats.niAlH());
+            row.createCell(i++).setCellValue(runStats.fAlH());
 
             row.createCell(i++).setCellValue(runStats.singleHomogeneityMetrics().ni75h());
             row.createCell(i++).setCellValue(runStats.singleHomogeneityMetrics().avg75h());
