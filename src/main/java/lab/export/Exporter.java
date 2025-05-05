@@ -804,6 +804,18 @@ public class Exporter {
         row.createCell(i++).setCellValue("NI_75of");
         row.createCell(i++).setCellValue("NI_95of");
 
+        row.createCell(i++).setCellValue("NI_75h");
+        row.createCell(i++).setCellValue("Avg_75h");
+        row.createCell(i++).setCellValue("NumOpt_75h");
+
+        row.createCell(i++).setCellValue("NI_90h");
+        row.createCell(i++).setCellValue("Avg_90h");
+        row.createCell(i++).setCellValue("NumOpt_90h");
+
+        row.createCell(i++).setCellValue("NI_95h");
+        row.createCell(i++).setCellValue("Avg_95h");
+        row.createCell(i++).setCellValue("NumOpt_95h");
+        
         row.createCell(i++).setCellValue("Fish_start");
         row.createCell(i++).setCellValue("Fish_min");
         row.createCell(i++).setCellValue("NI_Fish_min");
@@ -894,7 +906,19 @@ public class Exporter {
             row.createCell(i++).setCellValue(runStats.ni50of());
             row.createCell(i++).setCellValue(runStats.ni75of());
             row.createCell(i++).setCellValue(runStats.ni90of());
+            
+            row.createCell(i++).setCellValue(runStats.singleHomogeneityMetrics().ni75h());
+            row.createCell(i++).setCellValue(runStats.singleHomogeneityMetrics().avg75h());
+            row.createCell(i++).setCellValue(runStats.singleHomogeneityMetrics().numOpt75h());
 
+            row.createCell(i++).setCellValue(runStats.singleHomogeneityMetrics().ni90h());
+            row.createCell(i++).setCellValue(runStats.singleHomogeneityMetrics().avg90h());
+            row.createCell(i++).setCellValue(runStats.singleHomogeneityMetrics().numOpt90h());
+
+            row.createCell(i++).setCellValue(runStats.singleHomogeneityMetrics().ni95h());
+            row.createCell(i++).setCellValue(runStats.singleHomogeneityMetrics().avg95h());
+            row.createCell(i++).setCellValue(runStats.singleHomogeneityMetrics().numOpt95h());
+            
             row.createCell(i++).setCellValue(runStats.fishStart());
             row.createCell(i++).setCellValue(runStats.fishMin());
             row.createCell(i++).setCellValue(runStats.niFishMin());

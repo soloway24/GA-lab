@@ -7,6 +7,7 @@ import lab.export.Optimality;
 import lab.function.FitnessFunction;
 import lab.identifier.ConvergenceIdentifier;
 import lab.metric.IndividualMetrics;
+import lab.metric.SingleHomogeneityMetrics;
 import lab.operator.Operator;
 import lab.operator.OperatorType;
 import lab.population.*;
@@ -156,6 +157,7 @@ public class RunPoolExecutor {
             Map<Integer, Double> generationToSigmaF = new HashMap<>();
             Map<Integer, Integer> generationToUniqueX = new HashMap<>();
             Map<Integer, Double> generationToOptimalRatio = new HashMap<>();
+            Map<Integer, Integer> generationToOptimalQ = new HashMap<>();
             Map<Integer, Double> generationToBestRatio = new HashMap<>();
 
             Map<Integer, List<IndividualMetrics>> generationToIndMetrics = new HashMap<>();
@@ -198,6 +200,8 @@ public class RunPoolExecutor {
                 generationToUniqueX.put(i, unique);
 
                 int optimalQ = getEqualQuantity(currentIndividuals, optimal);
+                generationToOptimalQ.put(i, optimalQ);
+
                 double optimalRatio = (double) optimalQ / currentIndividuals.size();
                 generationToOptimalRatio.put(i, optimalRatio);
 
@@ -329,6 +333,8 @@ public class RunPoolExecutor {
             int niFHSM = getNiFHSM(generationToAvgF, optimalF, startFAvg);
 
             int optimalQ = getEqualQuantity(currentIndividuals, optimal);
+            generationToOptimalQ.put(ni, optimalQ);
+
             double optimalRatio = (double) optimalQ / currentIndividuals.size();
             generationToOptimalRatio.put(ni, optimalRatio);
 
@@ -448,6 +454,17 @@ public class RunPoolExecutor {
                 kendallAvg = CalculationUtils.getAverage(iterationToKendall.values());
             }
 
+            int ni75h = ofNullable(homogeneityToGeneration.get(Homogeneity.SEVENTY_FIVE)).orElse(-1);
+            double avg75h = ofNullable(generationToAvgF.get(ni75h)).orElse(-1.0);
+            int numOpt75h = ofNullable(generationToOptimalQ.get(ni75h)).orElse(-1);
+
+            int ni90h = ofNullable(homogeneityToGeneration.get(Homogeneity.NINETY)).orElse(-1);
+            double avg90h = ofNullable(generationToAvgF.get(ni90h)).orElse(-1.0);
+            int numOpt90h = ofNullable(generationToOptimalQ.get(ni90h)).orElse(-1);
+
+            int ni95h = ofNullable(homogeneityToGeneration.get(NINETY_FIVE)).orElse(-1);
+            double avg95h = ofNullable(generationToAvgF.get(ni95h)).orElse(-1.0);
+            int numOpt95h = ofNullable(generationToOptimalQ.get(ni95h)).orElse(-1);
 
             return RunStats.builder()
                     .withFinalPopulation(individualToFitness)
@@ -553,6 +570,21 @@ public class RunPoolExecutor {
                     .withGenerationToIndMetrics(generationToIndMetrics)
                     .withHomogeneityToIndMetrics(homogeneityToIndMetrics)
                     .withTimingTypeToPopulationSnapshot(timingTypeToPopulationSnapshot)
+
+                    .withSingleHomogeneityMetrics(SingleHomogeneityMetrics.builder()
+                            .withNi75h(ni75h)
+                            .withAvg75h(avg75h)
+                            .withNumOpt75h(numOpt75h)
+
+                            .withNi90h(ni90h)
+                            .withAvg90h(avg90h)
+                            .withNumOpt90h(numOpt90h)
+
+                            .withAvg95h(avg95h)
+                            .withNi95h(ni95h)
+                            .withNumOpt95h(numOpt95h)
+
+                            .build())
 
                     .build();
         } catch (Exception e) {
