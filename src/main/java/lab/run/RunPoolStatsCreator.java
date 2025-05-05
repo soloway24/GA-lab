@@ -1,6 +1,7 @@
 package lab.run;
 
 import lab.metric.KendallMetrics;
+import lab.metric.NiOfMetrics;
 import lab.util.CalculationUtils;
 import lab.util.MetricUtils;
 import org.apache.commons.math3.util.Pair;
@@ -243,6 +244,26 @@ public class RunPoolStatsCreator {
         double avgNiFHSM = 0;
         double sigmaNiFHSM = 0;
 
+        int minNi25of = 0;
+        int maxNi25of = 0;
+        double avgNi25of = 0;
+        double sigmaNi25of = 0;
+
+        int minNi50of = 0;
+        int maxNi50of = 0;
+        double avgNi50of = 0;
+        double sigmaNi50of = 0;
+
+        int minNi75of = 0;
+        int maxNi75of = 0;
+        double avgNi75of = 0;
+        double sigmaNi75of = 0;
+
+        int minNi90of = 0;
+        int maxNi90of = 0;
+        double avgNi90of = 0;
+        double sigmaNi90of = 0;
+
         double minFishMin = 0;
         int niMinFishMin = 0;
         double maxFishMax = 0;
@@ -476,6 +497,30 @@ public class RunPoolStatsCreator {
             maxNiFHSM = CalculationUtils.getMaxInt(niFHSMs);
             avgNiFHSM = CalculationUtils.getAverage(niFHSMs);
             sigmaNiFHSM = MetricUtils.getStandardDeviation(niFHSMs, avgNiFHSM);
+
+            List<Integer> ni25ofs = getIntValues(allRunStats, RunStats::ni25of);
+            minNi25of = CalculationUtils.getMinInt(ni25ofs);
+            maxNi25of = CalculationUtils.getMaxInt(ni25ofs);
+            avgNi25of = CalculationUtils.getAverage(ni25ofs);
+            sigmaNi25of = MetricUtils.getStandardDeviation(ni25ofs, avgNi25of);
+
+            List<Integer> ni50ofs = getIntValues(allRunStats, RunStats::ni50of);
+            minNi50of = CalculationUtils.getMinInt(ni50ofs);
+            maxNi50of = CalculationUtils.getMaxInt(ni50ofs);
+            avgNi50of = CalculationUtils.getAverage(ni50ofs);
+            sigmaNi50of = MetricUtils.getStandardDeviation(ni50ofs, avgNi50of);
+
+            List<Integer> ni75ofs = getIntValues(allRunStats, RunStats::ni75of);
+            minNi75of = CalculationUtils.getMinInt(ni75ofs);
+            maxNi75of = CalculationUtils.getMaxInt(ni75ofs);
+            avgNi75of = CalculationUtils.getAverage(ni75ofs);
+            sigmaNi75of = MetricUtils.getStandardDeviation(ni75ofs, avgNi75of);
+
+            List<Integer> ni90ofs = getIntValues(allRunStats, RunStats::ni90of);
+            minNi90of = CalculationUtils.getMinInt(ni90ofs);
+            maxNi90of = CalculationUtils.getMaxInt(ni90ofs);
+            avgNi90of = CalculationUtils.getAverage(ni90ofs);
+            sigmaNi90of = MetricUtils.getStandardDeviation(ni90ofs, avgNi90of);
         }
 
 
@@ -661,6 +706,29 @@ public class RunPoolStatsCreator {
                 .withMaxNiFHSM(maxNiFHSM)
                 .withAvgNiFHSM(avgNiFHSM)
                 .withSigmaNiFHSM(sigmaNiFHSM)
+
+                .withNiOfMetrics(
+                        NiOfMetrics.builder()
+                                .withMinNi25of(minNi25of)
+                                .withMaxNi25of(maxNi25of)
+                                .withAvgNi25of(avgNi25of)
+                                .withSigmaNi25of(sigmaNi25of)
+
+                                .withMinNi50of(minNi50of)
+                                .withMaxNi50of(maxNi50of)
+                                .withAvgNi50of(avgNi50of)
+                                .withSigmaNi50of(sigmaNi50of)
+
+                                .withMinNi75of(minNi75of)
+                                .withMaxNi75of(maxNi75of)
+                                .withAvgNi75of(avgNi75of)
+                                .withSigmaNi75of(sigmaNi75of)
+
+                                .withMinNi90of(minNi90of)
+                                .withMaxNi90of(maxNi90of)
+                                .withAvgNi90of(avgNi90of)
+                                .withSigmaNi90of(sigmaNi90of)
+                                .build())
 
                 .build();
     }

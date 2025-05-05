@@ -1100,6 +1100,26 @@ public class Exporter {
         row.createCell(i++).setCellValue("Max_NI_FHSM");
         row.createCell(i++).setCellValue("Avg_NI_FHSM");
         row.createCell(i++).setCellValue("Sigma_NI_FHSM");
+
+        row.createCell(i++).setCellValue("Min_NI_25of");
+        row.createCell(i++).setCellValue("Max_NI_25of");
+        row.createCell(i++).setCellValue("Avg_NI_25of");
+        row.createCell(i++).setCellValue("Sigma_NI_25of");
+
+        row.createCell(i++).setCellValue("Min_NI_50of");
+        row.createCell(i++).setCellValue("Max_NI_50of");
+        row.createCell(i++).setCellValue("Avg_NI_50of");
+        row.createCell(i++).setCellValue("Sigma_NI_50of");
+
+        row.createCell(i++).setCellValue("Min_NI_75of");
+        row.createCell(i++).setCellValue("Max_NI_75of");
+        row.createCell(i++).setCellValue("Avg_NI_75of");
+        row.createCell(i++).setCellValue("Sigma_NI_75of");
+
+        row.createCell(i++).setCellValue("Min_NI_90of");
+        row.createCell(i++).setCellValue("Max_NI_90of");
+        row.createCell(i++).setCellValue("Avg_NI_90of");
+        row.createCell(i++).setCellValue("Sigma_NI_90of");
     }
 
     private void createRunPoolRow(Sheet sheet, int index, int configNumber, RunPoolStats runPoolStats) {
@@ -1305,6 +1325,26 @@ public class Exporter {
             row.createCell(i++).setCellValue(runPoolStats.maxNiFHSM());
             row.createCell(i++).setCellValue(runPoolStats.avgNiFHSM());
             row.createCell(i++).setCellValue(runPoolStats.sigmaNiFHSM());
+
+            row.createCell(i++).setCellValue(runPoolStats.niOfMetrics().minNi25of());
+            row.createCell(i++).setCellValue(runPoolStats.niOfMetrics().maxNi25of());
+            row.createCell(i++).setCellValue(runPoolStats.niOfMetrics().avgNi25of());
+            row.createCell(i++).setCellValue(runPoolStats.niOfMetrics().sigmaNi25of());
+
+            row.createCell(i++).setCellValue(runPoolStats.niOfMetrics().minNi50of());
+            row.createCell(i++).setCellValue(runPoolStats.niOfMetrics().maxNi50of());
+            row.createCell(i++).setCellValue(runPoolStats.niOfMetrics().avgNi50of());
+            row.createCell(i++).setCellValue(runPoolStats.niOfMetrics().sigmaNi50of());
+
+            row.createCell(i++).setCellValue(runPoolStats.niOfMetrics().minNi75of());
+            row.createCell(i++).setCellValue(runPoolStats.niOfMetrics().maxNi75of());
+            row.createCell(i++).setCellValue(runPoolStats.niOfMetrics().avgNi75of());
+            row.createCell(i++).setCellValue(runPoolStats.niOfMetrics().sigmaNi75of());
+
+            row.createCell(i++).setCellValue(runPoolStats.niOfMetrics().minNi90of());
+            row.createCell(i++).setCellValue(runPoolStats.niOfMetrics().maxNi90of());
+            row.createCell(i++).setCellValue(runPoolStats.niOfMetrics().avgNi90of());
+            row.createCell(i++).setCellValue(runPoolStats.niOfMetrics().sigmaNi90of());
         }
     }
 

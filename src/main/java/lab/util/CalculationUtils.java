@@ -37,6 +37,7 @@ public class CalculationUtils {
 
     public static Integer getMinInt(Collection<Integer> values) {
         return values.stream()
+                .filter(value -> value >= 0)
                 .min(Integer::compareTo)
                 .orElseThrow(() -> new IllegalArgumentException("Cannot get min value of an empty collection."));
     }
