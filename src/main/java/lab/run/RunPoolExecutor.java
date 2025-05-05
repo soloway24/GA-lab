@@ -3,9 +3,9 @@ package lab.run;
 import lab.Individual;
 import lab.encoding.Encoding;
 import lab.export.Homogeneity;
+import lab.export.Optimality;
 import lab.function.FitnessFunction;
 import lab.identifier.ConvergenceIdentifier;
-import lab.identifier.SuccessfulRunIdentifier;
 import lab.metric.IndividualMetrics;
 import lab.operator.Operator;
 import lab.operator.OperatorType;
@@ -29,7 +29,9 @@ import static java.util.Optional.ofNullable;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 import static lab.encoding.Decoder.decode;
-import static lab.export.Homogeneity.*;
+import static lab.export.Homogeneity.NINETY_FIVE;
+import static lab.export.Homogeneity.NINETY_NINE;
+import static lab.export.Optimality.*;
 import static lab.identifier.ConvergenceIdentifier.getEqualQuantity;
 import static lab.identifier.ConvergenceIdentifier.isHomogenous;
 import static lab.identifier.SuccessfulRunIdentifier.getBestIndividual;
@@ -158,6 +160,7 @@ public class RunPoolExecutor {
 
             Map<Integer, List<IndividualMetrics>> generationToIndMetrics = new HashMap<>();
             Map<Homogeneity, List<IndividualMetrics>> homogeneityToIndMetrics = new HashMap<>();
+            Map<Homogeneity, Integer> homogeneityToGeneration = new HashMap<>();
             Map<PopulationTimingType, PopulationSnapshot> timingTypeToPopulationSnapshot = new HashMap<>();
 
             int maxIterations = getMaxIterations(function, selector);
@@ -261,6 +264,7 @@ public class RunPoolExecutor {
                     iterationToKendall.put(i + 1, currentKendall);
                 }
 
+                populateHomogeneityToGeneration(currentIndividuals, i, homogeneityToGeneration);
                 populateHistogramData(function, currentIndividuals, i, generationToIndMetrics, homogeneityToIndMetrics);
                 populateSnapshotData(population.populationConfiguration(), individualToFitness, timingTypeToPopulationSnapshot, i, avgF, maxF);
 
@@ -271,9 +275,9 @@ public class RunPoolExecutor {
                 i++;
             }
 
-
             individualToFitness = getIndividualToFitness(currentIndividuals, function);
 
+            populateHomogeneityToGeneration(currentIndividuals, i, homogeneityToGeneration);
             populateHistogramData(function, currentIndividuals, i, generationToIndMetrics, homogeneityToIndMetrics);
 
             // metrics for all functions
@@ -327,6 +331,12 @@ public class RunPoolExecutor {
             int optimalQ = getEqualQuantity(currentIndividuals, optimal);
             double optimalRatio = (double) optimalQ / currentIndividuals.size();
             generationToOptimalRatio.put(ni, optimalRatio);
+
+            int ni25of = getNiOptimalRatioOf(generationToOptimalRatio, TWENTY_FIVE);
+            int ni50of = getNiOptimalRatioOf(generationToOptimalRatio, FIFTY);
+            int ni75of = getNiOptimalRatioOf(generationToOptimalRatio, SEVENTY_FIVE);
+            int ni90of = getNiOptimalRatioOf(generationToOptimalRatio, NINETY);
+
             int bestQ = getEqualQuantity(currentIndividuals, best);
             double bestRatio = (double) bestQ / currentIndividuals.size();
             generationToBestRatio.put(ni, bestRatio);
@@ -506,6 +516,11 @@ public class RunPoolExecutor {
                     .withNiFHM(niFHM)
                     .withNiFHSM(niFHSM)
 
+                    .withNi25of(ni25of)
+                    .withNi50of(ni50of)
+                    .withNi75of(ni75of)
+                    .withNi90of(ni90of)
+
                     .withFishStart(fishStart)
                     .withFishMin(fishMin)
                     .withNiFishMin(niFishMin)
@@ -546,6 +561,18 @@ public class RunPoolExecutor {
         }
     }
 
+    private void populateHomogeneityToGeneration(List<Individual> currentIndividuals,
+                                                 int i,
+                                                 Map<Homogeneity, Integer> homogeneityToGeneration) {
+        List<Homogeneity> exportedHomogeneities = List.of(Homogeneity.SEVENTY_FIVE, Homogeneity.NINETY, NINETY_FIVE);
+        exportedHomogeneities
+                .forEach(h -> {
+                    if (!homogeneityToGeneration.containsKey(h) && isHomogenous(currentIndividuals, h.getPercentage())) {
+                        homogeneityToGeneration.put(h, i);
+                    }
+                });
+    }
+
     private int getNiFHM(Map<Integer, ? extends Number> generationToAvgF, double optimalF) {
         for (int i = 0; i < generationToAvgF.size(); i++) {
             if (generationToAvgF.get(i).doubleValue() >= optimalF * 0.5) {
@@ -558,6 +585,15 @@ public class RunPoolExecutor {
     private int getNiFHSM(Map<Integer, ? extends Number> generationToAvgF, double optimalF, double startFAvg) {
         for (int i = 0; i < generationToAvgF.size(); i++) {
             if (generationToAvgF.get(i).doubleValue() >= startFAvg + 0.5 * (optimalF - startFAvg)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private int getNiOptimalRatioOf(Map<Integer, Double> generationToOptimalRatio, Optimality optimality) {
+        for (int i = 0; i < generationToOptimalRatio.size(); i++) {
+            if (generationToOptimalRatio.get(i) >= optimality.getPercentage()) {
                 return i;
             }
         }
@@ -607,7 +643,7 @@ public class RunPoolExecutor {
             generationToIndMetrics.put(i, individualMetrics);
         }
 
-        List<Homogeneity> exportedHomogeneities = List.of(SEVENTY_FIVE, NINETY, NINETY_FIVE, NINETY_NINE);
+        List<Homogeneity> exportedHomogeneities = List.of(Homogeneity.SEVENTY_FIVE, Homogeneity.NINETY, NINETY_FIVE, NINETY_NINE);
         exportedHomogeneities
                 .forEach(h -> {
                     if (!homogeneityToIndMetrics.containsKey(h) && isHomogenous(currentIndividuals, h.getPercentage())) {
