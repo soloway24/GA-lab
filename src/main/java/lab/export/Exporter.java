@@ -803,6 +803,9 @@ public class Exporter {
         row.createCell(i++).setCellValue("NI_Pr_max");
         row.createCell(i++).setCellValue("Pr_avg");
 
+        row.createCell(i++).setCellValue("NI_FHM");
+        row.createCell(i++).setCellValue("NI_FHSM");
+
         row.createCell(i++).setCellValue("Fish_start");
         row.createCell(i++).setCellValue("Fish_min");
         row.createCell(i++).setCellValue("NI_Fish_min");
@@ -885,6 +888,9 @@ public class Exporter {
             row.createCell(i++).setCellValue(runStats.prMax());
             row.createCell(i++).setCellValue(runStats.niPrMax());
             row.createCell(i++).setCellValue(runStats.prAvg());
+
+            row.createCell(i++).setCellValue(runStats.niFHM());
+            row.createCell(i++).setCellValue(runStats.niFHSM());
 
             row.createCell(i++).setCellValue(runStats.fishStart());
             row.createCell(i++).setCellValue(runStats.fishMin());

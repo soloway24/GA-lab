@@ -75,6 +75,9 @@ public record RunStats(Map<Individual, ? extends Number> finalPopulation,
                        int niPrMax,
                        double prAvg,
 
+                       int niFHM,
+                       int niFHSM,
+
                        double fishStart,
                        double fishMin,
                        int niFishMin,

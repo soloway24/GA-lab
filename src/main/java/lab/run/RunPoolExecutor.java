@@ -32,7 +32,9 @@ import static lab.encoding.Decoder.decode;
 import static lab.export.Homogeneity.*;
 import static lab.identifier.ConvergenceIdentifier.getEqualQuantity;
 import static lab.identifier.ConvergenceIdentifier.isHomogenous;
+import static lab.identifier.SuccessfulRunIdentifier.getBestIndividual;
 import static lab.selection.SelectorType.SUS;
+import static lab.util.CalculationUtils.getAverageFitness;
 import static lab.util.MetricUtils.*;
 
 @Component
@@ -179,19 +181,23 @@ public class RunPoolExecutor {
                 shuffle(parentCopies);
                 offsprings = operator.apply(parentPool);
 
-                double avgF = CalculationUtils.getAverageFitness(individualToFitness);
+                double avgF = getAverageFitness(individualToFitness);
                 generationToAvgF.put(i, avgF);
-                Individual best = SuccessfulRunIdentifier.getBestIndividual(individualToFitness);
+
+                Individual best = getBestIndividual(individualToFitness);
                 double maxF = individualToFitness.get(best).doubleValue();
                 generationToMaxF.put(i, maxF);
+
                 double sigmaF = getStandardDeviation(individualToFitness.values(), avgF);
                 generationToSigmaF.put(i, sigmaF);
+
                 int unique = getUniqueBinaryCodes(currentIndividuals).size();
                 generationToUniqueX.put(i, unique);
 
                 int optimalQ = getEqualQuantity(currentIndividuals, optimal);
                 double optimalRatio = (double) optimalQ / currentIndividuals.size();
                 generationToOptimalRatio.put(i, optimalRatio);
+
                 int bestQ = getEqualQuantity(currentIndividuals, best);
                 double bestRatio = (double) bestQ / currentIndividuals.size();
                 generationToBestRatio.put(i, bestRatio);
@@ -226,7 +232,7 @@ public class RunPoolExecutor {
                     currentS = getDifference(individualToFitness, parentPoolToFitness);
                     iterationToS.put(i + 1, currentS);
 
-                    double parentAvgF = CalculationUtils.getAverageFitness(parentPoolToFitness);
+                    double parentAvgF = getAverageFitness(parentPoolToFitness);
                     currentI = sigmaF == 0
                             ? 1
                             : (parentAvgF - avgF) / sigmaF;
@@ -304,11 +310,19 @@ public class RunPoolExecutor {
             if (numLoose == 0) {
                 maxOptSavedNILoose = getEqualQuantity(currentIndividuals, optimal);
             }
-            Individual best = SuccessfulRunIdentifier.getBestIndividual(individualToFitness);
+
+            Individual best = getBestIndividual(individualToFitness);
             double fFound = individualToFitness.get(best).doubleValue();
-            double fAvg = CalculationUtils.getAverageFitness(individualToFitness);
             generationToMaxF.put(ni, fFound);
+
+            double fAvg = getAverageFitness(individualToFitness);
             generationToAvgF.put(ni, fAvg);
+
+            double optimalF = function.getMaxFitness().doubleValue();
+            int niFHM = getNiFHM(generationToAvgF, optimalF);
+
+            double startFAvg = generationToAvgF.get(0);
+            int niFHSM = getNiFHSM(generationToAvgF, optimalF, startFAvg);
 
             int optimalQ = getEqualQuantity(currentIndividuals, optimal);
             double optimalRatio = (double) optimalQ / currentIndividuals.size();
@@ -489,6 +503,9 @@ public class RunPoolExecutor {
                     .withNiPrMax(niPrMax)
                     .withPrAvg(prAvg)
 
+                    .withNiFHM(niFHM)
+                    .withNiFHSM(niFHSM)
+
                     .withFishStart(fishStart)
                     .withFishMin(fishMin)
                     .withNiFishMin(niFishMin)
@@ -527,6 +544,24 @@ public class RunPoolExecutor {
             System.out.println(Thread.currentThread() + " exception: " + e.getMessage() + ", " + Arrays.toString(e.getStackTrace()));
             throw new RuntimeException(e);
         }
+    }
+
+    private int getNiFHM(Map<Integer, ? extends Number> generationToAvgF, double optimalF) {
+        for (int i = 0; i < generationToAvgF.size(); i++) {
+            if (generationToAvgF.get(i).doubleValue() >= optimalF * 0.5) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private int getNiFHSM(Map<Integer, ? extends Number> generationToAvgF, double optimalF, double startFAvg) {
+        for (int i = 0; i < generationToAvgF.size(); i++) {
+            if (generationToAvgF.get(i).doubleValue() >= startFAvg + 0.5 * (optimalF - startFAvg)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private boolean shouldNotStop(Map<Individual, ? extends Number> individualToFitness, Operator operator, Selector selector, Individual optimal) {
