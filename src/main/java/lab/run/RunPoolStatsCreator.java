@@ -233,6 +233,16 @@ public class RunPoolStatsCreator {
         double avgPrStart = 0;
         double sigmaPrStart = 0;
 
+        int minNiFHM = 0;
+        int maxNiFHM = 0;
+        double avgNiFHM = 0;
+        double sigmaNiFHM = 0;
+
+        int minNiFHSM = 0;
+        int maxNiFHSM = 0;
+        double avgNiFHSM = 0;
+        double sigmaNiFHSM = 0;
+
         double minFishMin = 0;
         int niMinFishMin = 0;
         double maxFishMax = 0;
@@ -454,6 +464,18 @@ public class RunPoolStatsCreator {
                 avgMaxOptSavedNILoose = CalculationUtils.getAverage(maxOptSavedNILooses);
                 sigmaMaxOptSavedNILoose = MetricUtils.getStandardDeviation(maxOptSavedNILooses, avgMaxOptSavedNILoose);
             }
+
+            List<Integer> niFHMs = getIntValues(allRunStats, RunStats::niFHM);
+            minNiFHM = CalculationUtils.getMinInt(niFHMs);
+            maxNiFHM = CalculationUtils.getMaxInt(niFHMs);
+            avgNiFHM = CalculationUtils.getAverage(niFHMs);
+            sigmaNiFHM = MetricUtils.getStandardDeviation(niFHMs, avgNiFHM);
+
+            List<Integer> niFHSMs = getIntValues(allRunStats, RunStats::niFHSM);
+            minNiFHSM = CalculationUtils.getMinInt(niFHSMs);
+            maxNiFHSM = CalculationUtils.getMaxInt(niFHSMs);
+            avgNiFHSM = CalculationUtils.getAverage(niFHSMs);
+            sigmaNiFHSM = MetricUtils.getStandardDeviation(niFHSMs, avgNiFHSM);
         }
 
 
@@ -629,6 +651,16 @@ public class RunPoolStatsCreator {
                 .withSigmaOptSavedNILoose(sigmaOptSavedNILoose)
                 .withAvgMaxOptSavedNILoose(avgMaxOptSavedNILoose)
                 .withSigmaMaxOptSavedNILoose(sigmaMaxOptSavedNILoose)
+
+                .withMinNiFHM(minNiFHM)
+                .withMaxNiFHM(maxNiFHM)
+                .withAvgNiFHM(avgNiFHM)
+                .withSigmaNiFHM(sigmaNiFHM)
+
+                .withMinNiFHSM(minNiFHSM)
+                .withMaxNiFHSM(maxNiFHSM)
+                .withAvgNiFHSM(avgNiFHSM)
+                .withSigmaNiFHSM(sigmaNiFHSM)
 
                 .build();
     }

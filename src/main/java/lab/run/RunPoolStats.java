@@ -158,7 +158,17 @@ public record RunPoolStats(RunConfiguration runConfiguration,
                            double avgOptSavedNILoose,
                            double sigmaOptSavedNILoose,
                            double avgMaxOptSavedNILoose,
-                           double sigmaMaxOptSavedNILoose
+                           double sigmaMaxOptSavedNILoose,
+
+                           int minNiFHM,
+                           int maxNiFHM,
+                           double avgNiFHM,
+                           double sigmaNiFHM,
+
+                           int minNiFHSM,
+                           int maxNiFHSM,
+                           double avgNiFHSM,
+                           double sigmaNiFHSM
 ) {
 
     @Override

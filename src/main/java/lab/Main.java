@@ -67,7 +67,7 @@ public class Main {
         FitnessFunction<?, ?> deb2Function = new Deb2Function(10, 0, 1.023, 3);
         FitnessFunction<?, ?> deb4Function = new Deb4Function(10, 0, 1.023, 3);
         FitnessFunction<?, ?> testSin2 = new TestSin2Function(10, 0, 10.23, 2);
-        FitnessFunction<?, ?> testSin500 = new TestSin500Function(10, 0, 10.23, 2);
+//        FitnessFunction<?, ?> testSin500 = new TestSin500Function(10, 0, 10.23, 2);
 
 //        return List.of(constAllFunction);
 //        return List.of(fhFunction);
@@ -82,7 +82,8 @@ public class Main {
 //                fhd10Function,
 //                fhd100Function
 //                .constAllFunction
-//                , quadraticFunction
+//                ,
+                quadraticFunction
 //                , quadratic512Function
 //                quadraticSqrt512Function
 //                , exponent025
@@ -91,8 +92,9 @@ public class Main {
 //                 rastriginFunction
 //                , deb2Function
 //                , deb4Function
-//                testSin2,
-                testSin500
+//                testSin2
+//                ,
+//                testSin500
         );
     }
 

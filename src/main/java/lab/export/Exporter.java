@@ -45,7 +45,6 @@ import static lab.population.PopulationTimingType.*;
 public class Exporter {
 
     private static final int EXPORT_RUN_Q = 5;
-    private static final int COLUMN_NUMBER = 81;
     private static final String STATS_PATH = Paths.get(".")
             .toAbsolutePath()
             .normalize()
@@ -77,9 +76,6 @@ public class Exporter {
         createRunPoolHeaderRow(sheet, runPoolStatsRowIndex);
         createRunPoolRow(sheet, runPoolStatsRowIndex + 1, 1, runPoolStats);
 
-        IntStream.range(0, COLUMN_NUMBER)
-                .forEach(sheet::autoSizeColumn);
-
         saveWorkbook(workbook, tablePath);
     }
 
@@ -93,9 +89,6 @@ public class Exporter {
 
         IntStream.range(0, allRunPoolStats.size())
                 .forEach(i -> createRunPoolRow(allStatsSheet, runPoolRowIndex + i, runPoolRowIndex + i, allRunPoolStats.get(i)));
-
-        IntStream.range(0, COLUMN_NUMBER)
-                .forEach(allStatsSheet::autoSizeColumn);
 
         saveWorkbook(allStatsWorkbook, allStatsTablePath);
     }
@@ -1087,6 +1080,16 @@ public class Exporter {
         row.createCell(i++).setCellValue("Sigma_optSaved_NI_loose");
         row.createCell(i++).setCellValue("Avg_MaxOptSaved_NI_loose");
         row.createCell(i++).setCellValue("Sigma_MaxOptSaved_NI_loose");
+
+        row.createCell(i++).setCellValue("Min_NI_FHM");
+        row.createCell(i++).setCellValue("Max_NI_FHM");
+        row.createCell(i++).setCellValue("Avg_NI_FHM");
+        row.createCell(i++).setCellValue("Sigma_NI_FHM");
+
+        row.createCell(i++).setCellValue("Min_NI_FHSM");
+        row.createCell(i++).setCellValue("Max_NI_FHSM");
+        row.createCell(i++).setCellValue("Avg_NI_FHSM");
+        row.createCell(i++).setCellValue("Sigma_NI_FHSM");
     }
 
     private void createRunPoolRow(Sheet sheet, int index, int configNumber, RunPoolStats runPoolStats) {
@@ -1282,6 +1285,16 @@ public class Exporter {
             row.createCell(i++).setCellValue(runPoolStats.sigmaOptSavedNILoose());
             row.createCell(i++).setCellValue(runPoolStats.avgMaxOptSavedNILoose());
             row.createCell(i++).setCellValue(runPoolStats.sigmaMaxOptSavedNILoose());
+
+            row.createCell(i++).setCellValue(runPoolStats.minNiFHM());
+            row.createCell(i++).setCellValue(runPoolStats.maxNiFHM());
+            row.createCell(i++).setCellValue(runPoolStats.avgNiFHM());
+            row.createCell(i++).setCellValue(runPoolStats.sigmaNiFHM());
+
+            row.createCell(i++).setCellValue(runPoolStats.minNiFHSM());
+            row.createCell(i++).setCellValue(runPoolStats.maxNiFHSM());
+            row.createCell(i++).setCellValue(runPoolStats.avgNiFHSM());
+            row.createCell(i++).setCellValue(runPoolStats.sigmaNiFHSM());
         }
     }
 
