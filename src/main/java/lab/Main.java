@@ -83,7 +83,7 @@ public class Main {
 //                fhd100Function
 //                .constAllFunction
 //                ,
-//                quadraticFunction
+                quadraticFunction
 //                , quadratic512Function
 //                quadraticSqrt512Function
 //                , exponent025
@@ -94,7 +94,7 @@ public class Main {
 //                , deb4Function
 //                testSin2
 //                ,
-                testSin500
+//                testSin500
         );
     }
 

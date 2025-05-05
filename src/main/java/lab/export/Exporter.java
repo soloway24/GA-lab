@@ -1198,6 +1198,16 @@ public class Exporter {
         row.createCell(i++).setCellValue("Max_NumOpt_95h");
         row.createCell(i++).setCellValue("Avg_NumOpt_95h");
         row.createCell(i++).setCellValue("Sigma_NumOpt_95h");
+
+        row.createCell(i++).setCellValue("Min_NI_AlH");
+        row.createCell(i++).setCellValue("Max_NI_AlH");
+        row.createCell(i++).setCellValue("Avg_NI_AlH");
+        row.createCell(i++).setCellValue("Sigma_NI_AlH");
+
+        row.createCell(i++).setCellValue("Min_F_AlH");
+        row.createCell(i++).setCellValue("Max_F_AlH");
+        row.createCell(i++).setCellValue("Avg_F_AlH");
+        row.createCell(i++).setCellValue("Sigma_F_AlH");
     }
 
     private void createRunPoolRow(Sheet sheet, int index, int configNumber, RunPoolStats runPoolStats) {
@@ -1471,6 +1481,16 @@ public class Exporter {
             row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().maxNumOpt95h());
             row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().avgNumOpt95h());
             row.createCell(i++).setCellValue(runPoolStats.homogeneityMetrics().sigmaNumOpt95h());
+
+            row.createCell(i++).setCellValue(runPoolStats.alleleHomogeneityMetrics().minNiAlH());
+            row.createCell(i++).setCellValue(runPoolStats.alleleHomogeneityMetrics().maxNiAlH());
+            row.createCell(i++).setCellValue(runPoolStats.alleleHomogeneityMetrics().avgNiAlH());
+            row.createCell(i++).setCellValue(runPoolStats.alleleHomogeneityMetrics().sigmaNiAlH());
+
+            row.createCell(i++).setCellValue(runPoolStats.alleleHomogeneityMetrics().minFAlH());
+            row.createCell(i++).setCellValue(runPoolStats.alleleHomogeneityMetrics().maxFAlH());
+            row.createCell(i++).setCellValue(runPoolStats.alleleHomogeneityMetrics().avgFAlH());
+            row.createCell(i++).setCellValue(runPoolStats.alleleHomogeneityMetrics().sigmaFAlH());
         }
     }
 

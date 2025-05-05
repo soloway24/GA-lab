@@ -1,9 +1,6 @@
 package lab.run;
 
-import lab.metric.KendallMetrics;
-import lab.metric.NiOfMetrics;
-import lab.metric.RunPoolHomogeneityMetrics;
-import lab.metric.SingleHomogeneityMetrics;
+import lab.metric.*;
 import lab.util.CalculationUtils;
 import lab.util.MetricUtils;
 import org.apache.commons.math3.util.Pair;
@@ -313,6 +310,16 @@ public class RunPoolStatsCreator {
         double avgNumOpt95h = 0;
         double sigmaNumOpt95h = 0;
 
+        int minNiAlH = 0;
+        int maxNiAlH = 0;
+        double avgNiAlH = 0;
+        double sigmaNiAlH = 0;
+
+        double minFAlH = 0;
+        double maxFAlH = 0;
+        double avgFAlH = 0;
+        double sigmaFAlH = 0;
+
         double minFishMin = 0;
         int niMinFishMin = 0;
         double maxFishMax = 0;
@@ -582,14 +589,14 @@ public class RunPoolStatsCreator {
             maxAvg75h = CalculationUtils.getMaxDouble(avg75hs);
             avgAvg75h = CalculationUtils.getAverage(avg75hs);
             sigmaAvg75h = MetricUtils.getStandardDeviation(avg75hs, avgAvg75h);
-            
+
             List<Integer> numOpt75hs = getHomogeneityIntValues(allRunStats, SingleHomogeneityMetrics::numOpt75h);
             minNumOpt75h = CalculationUtils.getMinInt(numOpt75hs);
             maxNumOpt75h = CalculationUtils.getMaxInt(numOpt75hs);
             avgNumOpt75h = CalculationUtils.getAverage(numOpt75hs);
             sigmaNumOpt75h = MetricUtils.getStandardDeviation(numOpt75hs, avgNumOpt75h);
 
-            
+
             List<Integer> ni90hs = getHomogeneityIntValues(allRunStats, SingleHomogeneityMetrics::ni90h);
             minNi90h = CalculationUtils.getMinInt(ni90hs);
             maxNi90h = CalculationUtils.getMaxInt(ni90hs);
@@ -608,7 +615,7 @@ public class RunPoolStatsCreator {
             avgNumOpt90h = CalculationUtils.getAverage(numOpt90hs);
             sigmaNumOpt90h = MetricUtils.getStandardDeviation(numOpt90hs, avgNumOpt90h);
 
-            
+
             List<Integer> ni95hs = getHomogeneityIntValues(allRunStats, SingleHomogeneityMetrics::ni95h);
             minNi95h = CalculationUtils.getMinInt(ni95hs);
             maxNi95h = CalculationUtils.getMaxInt(ni95hs);
@@ -626,6 +633,18 @@ public class RunPoolStatsCreator {
             maxNumOpt95h = CalculationUtils.getMaxInt(numOpt95hs);
             avgNumOpt95h = CalculationUtils.getAverage(numOpt95hs);
             sigmaNumOpt95h = MetricUtils.getStandardDeviation(numOpt95hs, avgNumOpt95h);
+
+            List<Integer> niAlHs = getIntValues(allRunStats, RunStats::niAlH);
+            minNiAlH = CalculationUtils.getMinInt(niAlHs);
+            maxNiAlH = CalculationUtils.getMaxInt(niAlHs);
+            avgNiAlH = CalculationUtils.getAverage(niAlHs);
+            sigmaNiAlH = MetricUtils.getStandardDeviation(niAlHs, avgNiAlH);
+
+            List<Double> fAlHs = getDoubleValues(allRunStats, RunStats::fAlH);
+            minFAlH = CalculationUtils.getMinDouble(fAlHs);
+            maxFAlH = CalculationUtils.getMaxDouble(fAlHs);
+            avgFAlH = CalculationUtils.getAverage(fAlHs);
+            sigmaFAlH = MetricUtils.getStandardDeviation(fAlHs, avgFAlH);
         }
 
 
@@ -840,12 +859,12 @@ public class RunPoolStatsCreator {
                         .withMaxNi75h(maxNi75h)
                         .withAvgNi75h(avgNi75h)
                         .withSigmaNi75h(sigmaNi75h)
-                        
+
                         .withMinAvg75h(minAvg75h)
                         .withMaxAvg75h(maxAvg75h)
                         .withAvgAvg75h(avgAvg75h)
                         .withSigmaAvg75h(sigmaAvg75h)
-                        
+
                         .withMinNumOpt75h(minNumOpt75h)
                         .withMaxNumOpt75h(maxNumOpt75h)
                         .withAvgNumOpt75h(avgNumOpt75h)
@@ -882,6 +901,18 @@ public class RunPoolStatsCreator {
                         .withMaxNumOpt95h(maxNumOpt95h)
                         .withAvgNumOpt95h(avgNumOpt95h)
                         .withSigmaNumOpt95h(sigmaNumOpt95h)
+                        .build())
+
+                .withAlleleHomogeneityMetrics(AlleleHomogeneityMetrics.builder()
+                        .withMinNiAlH(minNiAlH)
+                        .withMaxNiAlH(maxNiAlH)
+                        .withAvgNiAlH(avgNiAlH)
+                        .withSigmaNiAlH(sigmaNiAlH)
+
+                        .withMinFAlH(minFAlH)
+                        .withMaxFAlH(maxFAlH)
+                        .withAvgFAlH(avgFAlH)
+                        .withSigmaFAlH(sigmaFAlH)
                         .build())
 
                 .build();

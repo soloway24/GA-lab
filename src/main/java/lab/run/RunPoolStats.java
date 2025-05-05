@@ -1,5 +1,6 @@
 package lab.run;
 
+import lab.metric.AlleleHomogeneityMetrics;
 import lab.metric.KendallMetrics;
 import lab.metric.NiOfMetrics;
 import lab.metric.RunPoolHomogeneityMetrics;
@@ -173,7 +174,8 @@ public record RunPoolStats(RunConfiguration runConfiguration,
                            double sigmaNiFHSM,
 
                            NiOfMetrics niOfMetrics,
-                           RunPoolHomogeneityMetrics homogeneityMetrics
+                           RunPoolHomogeneityMetrics homogeneityMetrics,
+                           AlleleHomogeneityMetrics alleleHomogeneityMetrics
 ) {
 
     @Override
