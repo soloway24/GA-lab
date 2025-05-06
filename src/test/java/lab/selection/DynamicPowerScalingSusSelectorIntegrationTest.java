@@ -1,6 +1,8 @@
 package lab.selection;
 
 import lab.Individual;
+import lab.selection.power.DynamicPowerScalingSelector;
+import lab.selection.power.DynamicPowerScalingSusSelector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,7 +39,7 @@ class DynamicPowerScalingSusSelectorIntegrationTest {
 
     @Test
     public void whenSelectWithMedianGreaterThanAverageThenSuccess() {
-        List<Individual> selected = dynamicPowerScalingSusSelector.select(INDIVIDUAL_TO_FITNESS_MED_G_AVG);
+        List<Individual> selected = dynamicPowerScalingSusSelector.select(new SelectionContext(INDIVIDUAL_TO_FITNESS_MED_G_AVG));
         assertThat(selected, hasSize(INDIVIDUAL_TO_FITNESS_MED_G_AVG.size()));
 
         List<String> binaryCodes = getBinaryCodes(selected);
@@ -48,7 +50,7 @@ class DynamicPowerScalingSusSelectorIntegrationTest {
 
     @Test
     public void whenSelectWithMedianLessThanAverageThenSuccess() {
-        List<Individual> selected = dynamicPowerScalingSusSelector.select(INDIVIDUAL_TO_FITNESS_DOUBLE);
+        List<Individual> selected = dynamicPowerScalingSusSelector.select(new SelectionContext(INDIVIDUAL_TO_FITNESS_DOUBLE));
         assertThat(selected, hasSize(INDIVIDUAL_TO_FITNESS_DOUBLE.size()));
 
         List<String> binaryCodes = getBinaryCodes(selected);
@@ -59,7 +61,7 @@ class DynamicPowerScalingSusSelectorIntegrationTest {
 
     @Test
     public void whenSelectWithZeroFitnessSumThenSuccess() {
-        List<Individual> selected = dynamicPowerScalingSusSelector.select(Map.of(INDIVIDUAL_1, 0.0));
+        List<Individual> selected = dynamicPowerScalingSusSelector.select(new SelectionContext(Map.of(INDIVIDUAL_1, 0.0)));
         List<String> binaryCodes = getBinaryCodes(selected);
         assertThat(binaryCodes, contains(INDIVIDUAL_1.getBinaryCode()));
     }

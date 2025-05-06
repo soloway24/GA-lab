@@ -11,6 +11,7 @@ import lab.metric.SingleHomogeneityMetrics;
 import lab.operator.Operator;
 import lab.operator.OperatorType;
 import lab.population.*;
+import lab.selection.SelectionContext;
 import lab.selection.Selector;
 import lab.util.CalculationUtils;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ import static lab.export.Homogeneity.NINETY_NINE;
 import static lab.export.Optimality.*;
 import static lab.identifier.ConvergenceIdentifier.*;
 import static lab.identifier.SuccessfulRunIdentifier.getBestIndividual;
+import static lab.selection.AdditionalSelectorProperty.NI;
 import static lab.selection.SelectorType.SUS;
 import static lab.util.CalculationUtils.getAverageFitness;
 import static lab.util.MetricUtils.*;
@@ -183,7 +185,9 @@ public class RunPoolExecutor {
                             + " iteration " + i + ", fitnessToCount = " + fitnessToCount);
                 }
 
-                parentPool = selector.select(individualToFitness);
+                SelectionContext selectionContext = buildSelectionContext(selector, individualToFitness, i);
+
+                parentPool = selector.select(selectionContext);
                 List<Individual> parentCopies = new ArrayList<>(parentPool);
                 shuffle(parentCopies);
                 offsprings = operator.apply(parentPool);
@@ -247,7 +251,7 @@ public class RunPoolExecutor {
                             : (parentAvgF - avgF) / sigmaF;
                     iterationToI.put(i + 1, currentI);
 
-                    Map<Individual, Double> scaledIndividuals = selector.scale(individualToFitness);
+                    Map<Individual, Double> scaledIndividuals = selector.scale(selectionContext);
                     double bestScaledF = CalculationUtils.getMaxDouble(scaledIndividuals.values());
                     double avgScaledF = CalculationUtils.getAverage(scaledIndividuals.values());
                     currentPr = bestScaledF / avgScaledF;
@@ -606,6 +610,18 @@ public class RunPoolExecutor {
             System.out.println(Thread.currentThread() + " exception: " + e.getMessage() + ", " + Arrays.toString(e.getStackTrace()));
             throw new RuntimeException(e);
         }
+    }
+
+    private SelectionContext buildSelectionContext(Selector selector,
+                                                   Map<Individual, ? extends Number> individualToFitness,
+                                                   int ni) {
+        SelectionContext.SelectionContextBuilder builder = SelectionContext.builder()
+                .withIndividualToFitness(individualToFitness);
+
+        if (selector.getAdditionalSelectorProperties().contains(NI)) {
+            builder.withNi(ni);
+        }
+        return builder.build();
     }
 
     private void populateHomogeneityToGeneration(List<Individual> currentIndividuals,

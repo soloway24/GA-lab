@@ -5,6 +5,7 @@ import lab.convertor.FitnessToProbabilityConvertor;
 import lab.export.SnapshotProbabilityPlotter;
 import lab.population.PopulationTimingType;
 import lab.selection.*;
+import lab.selection.power.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.stereotype.Component;
@@ -57,7 +58,8 @@ public class SnapshotRunner {
 
     private Map<Individual, Double> convertToProbabilities(Map<Individual, Double> individualToFitness,
                                                            Selector selector) {
-        Map<Individual, Double> scaledIndividualToFitness = selector.scale(individualToFitness);
+        // TODO build correct SelectionContext
+        Map<Individual, Double> scaledIndividualToFitness = selector.scale(new SelectionContext(individualToFitness));
         Map<Individual, Double> IndividualToProbability = fitnessToProbabilityConvertor.convertToSelectionProbabilities(scaledIndividualToFitness);
         return IndividualToProbability.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())

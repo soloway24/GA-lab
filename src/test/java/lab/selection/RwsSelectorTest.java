@@ -32,7 +32,7 @@ class RwsSelectorTest {
         when(convertor.convertToSelectionProbabilities(SelectionTestEntities.INDIVIDUAL_TO_FITNESS_INT)).thenReturn(SelectionTestEntities.INDIVIDUAL_TO_PROBABILITY);
         when(random.nextDouble()).thenReturn(0.5);
 
-        List<Individual> selected = rwsSelector.select(SelectionTestEntities.INDIVIDUAL_TO_FITNESS_INT);
+        List<Individual> selected = rwsSelector.select(new SelectionContext(SelectionTestEntities.INDIVIDUAL_TO_FITNESS_INT));
         MatcherAssert.assertThat(selected, Matchers.hasSize(SelectionTestEntities.INDIVIDUAL_TO_FITNESS_INT.size()));
 
         List<String> binaryCodes = SelectionTestEntities.getBinaryCodes(selected);
@@ -46,7 +46,7 @@ class RwsSelectorTest {
         when(convertor.convertToSelectionProbabilities(SelectionTestEntities.INDIVIDUAL_TO_FITNESS_DOUBLE)).thenReturn(SelectionTestEntities.INDIVIDUAL_TO_PROBABILITY);
         when(random.nextDouble()).thenReturn(0.5);
 
-        List<Individual> selected = rwsSelector.select(SelectionTestEntities.INDIVIDUAL_TO_FITNESS_DOUBLE);
+        List<Individual> selected = rwsSelector.select(new SelectionContext(SelectionTestEntities.INDIVIDUAL_TO_FITNESS_DOUBLE));
         MatcherAssert.assertThat(selected, Matchers.hasSize(SelectionTestEntities.INDIVIDUAL_TO_FITNESS_DOUBLE.size()));
 
         List<String> binaryCodes = SelectionTestEntities.getBinaryCodes(selected);

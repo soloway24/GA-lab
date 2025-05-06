@@ -1,6 +1,10 @@
-package lab.selection;
+package lab.selection.sigmatruncation;
 
 import lab.Individual;
+import lab.selection.RwsSelector;
+import lab.selection.SelectionContext;
+import lab.selection.Selector;
+import lab.selection.SelectorType;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -41,12 +45,12 @@ public class SigmaTruncationRwsSelector implements Selector {
     }
 
     @Override
-    public List<Individual> select(Map<Individual, ? extends Number> individualToFitness) {
-        return sigmaTruncationSelector.select(individualToFitness, rwsSelector::select);
+    public List<Individual> select(SelectionContext selectionContext) {
+        return sigmaTruncationSelector.select(selectionContext, rwsSelector::select);
     }
 
     @Override
-    public Map<Individual, Double> scale(Map<Individual, ? extends Number> individualToFitness) {
-        return sigmaTruncationSelector.scale(individualToFitness);
+    public Map<Individual, Double> scale(SelectionContext selectionContext) {
+        return sigmaTruncationSelector.scale(selectionContext);
     }
 }

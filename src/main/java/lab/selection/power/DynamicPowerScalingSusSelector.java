@@ -1,6 +1,10 @@
-package lab.selection;
+package lab.selection.power;
 
 import lab.Individual;
+import lab.selection.SelectionContext;
+import lab.selection.Selector;
+import lab.selection.SelectorType;
+import lab.selection.SusSelector;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -45,13 +49,13 @@ public class DynamicPowerScalingSusSelector implements Selector {
     }
 
     @Override
-    public List<Individual> select(Map<Individual, ? extends Number> individualToFitness) {
-        return dynamicPowerScalingSelector.select(individualToFitness, susSelector::select);
+    public List<Individual> select(SelectionContext selectionContext) {
+        return dynamicPowerScalingSelector.select(selectionContext, susSelector::select);
     }
 
     @Override
-    public Map<Individual, Double> scale(Map<Individual, ? extends Number> individualToFitness) {
-        return dynamicPowerScalingSelector.scale(individualToFitness);
+    public Map<Individual, Double> scale(SelectionContext selectionContext) {
+        return dynamicPowerScalingSelector.scale(selectionContext);
     }
 
 }

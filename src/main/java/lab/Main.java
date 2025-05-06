@@ -8,14 +8,25 @@ import lab.run.RunConfigurationFactory;
 import lab.run.RunPool;
 import lab.run.RunPoolConfiguration;
 import lab.run.RunPoolCreator;
-import lab.selection.*;
+import lab.selection.RwsSelector;
+import lab.selection.ScalingSelector;
+import lab.selection.Selector;
+import lab.selection.SusSelector;
+import lab.selection.linear.*;
+import lab.selection.power.*;
+import lab.selection.sigmatruncation.SigmaTruncationRwsSelector;
+import lab.selection.sigmatruncation.SigmaTruncationSelector;
+import lab.selection.sigmatruncation.SigmaTruncationSusSelector;
+import lab.selection.spanmethod.SpanMethodRwsSelector;
+import lab.selection.spanmethod.SpanMethodSelector;
+import lab.selection.spanmethod.SpanMethodSusSelector;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static lab.selection.DynamicLinearScaler.*;
+import static lab.selection.linear.DynamicLinearScaler.*;
 
 @Component
 @RequiredArgsConstructor
@@ -86,7 +97,7 @@ public class Main {
 //                fhd100Function
 //                .constAllFunction
 //                ,
-                quadraticFunction
+                quadraticFunction,
 //                , quadratic512Function
 //                quadraticSqrt512Function
 //                , exponent025
@@ -95,9 +106,9 @@ public class Main {
 //                 rastriginFunction
 //                , deb2Function
 //                , deb4Function
-//                testSin2
-//                ,
-//                testSin500
+                testSin2
+                ,
+                testSin500
         );
     }
 
@@ -188,6 +199,14 @@ public class Main {
         SigmaTruncationSusSelector sigmaTruncationSus3 = new SigmaTruncationSusSelector(sigmaTruncation3, susSelector);
         SigmaTruncationSusSelector sigmaTruncationSus4 = new SigmaTruncationSusSelector(sigmaTruncation4, susSelector);
 
+        // span method
+        SpanMethodSelector spanMethod194 = new SpanMethodSelector(scalingSelector, 194);
+        SpanMethodSelector spanMethod5000 = new SpanMethodSelector(scalingSelector, 5000);
+        SpanMethodSelector spanMethod10000 = new SpanMethodSelector(scalingSelector, 10000);
+
+        SpanMethodRwsSelector spanMethodRws194 = new SpanMethodRwsSelector(spanMethod194, rwsSelector);
+        SpanMethodSusSelector spanMethodSus5000 = new SpanMethodSusSelector(spanMethod5000, susSelector);
+        SpanMethodSusSelector spanMethodSus10000 = new SpanMethodSusSelector(spanMethod10000, susSelector);
 
         return List.of(
 //                rwsSelector
@@ -234,14 +253,17 @@ public class Main {
 //                medianLinearSus,
 //                maxAvgWorstLinearSus,
 
-                sigmaTruncationRws1,
-                sigmaTruncationRws2,
-                sigmaTruncationRws3,
-                sigmaTruncationRws4,
-                sigmaTruncationSus1,
-                sigmaTruncationSus2,
-                sigmaTruncationSus3,
-                sigmaTruncationSus4
+//                sigmaTruncationRws1,
+//                sigmaTruncationRws2,
+//                sigmaTruncationRws3,
+//                sigmaTruncationRws4,
+//                sigmaTruncationSus1,
+//                sigmaTruncationSus2,
+//                sigmaTruncationSus3,
+//                sigmaTruncationSus4,
+
+                spanMethodRws194,
+                spanMethodSus5000
         );
     }
 

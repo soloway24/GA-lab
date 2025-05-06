@@ -44,8 +44,8 @@ public class RwsSelector implements Selector {
     }
 
     @Override
-    public List<Individual> select(Map<Individual, ? extends Number> individualToFitness) {
-        Map<Individual, Double> individualToProbability = fitnessToProbabilityConvertor.convertToSelectionProbabilities(individualToFitness);
+    public List<Individual> select(SelectionContext selectionContext) {
+        Map<Individual, Double> individualToProbability = fitnessToProbabilityConvertor.convertToSelectionProbabilities(selectionContext.getIndividualToFitness());
         return selectRWS(individualToProbability);
     }
 

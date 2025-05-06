@@ -1,6 +1,8 @@
 package lab.selection;
 
 import lab.Individual;
+import lab.selection.power.PowerScalingSelector;
+import lab.selection.power.PowerScalingSusSelector;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +38,7 @@ class PowerScalingSusSelectorIntegrationTest {
 
     @Test
     public void whenSelectWithDoubleFitnessThenSuccess() {
-        List<Individual> selected = powerScalingSusSelector.select(SelectionTestEntities.INDIVIDUAL_TO_FITNESS_DOUBLE);
+        List<Individual> selected = powerScalingSusSelector.select(new SelectionContext(SelectionTestEntities.INDIVIDUAL_TO_FITNESS_DOUBLE));
         MatcherAssert.assertThat(selected, Matchers.hasSize(SelectionTestEntities.INDIVIDUAL_TO_FITNESS_DOUBLE.size()));
 
         List<String> binaryCodes = SelectionTestEntities.getBinaryCodes(selected);

@@ -36,7 +36,7 @@ class SusSelectorTest {
         when(probabilityToExpectedQuantityConvertor.convertToExpectedQuantities(INDIVIDUAL_TO_PROBABILITY)).thenReturn(INDIVIDUAL_TO_EXPECTED_QUANTITY);
         when(random.nextDouble()).thenReturn(0.5);
 
-        List<Individual> selected = susSelector.select(INDIVIDUAL_TO_FITNESS_INT);
+        List<Individual> selected = susSelector.select(new SelectionContext(INDIVIDUAL_TO_FITNESS_INT));
         assertThat(selected, hasSize(INDIVIDUAL_TO_FITNESS_INT.size()));
 
         List<String> binaryCodes = getBinaryCodes(selected);
@@ -53,7 +53,7 @@ class SusSelectorTest {
         when(probabilityToExpectedQuantityConvertor.convertToExpectedQuantities(INDIVIDUAL_TO_PROBABILITY)).thenReturn(INDIVIDUAL_TO_EXPECTED_QUANTITY);
         when(random.nextDouble()).thenReturn(0.5);
 
-        List<Individual> selected = susSelector.select(INDIVIDUAL_TO_FITNESS_DOUBLE);
+        List<Individual> selected = susSelector.select(new SelectionContext(INDIVIDUAL_TO_FITNESS_DOUBLE));
         assertThat(selected, hasSize(INDIVIDUAL_TO_FITNESS_DOUBLE.size()));
 
         List<String> binaryCodes = getBinaryCodes(selected);

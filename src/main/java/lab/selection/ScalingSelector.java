@@ -23,16 +23,16 @@ public class ScalingSelector {
 
     private static final double DEFAULT_SCALED_FITNESS = 0.0001;
 
-    public <T extends Number> List<Individual> select(Map<Individual, T> individualToFitness,
-                                                      Function<Map<Individual, Double>, List<Individual>> selectionFunction,
-                                                      BiFunction<T, Map<Individual, T>, Double> scalingFunction) {
-        Map<Individual, Double> individualToScaledFitness = getIndividualToScaledFitness(individualToFitness, scalingFunction);
+    public <T extends Number> List<Individual> select(SelectionContext selectionContext,
+                                                      Function<SelectionContext, List<Individual>> selectionFunction,
+                                                      BiFunction<T, SelectionContext, Double> scalingFunction) {
+        Map<Individual, Double> individualToScaledFitness = getIndividualToScaledFitness(selectionContext, scalingFunction);
         List<Entry<Individual, Double>> individuals = new ArrayList<>(individualToScaledFitness.entrySet());
 
         shuffle(individuals);
         Map<Individual, Double> shuffledIndividualToScaledFitness = unmodifiableMap(getOrderedMap(individuals));
 
-        return selectionFunction.apply(shuffledIndividualToScaledFitness);
+        return selectionFunction.apply(new SelectionContext(shuffledIndividualToScaledFitness));
     }
 
     private LinkedHashMap<Individual, Double> getOrderedMap(List<Entry<Individual, Double>> individuals) {
@@ -44,10 +44,11 @@ public class ScalingSelector {
                         LinkedHashMap::new));
     }
 
-    public <T extends Number> Map<Individual, Double> getIndividualToScaledFitness(Map<Individual, T> individualToFitness,
-                                                                                   BiFunction<T, Map<Individual, T>, Double> scalingFunction) {
-        Map<Individual, Double> individualToScaledFitness = individualToFitness.entrySet().stream()
-                .collect(toUnmodifiableMap(Entry::getKey, entry -> scalingFunction.apply(entry.getValue(), individualToFitness)));
+    @SuppressWarnings("unchecked")
+    public <T extends Number> Map<Individual, Double> getIndividualToScaledFitness(SelectionContext selectionContext,
+                                                                                   BiFunction<T, SelectionContext, Double> scalingFunction) {
+        Map<Individual, Double> individualToScaledFitness = selectionContext.getIndividualToFitness().entrySet().stream()
+                .collect(toUnmodifiableMap(Entry::getKey, entry -> scalingFunction.apply((T) entry.getValue(), selectionContext)));
 
         if (doesNotContainPositiveFitness(individualToScaledFitness)) {
             return getDefaultIndividualToScaledFitness(individualToScaledFitness);

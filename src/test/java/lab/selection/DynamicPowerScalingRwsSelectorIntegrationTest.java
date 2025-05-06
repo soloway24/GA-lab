@@ -1,6 +1,8 @@
 package lab.selection;
 
 import lab.Individual;
+import lab.selection.power.DynamicPowerScalingRwsSelector;
+import lab.selection.power.DynamicPowerScalingSelector;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +41,7 @@ class DynamicPowerScalingRwsSelectorIntegrationTest {
 
     @Test
     public void whenSelectWithMedianGreaterThanAverageThenSuccess() {
-        List<Individual> selected = dynamicPowerScalingRwsSelector.select(SelectionTestEntities.INDIVIDUAL_TO_FITNESS_MED_G_AVG);
+        List<Individual> selected = dynamicPowerScalingRwsSelector.select(new SelectionContext(SelectionTestEntities.INDIVIDUAL_TO_FITNESS_MED_G_AVG));
         MatcherAssert.assertThat(selected, Matchers.hasSize(SelectionTestEntities.INDIVIDUAL_TO_FITNESS_MED_G_AVG.size()));
 
         List<String> binaryCodes = SelectionTestEntities.getBinaryCodes(selected);
@@ -50,7 +52,7 @@ class DynamicPowerScalingRwsSelectorIntegrationTest {
 
     @Test
     public void whenSelectWithMedianLessThanAverageThenSuccess() {
-        List<Individual> selected = dynamicPowerScalingRwsSelector.select(SelectionTestEntities.INDIVIDUAL_TO_FITNESS_DOUBLE);
+        List<Individual> selected = dynamicPowerScalingRwsSelector.select(new SelectionContext(SelectionTestEntities.INDIVIDUAL_TO_FITNESS_DOUBLE));
         MatcherAssert.assertThat(selected, Matchers.hasSize(SelectionTestEntities.INDIVIDUAL_TO_FITNESS_DOUBLE.size()));
 
         List<String> binaryCodes = SelectionTestEntities.getBinaryCodes(selected);
@@ -61,7 +63,7 @@ class DynamicPowerScalingRwsSelectorIntegrationTest {
 
     @Test
     public void whenSelectWithZeroFitnessSumThenSuccess() {
-        List<Individual> selected = dynamicPowerScalingRwsSelector.select(Map.of(SelectionTestEntities.INDIVIDUAL_1, 0.0));
+        List<Individual> selected = dynamicPowerScalingRwsSelector.select(new SelectionContext(Map.of(SelectionTestEntities.INDIVIDUAL_1, 0.0)));
         List<String> binaryCodes = SelectionTestEntities.getBinaryCodes(selected);
         MatcherAssert.assertThat(binaryCodes, Matchers.contains(SelectionTestEntities.INDIVIDUAL_1.getBinaryCode()));
     }

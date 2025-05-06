@@ -20,12 +20,16 @@ public interface Selector {
 
     Optional<String> getParam2();
 
-    List<Individual> select(Map<Individual, ? extends Number> individualToFitness);
+    List<Individual> select(SelectionContext selectionContext);
 
-    default Map<Individual, Double> scale(Map<Individual, ? extends Number> individualToFitness) {
-        return individualToFitness.entrySet()
+    default Map<Individual, Double> scale(SelectionContext selectionContext) {
+        return selectionContext.getIndividualToFitness().entrySet()
                 .stream()
                 .collect(Collectors.toUnmodifiableMap(Entry::getKey, entry -> entry.getValue().doubleValue()));
+    }
+
+    default List<AdditionalSelectorProperty> getAdditionalSelectorProperties() {
+        return List.of();
     }
 
 }
