@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static lab.selection.DynamicLinearScaler.*;
+
 @Component
 @RequiredArgsConstructor
 public class Main {
@@ -24,6 +26,7 @@ public class Main {
     private final Executor executor;
     private final RwsSelector rwsSelector;
     private final SusSelector susSelector;
+    private final ScalingSelector scalingSelector;
 
     public void run() throws InterruptedException {
         List<Integer> populationSizes = getPopulationSizes();
@@ -99,7 +102,7 @@ public class Main {
     }
 
     private List<Selector> getSelectors() {
-        ScalingSelector scalingSelector = new ScalingSelector();
+        // power scaling
         PowerScalingSelector powerScalingSelector = new PowerScalingSelector(scalingSelector, 1.1);
         PowerScalingSelector powerScalingSelector2 = new PowerScalingSelector(scalingSelector, 2);
 
@@ -108,6 +111,41 @@ public class Main {
         PowerScalingSusSelector powerScalingSusSelector = new PowerScalingSusSelector(powerScalingSelector, susSelector);
         PowerScalingSusSelector powerScalingSusSelector2 = new PowerScalingSusSelector(powerScalingSelector2, susSelector);
 
+        // linear scaling
+        LinearScalingSelector linearScalingSelector12 = new LinearScalingSelector(scalingSelector, 1.2);
+        LinearScalingSelector linearScalingSelector14 = new LinearScalingSelector(scalingSelector, 1.4);
+        LinearScalingSelector linearScalingSelector15 = new LinearScalingSelector(scalingSelector, 1.5);
+        LinearScalingSelector linearScalingSelector16 = new LinearScalingSelector(scalingSelector, 1.6);
+        LinearScalingSelector linearScalingSelector18 = new LinearScalingSelector(scalingSelector, 1.8);
+        LinearScalingSelector linearScalingSelector2 = new LinearScalingSelector(scalingSelector, 2);
+
+        LinearScalingRwsSelector linearScalingRws12 = new LinearScalingRwsSelector(linearScalingSelector12, rwsSelector);
+        LinearScalingRwsSelector linearScalingRws14 = new LinearScalingRwsSelector(linearScalingSelector14, rwsSelector);
+        LinearScalingRwsSelector linearScalingRws15 = new LinearScalingRwsSelector(linearScalingSelector15, rwsSelector);
+        LinearScalingRwsSelector linearScalingRws16 = new LinearScalingRwsSelector(linearScalingSelector16, rwsSelector);
+        LinearScalingRwsSelector linearScalingRws18 = new LinearScalingRwsSelector(linearScalingSelector18, rwsSelector);
+        LinearScalingRwsSelector linearScalingRws2 = new LinearScalingRwsSelector(linearScalingSelector2, rwsSelector);
+
+        LinearScalingSusSelector linearScalingSus12 = new LinearScalingSusSelector(linearScalingSelector12, susSelector);
+        LinearScalingSusSelector linearScalingSus14 = new LinearScalingSusSelector(linearScalingSelector14, susSelector);
+        LinearScalingSusSelector linearScalingSus15 = new LinearScalingSusSelector(linearScalingSelector15, susSelector);
+        LinearScalingSusSelector linearScalingSus16 = new LinearScalingSusSelector(linearScalingSelector16, susSelector);
+        LinearScalingSusSelector linearScalingSus18 = new LinearScalingSusSelector(linearScalingSelector18, susSelector);
+        LinearScalingSusSelector linearScalingSus2 = new LinearScalingSusSelector(linearScalingSelector2, susSelector);
+
+        // dynamic linear scaling
+        DynamicLinearScalingSelector averageLinearScaling = new DynamicLinearScalingSelector(scalingSelector, AVERAGE);
+        DynamicLinearScalingSelector medianLinearScaling = new DynamicLinearScalingSelector(scalingSelector, MEDIAN);
+        DynamicLinearScalingSelector maxAvgWorstLinearScaling = new DynamicLinearScalingSelector(scalingSelector, MAX_AVG_WORST);
+
+        DynamicLinearScalingRwsSelector averageLinearRws = new DynamicLinearScalingRwsSelector(averageLinearScaling, rwsSelector);
+        DynamicLinearScalingRwsSelector medianLinearRws = new DynamicLinearScalingRwsSelector(medianLinearScaling, rwsSelector);
+        DynamicLinearScalingRwsSelector maxAvgWorstLinearRws = new DynamicLinearScalingRwsSelector(maxAvgWorstLinearScaling, rwsSelector);
+        DynamicLinearScalingSusSelector averageLinearSus = new DynamicLinearScalingSusSelector(averageLinearScaling, susSelector);
+        DynamicLinearScalingSusSelector medianLinearSus = new DynamicLinearScalingSusSelector(medianLinearScaling, susSelector);
+        DynamicLinearScalingSusSelector maxAvgWorstLinearSus = new DynamicLinearScalingSusSelector(maxAvgWorstLinearScaling, susSelector);
+
+        // dynamic power scaling
         DynamicPowerScalingSelector dynamicPowerScalingSelector0p9to1p1 = new DynamicPowerScalingSelector(scalingSelector, 0.9, 1.1);
         DynamicPowerScalingSelector dynamicPowerScalingSelector0p8to1p2 = new DynamicPowerScalingSelector(scalingSelector, 0.8, 1.2);
 
@@ -124,7 +162,7 @@ public class Main {
         return List.of(
 //                rwsSelector
 //                ,
-                susSelector
+//                susSelector
 //                , powerScalingRwsSelector
 //                , powerScalingRwsSelector2
 //                , powerScalingSusSelector
@@ -132,7 +170,27 @@ public class Main {
 //                , dynamicPowerScalingRwsSelector0p9to1p1
 //                , dynamicPowerScalingRwsSelector0p8to1p2
 //                , dynamicPowerScalingSusSelector0p9to1p1
-//                , dynamicPowerScalingSusSelector0p8to1p2
+//                , dynamicPowerScalingSusSelector0p8to1p2,
+//
+//                linearScalingRws12,
+//                linearScalingRws14,
+//                linearScalingRws15,
+//                linearScalingRws16,
+//                linearScalingRws18,
+//                linearScalingRws2,
+//                linearScalingSus12,
+//                linearScalingSus14,
+//                linearScalingSus15,
+//                linearScalingSus16,
+//                linearScalingSus18,
+//                linearScalingSus2,
+
+                averageLinearRws,
+                medianLinearRws,
+                maxAvgWorstLinearRws,
+                averageLinearSus,
+                medianLinearSus,
+                maxAvgWorstLinearSus
         );
     }
 

@@ -79,6 +79,14 @@ public class CalculationUtils {
                 .toList();
     }
 
+    public static <T extends Number> double getMaxFitness(Map<Individual, T> individualToFitness) {
+        return individualToFitness.values()
+                .stream()
+                .map(Number::doubleValue)
+                .max(Double::compareTo)
+                .orElseThrow(() -> new IllegalStateException("No max fitness found during linear scaling."));
+    }
+
     private static Individual getIndividualWithIndex(Individual individual, int index) {
         return new Individual(index, individual.getBinaryCode(), individual.getEncoding());
     }
