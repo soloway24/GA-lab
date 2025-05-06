@@ -172,6 +172,23 @@ public class Main {
         DynamicPowerScalingSusSelector dynamicPowerScalingSus0p5to1p5 = new DynamicPowerScalingSusSelector(dynamicPowerScaling0p5to1p5, susSelector);
         DynamicPowerScalingSusSelector dynamicPowerScalingSus0p5to2 = new DynamicPowerScalingSusSelector(dynamicPowerScaling0p5to2, susSelector);
 
+        // sigma truncation
+        SigmaTruncationSelector sigmaTruncation1 = new SigmaTruncationSelector(scalingSelector, 1);
+        SigmaTruncationSelector sigmaTruncation2 = new SigmaTruncationSelector(scalingSelector, 2);
+        SigmaTruncationSelector sigmaTruncation3 = new SigmaTruncationSelector(scalingSelector, 3);
+        SigmaTruncationSelector sigmaTruncation4 = new SigmaTruncationSelector(scalingSelector, 4);
+
+        SigmaTruncationRwsSelector sigmaTruncationRws1 = new SigmaTruncationRwsSelector(sigmaTruncation1, rwsSelector);
+        SigmaTruncationRwsSelector sigmaTruncationRws2 = new SigmaTruncationRwsSelector(sigmaTruncation2, rwsSelector);
+        SigmaTruncationRwsSelector sigmaTruncationRws3 = new SigmaTruncationRwsSelector(sigmaTruncation3, rwsSelector);
+        SigmaTruncationRwsSelector sigmaTruncationRws4 = new SigmaTruncationRwsSelector(sigmaTruncation4, rwsSelector);
+
+        SigmaTruncationSusSelector sigmaTruncationSus1 = new SigmaTruncationSusSelector(sigmaTruncation1, susSelector);
+        SigmaTruncationSusSelector sigmaTruncationSus2 = new SigmaTruncationSusSelector(sigmaTruncation2, susSelector);
+        SigmaTruncationSusSelector sigmaTruncationSus3 = new SigmaTruncationSusSelector(sigmaTruncation3, susSelector);
+        SigmaTruncationSusSelector sigmaTruncationSus4 = new SigmaTruncationSusSelector(sigmaTruncation4, susSelector);
+
+
         return List.of(
 //                rwsSelector
 //                ,
@@ -188,14 +205,14 @@ public class Main {
 //                powerScalingSus2,
 //                powerScalingSus3,
 
-                dynamicPowerScalingRws0p9to1p1,
-                dynamicPowerScalingRws0p8to1p2,
-                dynamicPowerScalingRws0p5to1p5,
-                dynamicPowerScalingRws0p5to2,
-                dynamicPowerScalingSus0p9to1p1,
-                dynamicPowerScalingSus0p8to1p2,
-                dynamicPowerScalingSus0p5to1p5,
-                dynamicPowerScalingSus0p5to2
+//                dynamicPowerScalingRws0p9to1p1,
+//                dynamicPowerScalingRws0p8to1p2,
+//                dynamicPowerScalingRws0p5to1p5,
+//                dynamicPowerScalingRws0p5to2,
+//                dynamicPowerScalingSus0p9to1p1,
+//                dynamicPowerScalingSus0p8to1p2,
+//                dynamicPowerScalingSus0p5to1p5,
+//                dynamicPowerScalingSus0p5to2,
 //
 //                linearScalingRws12,
 //                linearScalingRws14,
@@ -215,7 +232,16 @@ public class Main {
 //                maxAvgWorstLinearRws,
 //                averageLinearSus,
 //                medianLinearSus,
-//                maxAvgWorstLinearSus
+//                maxAvgWorstLinearSus,
+
+                sigmaTruncationRws1,
+                sigmaTruncationRws2,
+                sigmaTruncationRws3,
+                sigmaTruncationRws4,
+                sigmaTruncationSus1,
+                sigmaTruncationSus2,
+                sigmaTruncationSus3,
+                sigmaTruncationSus4
         );
     }
 
