@@ -103,13 +103,24 @@ public class Main {
 
     private List<Selector> getSelectors() {
         // power scaling
-        PowerScalingSelector powerScalingSelector = new PowerScalingSelector(scalingSelector, 1.1);
-        PowerScalingSelector powerScalingSelector2 = new PowerScalingSelector(scalingSelector, 2);
+        PowerScalingSelector powerScaling11 = new PowerScalingSelector(scalingSelector, 1.1);
+        PowerScalingSelector powerScaling12 = new PowerScalingSelector(scalingSelector, 1.2);
+        PowerScalingSelector powerScaling15 = new PowerScalingSelector(scalingSelector, 1.5);
+        PowerScalingSelector powerScaling2 = new PowerScalingSelector(scalingSelector, 2);
+        PowerScalingSelector powerScaling3 = new PowerScalingSelector(scalingSelector, 3);
 
-        PowerScalingRwsSelector powerScalingRwsSelector = new PowerScalingRwsSelector(powerScalingSelector, rwsSelector);
-        PowerScalingRwsSelector powerScalingRwsSelector2 = new PowerScalingRwsSelector(powerScalingSelector2, rwsSelector);
-        PowerScalingSusSelector powerScalingSusSelector = new PowerScalingSusSelector(powerScalingSelector, susSelector);
-        PowerScalingSusSelector powerScalingSusSelector2 = new PowerScalingSusSelector(powerScalingSelector2, susSelector);
+
+        PowerScalingRwsSelector powerScalingRws11 = new PowerScalingRwsSelector(powerScaling11, rwsSelector);
+        PowerScalingRwsSelector powerScalingRws12 = new PowerScalingRwsSelector(powerScaling12, rwsSelector);
+        PowerScalingRwsSelector powerScalingRws15 = new PowerScalingRwsSelector(powerScaling15, rwsSelector);
+        PowerScalingRwsSelector powerScalingRws2 = new PowerScalingRwsSelector(powerScaling2, rwsSelector);
+        PowerScalingRwsSelector powerScalingRws3 = new PowerScalingRwsSelector(powerScaling3, rwsSelector);
+
+        PowerScalingSusSelector powerScalingSus11 = new PowerScalingSusSelector(powerScaling11, susSelector);
+        PowerScalingSusSelector powerScalingSus12 = new PowerScalingSusSelector(powerScaling12, susSelector);
+        PowerScalingSusSelector powerScalingSus15 = new PowerScalingSusSelector(powerScaling15, susSelector);
+        PowerScalingSusSelector powerScalingSus2 = new PowerScalingSusSelector(powerScaling2, susSelector);
+        PowerScalingSusSelector powerScalingSus3 = new PowerScalingSusSelector(powerScaling3, susSelector);
 
         // linear scaling
         LinearScalingSelector linearScalingSelector12 = new LinearScalingSelector(scalingSelector, 1.2);
@@ -146,31 +157,45 @@ public class Main {
         DynamicLinearScalingSusSelector maxAvgWorstLinearSus = new DynamicLinearScalingSusSelector(maxAvgWorstLinearScaling, susSelector);
 
         // dynamic power scaling
-        DynamicPowerScalingSelector dynamicPowerScalingSelector0p9to1p1 = new DynamicPowerScalingSelector(scalingSelector, 0.9, 1.1);
-        DynamicPowerScalingSelector dynamicPowerScalingSelector0p8to1p2 = new DynamicPowerScalingSelector(scalingSelector, 0.8, 1.2);
+        DynamicPowerScalingSelector dynamicPowerScaling0p9to1p1 = new DynamicPowerScalingSelector(scalingSelector, 0.9, 1.1);
+        DynamicPowerScalingSelector dynamicPowerScaling0p8to1p2 = new DynamicPowerScalingSelector(scalingSelector, 0.8, 1.2);
+        DynamicPowerScalingSelector dynamicPowerScaling0p5to1p5 = new DynamicPowerScalingSelector(scalingSelector, 0.5, 1.5);
+        DynamicPowerScalingSelector dynamicPowerScaling0p5to2 = new DynamicPowerScalingSelector(scalingSelector, 0.5, 2);
 
-        DynamicPowerScalingRwsSelector dynamicPowerScalingRwsSelector0p9to1p1 =
-                new DynamicPowerScalingRwsSelector(dynamicPowerScalingSelector0p9to1p1, rwsSelector);
-        DynamicPowerScalingRwsSelector dynamicPowerScalingRwsSelector0p8to1p2 =
-                new DynamicPowerScalingRwsSelector(dynamicPowerScalingSelector0p8to1p2, rwsSelector);
+        DynamicPowerScalingRwsSelector dynamicPowerScalingRws0p9to1p1 = new DynamicPowerScalingRwsSelector(dynamicPowerScaling0p9to1p1, rwsSelector);
+        DynamicPowerScalingRwsSelector dynamicPowerScalingRws0p8to1p2 = new DynamicPowerScalingRwsSelector(dynamicPowerScaling0p8to1p2, rwsSelector);
+        DynamicPowerScalingRwsSelector dynamicPowerScalingRws0p5to1p5 = new DynamicPowerScalingRwsSelector(dynamicPowerScaling0p5to1p5, rwsSelector);
+        DynamicPowerScalingRwsSelector dynamicPowerScalingRws0p5to2 = new DynamicPowerScalingRwsSelector(dynamicPowerScaling0p5to2, rwsSelector);
 
-        DynamicPowerScalingSusSelector dynamicPowerScalingSusSelector0p9to1p1 =
-                new DynamicPowerScalingSusSelector(dynamicPowerScalingSelector0p9to1p1, susSelector);
-        DynamicPowerScalingSusSelector dynamicPowerScalingSusSelector0p8to1p2 =
-                new DynamicPowerScalingSusSelector(dynamicPowerScalingSelector0p8to1p2, susSelector);
+        DynamicPowerScalingSusSelector dynamicPowerScalingSus0p9to1p1 = new DynamicPowerScalingSusSelector(dynamicPowerScaling0p9to1p1, susSelector);
+        DynamicPowerScalingSusSelector dynamicPowerScalingSus0p8to1p2 = new DynamicPowerScalingSusSelector(dynamicPowerScaling0p8to1p2, susSelector);
+        DynamicPowerScalingSusSelector dynamicPowerScalingSus0p5to1p5 = new DynamicPowerScalingSusSelector(dynamicPowerScaling0p5to1p5, susSelector);
+        DynamicPowerScalingSusSelector dynamicPowerScalingSus0p5to2 = new DynamicPowerScalingSusSelector(dynamicPowerScaling0p5to2, susSelector);
 
         return List.of(
 //                rwsSelector
 //                ,
 //                susSelector
-//                , powerScalingRwsSelector
-//                , powerScalingRwsSelector2
-//                , powerScalingSusSelector
-//                , powerScalingSusSelector2
-//                , dynamicPowerScalingRwsSelector0p9to1p1
-//                , dynamicPowerScalingRwsSelector0p8to1p2
-//                , dynamicPowerScalingSusSelector0p9to1p1
-//                , dynamicPowerScalingSusSelector0p8to1p2,
+
+//                powerScalingRws11,
+//                powerScalingRws12,
+//                powerScalingRws15,
+//                powerScalingRws2,
+//                powerScalingRws3,
+//                powerScalingSus11,
+//                powerScalingSus12,
+//                powerScalingSus15,
+//                powerScalingSus2,
+//                powerScalingSus3,
+
+                dynamicPowerScalingRws0p9to1p1,
+                dynamicPowerScalingRws0p8to1p2,
+                dynamicPowerScalingRws0p5to1p5,
+                dynamicPowerScalingRws0p5to2,
+                dynamicPowerScalingSus0p9to1p1,
+                dynamicPowerScalingSus0p8to1p2,
+                dynamicPowerScalingSus0p5to1p5,
+                dynamicPowerScalingSus0p5to2
 //
 //                linearScalingRws12,
 //                linearScalingRws14,
@@ -185,12 +210,12 @@ public class Main {
 //                linearScalingSus18,
 //                linearScalingSus2,
 
-                averageLinearRws,
-                medianLinearRws,
-                maxAvgWorstLinearRws,
-                averageLinearSus,
-                medianLinearSus,
-                maxAvgWorstLinearSus
+//                averageLinearRws,
+//                medianLinearRws,
+//                maxAvgWorstLinearRws,
+//                averageLinearSus,
+//                medianLinearSus,
+//                maxAvgWorstLinearSus
         );
     }
 
