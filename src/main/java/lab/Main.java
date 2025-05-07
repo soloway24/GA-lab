@@ -12,6 +12,9 @@ import lab.selection.RwsSelector;
 import lab.selection.ScalingSelector;
 import lab.selection.Selector;
 import lab.selection.SusSelector;
+import lab.selection.adaptivepowerlaw.AdaptivePowerLawScalingRwsSelector;
+import lab.selection.adaptivepowerlaw.AdaptivePowerLawScalingSelector;
+import lab.selection.adaptivepowerlaw.AdaptivePowerLawScalingSusSelector;
 import lab.selection.linear.*;
 import lab.selection.power.*;
 import lab.selection.sigmatruncation.SigmaTruncationRwsSelector;
@@ -227,6 +230,14 @@ public class Main {
         WindowScalingSusSelector windowScalingSus2 = new WindowScalingSusSelector(windowScaling2, susSelector);
         WindowScalingSusSelector windowScalingSus10 = new WindowScalingSusSelector(windowScaling10, susSelector);
 
+        AdaptivePowerLawScalingSelector adaptivePowerLawScaling194 = new AdaptivePowerLawScalingSelector(scalingSelector, 194);
+        AdaptivePowerLawScalingSelector adaptivePowerLawScaling5000 = new AdaptivePowerLawScalingSelector(scalingSelector, 5000);
+        AdaptivePowerLawScalingSelector adaptivePowerLawScaling10000 = new AdaptivePowerLawScalingSelector(scalingSelector, 10000);
+
+        AdaptivePowerLawScalingRwsSelector AdaptivePowerLawScalingRws194 = new AdaptivePowerLawScalingRwsSelector(adaptivePowerLawScaling194, rwsSelector);
+        AdaptivePowerLawScalingSusSelector AdaptivePowerLawScalingSus5000 = new AdaptivePowerLawScalingSusSelector(adaptivePowerLawScaling5000, susSelector);
+        AdaptivePowerLawScalingSusSelector AdaptivePowerLawScalingSus10000 = new AdaptivePowerLawScalingSusSelector(adaptivePowerLawScaling10000, susSelector);
+
         return List.of(
 //                rwsSelector
 //                ,
@@ -284,14 +295,17 @@ public class Main {
 //                spanMethodRws194,
 //                spanMethodSus5000
 
-                windowScalingRws0,
-                windowScalingRws1,
-                windowScalingRws2,
-                windowScalingRws10,
-                windowScalingSus0,
-                windowScalingSus1,
-                windowScalingSus2,
-                windowScalingSus10
+                AdaptivePowerLawScalingRws194,
+                AdaptivePowerLawScalingSus5000
+
+//                windowScalingRws0,
+//                windowScalingRws1,
+//                windowScalingRws2,
+//                windowScalingRws10,
+//                windowScalingSus0,
+//                windowScalingSus1,
+//                windowScalingSus2,
+//                windowScalingSus10
         );
     }
 

@@ -1,4 +1,4 @@
-package lab.selection.spanmethod;
+package lab.selection.adaptivepowerlaw;
 
 import lab.Individual;
 import lab.selection.ScalingSelector;
@@ -11,13 +11,13 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static java.lang.Math.pow;
+import static java.lang.Math.*;
 import static java.util.Optional.ofNullable;
 import static lab.util.CalculationUtils.getAverageFitness;
 import static lab.util.MetricUtils.getStandardDeviation;
 
 @RequiredArgsConstructor
-public class SpanMethodSelector {
+public class AdaptivePowerLawScalingSelector {
 
     private final ScalingSelector scalingSelector;
     @Getter
@@ -39,14 +39,22 @@ public class SpanMethodSelector {
     private <T extends Number> double scale(T fitness, SelectionContext selectionContext) {
         double fAvg = getAverageFitness(selectionContext.getIndividualToFitness());
         double sigmaF = getStandardDeviation(selectionContext.getIndividualToFitness().values(), fAvg);
-        // TODO should be + 1 ?
+        double s0 = sigmaF / fAvg;
+
+        double p1 = 0.05;
+        double p2 = 0.1;
+        double s_star = 0.1;
+        double a = 0.1;
+
         int g = ofNullable(selectionContext.getNi())
                 .map(ni -> ni + 1)
                 .orElseThrow(() -> new IllegalArgumentException("Ni value is not present in span method selector."));
-        double t = 15.0 * g / G - 10;
-        double W = 20 - 16 * (1 / (1 + pow(Math.E, -t)));
 
-        return (fitness.doubleValue() - fAvg) / sigmaF + W;
+        double tan = tan(g * PI / ((G + 1) * 2.0));
+        double tanExponent = p2 * pow(s0 / s_star, a);
+        double k = pow((s_star / s0), p1) * pow(tan, tanExponent);
+
+        return pow(fitness.doubleValue(), k);
     }
 
 }
