@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static java.lang.Math.pow;
+import static java.lang.Math.*;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
@@ -21,7 +21,7 @@ import static lab.encoding.Encoding.STANDARD;
 import static lab.util.Constants.PRECISION_BASE;
 import static lab.validators.EncodingSpaceValidator.validateEncodingSpace;
 
-public class F1Function implements FitnessFunction<Double, Double> {
+public class F1_1Function implements FitnessFunction<Double, Double> {
 
     private static final String OPTIMAL_STANDARD_CODE = "1000000000";
     private static final String OPTIMAL_GRAY_CODE = "1100000000";
@@ -34,7 +34,7 @@ public class F1Function implements FitnessFunction<Double, Double> {
     private final Double maxX;
     private final int argumentPrecision;
 
-    public F1Function(int arity, int chromosomeLength, double minX, double maxX, int argumentPrecision) {
+    public F1_1Function(int arity, int chromosomeLength, double minX, double maxX, int argumentPrecision) {
         validateEncodingSpace(chromosomeLength, minX, maxX, argumentPrecision);
         this.n = arity;
         this.chromosomeLength = chromosomeLength;
@@ -50,7 +50,7 @@ public class F1Function implements FitnessFunction<Double, Double> {
 
     @Override
     public String getName() {
-        return "F1 " + n;
+        return "F1_1 " + n;
     }
 
     @Override
@@ -77,7 +77,7 @@ public class F1Function implements FitnessFunction<Double, Double> {
 
     @Override
     public Double getMaxFitness() {
-        return pow(5.12, 2) * n;
+        return n * sqrt(5.12);
     }
 
     @Override
@@ -104,11 +104,11 @@ public class F1Function implements FitnessFunction<Double, Double> {
     @Override
     public Double evaluate(Individual individual) {
         List<Double> xs = decodeMultipleArguments(individual, this);
-        double sumX2 = xs.stream()
-                .map(x -> pow(x, 2))
+        double sumSqrtX = xs.stream()
+                .map(x -> sqrt(abs(x)))
                 .reduce(0.0, Double::sum);
 
-        return pow(5.12, 2) * n - sumX2;
+        return n * sqrt(5.12) - sumSqrtX;
     }
 
     @Override
