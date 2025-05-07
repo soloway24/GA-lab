@@ -20,6 +20,9 @@ import lab.selection.sigmatruncation.SigmaTruncationSusSelector;
 import lab.selection.spanmethod.SpanMethodRwsSelector;
 import lab.selection.spanmethod.SpanMethodSelector;
 import lab.selection.spanmethod.SpanMethodSusSelector;
+import lab.selection.window.WindowScalingRwsSelector;
+import lab.selection.window.WindowScalingSelector;
+import lab.selection.window.WindowScalingSusSelector;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.stereotype.Component;
@@ -97,7 +100,7 @@ public class Main {
 //                fhd100Function
 //                .constAllFunction
 //                ,
-                quadraticFunction,
+                quadraticFunction
 //                , quadratic512Function
 //                quadraticSqrt512Function
 //                , exponent025
@@ -106,9 +109,9 @@ public class Main {
 //                 rastriginFunction
 //                , deb2Function
 //                , deb4Function
-                testSin2
-                ,
-                testSin500
+//                testSin2
+//                ,
+//                testSin500
         );
     }
 
@@ -208,6 +211,22 @@ public class Main {
         SpanMethodSusSelector spanMethodSus5000 = new SpanMethodSusSelector(spanMethod5000, susSelector);
         SpanMethodSusSelector spanMethodSus10000 = new SpanMethodSusSelector(spanMethod10000, susSelector);
 
+        // window scaling
+        WindowScalingSelector windowScaling0 = new WindowScalingSelector(scalingSelector, 0);
+        WindowScalingSelector windowScaling1 = new WindowScalingSelector(scalingSelector, 1);
+        WindowScalingSelector windowScaling2 = new WindowScalingSelector(scalingSelector, 2);
+        WindowScalingSelector windowScaling10 = new WindowScalingSelector(scalingSelector, 10);
+
+        WindowScalingRwsSelector windowScalingRws0 = new WindowScalingRwsSelector(windowScaling0, rwsSelector);
+        WindowScalingRwsSelector windowScalingRws1 = new WindowScalingRwsSelector(windowScaling1, rwsSelector);
+        WindowScalingRwsSelector windowScalingRws2 = new WindowScalingRwsSelector(windowScaling2, rwsSelector);
+        WindowScalingRwsSelector windowScalingRws10 = new WindowScalingRwsSelector(windowScaling10, rwsSelector);
+
+        WindowScalingSusSelector windowScalingSus0 = new WindowScalingSusSelector(windowScaling0, susSelector);
+        WindowScalingSusSelector windowScalingSus1 = new WindowScalingSusSelector(windowScaling1, susSelector);
+        WindowScalingSusSelector windowScalingSus2 = new WindowScalingSusSelector(windowScaling2, susSelector);
+        WindowScalingSusSelector windowScalingSus10 = new WindowScalingSusSelector(windowScaling10, susSelector);
+
         return List.of(
 //                rwsSelector
 //                ,
@@ -262,8 +281,17 @@ public class Main {
 //                sigmaTruncationSus3,
 //                sigmaTruncationSus4,
 
-                spanMethodRws194,
-                spanMethodSus5000
+//                spanMethodRws194,
+//                spanMethodSus5000
+
+                windowScalingRws0,
+                windowScalingRws1,
+                windowScalingRws2,
+                windowScalingRws10,
+                windowScalingSus0,
+                windowScalingSus1,
+                windowScalingSus2,
+                windowScalingSus10
         );
     }
 

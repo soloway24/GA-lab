@@ -28,8 +28,7 @@ public interface Selector {
                 .collect(Collectors.toUnmodifiableMap(Entry::getKey, entry -> entry.getValue().doubleValue()));
     }
 
-    default List<AdditionalSelectorProperty> getAdditionalSelectorProperties() {
-        return List.of();
+    default Map<AdditionalSelectorProperty, Object> getAdditionalSelectorProperties() {
+        return Map.of();
     }
-
 }

@@ -1,4 +1,4 @@
-package lab.selection.spanmethod;
+package lab.selection.window;
 
 import lab.Individual;
 import lab.selection.*;
@@ -9,34 +9,32 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.String.valueOf;
-import static lab.selection.AdditionalSelectorProperty.NI;
+import static lab.selection.AdditionalSelectorProperty.WINDOW_WORST;
 
 @RequiredArgsConstructor
-public class SpanMethodRwsSelector implements Selector {
+public class WindowScalingSusSelector implements Selector {
 
-    private static final int NOT_USED_VALUE = -1;
-
-    private final SpanMethodSelector spanMethodSelector;
-    private final RwsSelector rwsSelector;
+    private final WindowScalingSelector windowScalingSelector;
+    private final SusSelector susSelector;
 
     @Override
     public SelectorType getSelectorType() {
-        return SelectorType.RWS;
+        return SelectorType.SUS;
     }
 
     @Override
     public String getName() {
-        return "Span RWS";
+        return "Window SUS";
     }
 
     @Override
     public String getFullName() {
-        return "Span RWS " + spanMethodSelector.getG();
+        return "Window SUS " + windowScalingSelector.getWindowSize();
     }
 
     @Override
     public Optional<String> getParam1() {
-        return Optional.of(valueOf(spanMethodSelector.getG()));
+        return Optional.of(valueOf(windowScalingSelector.getWindowSize()));
     }
 
     @Override
@@ -46,16 +44,16 @@ public class SpanMethodRwsSelector implements Selector {
 
     @Override
     public List<Individual> select(SelectionContext selectionContext) {
-        return spanMethodSelector.select(selectionContext, rwsSelector::select);
+        return windowScalingSelector.select(selectionContext, susSelector::select);
     }
 
     @Override
     public Map<Individual, Double> scale(SelectionContext selectionContext) {
-        return spanMethodSelector.scale(selectionContext);
+        return windowScalingSelector.scale(selectionContext);
     }
 
     @Override
     public Map<AdditionalSelectorProperty, Object> getAdditionalSelectorProperties() {
-        return Map.of(NI, NOT_USED_VALUE);
+        return Map.of(WINDOW_WORST, windowScalingSelector.getWindowSize());
     }
 }

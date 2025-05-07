@@ -37,8 +37,9 @@ import static lab.export.Optimality.*;
 import static lab.identifier.ConvergenceIdentifier.*;
 import static lab.identifier.SuccessfulRunIdentifier.getBestIndividual;
 import static lab.selection.AdditionalSelectorProperty.NI;
+import static lab.selection.AdditionalSelectorProperty.WINDOW_WORST;
 import static lab.selection.SelectorType.SUS;
-import static lab.util.CalculationUtils.getAverageFitness;
+import static lab.util.CalculationUtils.*;
 import static lab.util.MetricUtils.*;
 
 @Component
@@ -169,6 +170,8 @@ public class RunPoolExecutor {
             Map<Homogeneity, Integer> homogeneityToGeneration = new HashMap<>();
             Map<PopulationTimingType, PopulationSnapshot> timingTypeToPopulationSnapshot = new HashMap<>();
 
+            Deque<Double> worstWindowFs = new LinkedList<>();
+
             int maxIterations = getMaxIterations(function, selector);
             individualToFitness = getIndividualToFitness(currentIndividuals, function);
 
@@ -185,7 +188,16 @@ public class RunPoolExecutor {
                             + " iteration " + i + ", fitnessToCount = " + fitnessToCount);
                 }
 
-                SelectionContext selectionContext = buildSelectionContext(selector, individualToFitness, i);
+                if (selector.getAdditionalSelectorProperties().containsKey(WINDOW_WORST)) {
+                    int windowSize = (int) selector.getAdditionalSelectorProperties().get(WINDOW_WORST);
+                    double currentWorstF = getMinDouble(getDoubleValues(individualToFitness));
+                    if (worstWindowFs.size() > windowSize) {
+                        worstWindowFs.removeFirst();
+                    }
+                    worstWindowFs.addLast(currentWorstF);
+                }
+
+                SelectionContext selectionContext = buildSelectionContext(selector, individualToFitness, i, worstWindowFs);
 
                 parentPool = selector.select(selectionContext);
                 List<Individual> parentCopies = new ArrayList<>(parentPool);
@@ -614,13 +626,19 @@ public class RunPoolExecutor {
 
     private SelectionContext buildSelectionContext(Selector selector,
                                                    Map<Individual, ? extends Number> individualToFitness,
-                                                   int ni) {
+                                                   int ni,
+                                                   Deque<Double> worstWindowFs) {
         SelectionContext.SelectionContextBuilder builder = SelectionContext.builder()
                 .withIndividualToFitness(individualToFitness);
 
-        if (selector.getAdditionalSelectorProperties().contains(NI)) {
+        if (selector.getAdditionalSelectorProperties().containsKey(NI)) {
             builder.withNi(ni);
         }
+        if (selector.getAdditionalSelectorProperties().containsKey(WINDOW_WORST)) {
+            double worstWindowF = getMinDouble(worstWindowFs);
+            builder.withWorstFitness(worstWindowF);
+        }
+
         return builder.build();
     }
 

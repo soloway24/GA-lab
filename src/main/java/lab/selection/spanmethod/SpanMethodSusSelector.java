@@ -14,6 +14,8 @@ import static lab.selection.AdditionalSelectorProperty.NI;
 @RequiredArgsConstructor
 public class SpanMethodSusSelector implements Selector {
 
+    private static final int NOT_USED_VALUE = -1;
+
     private final SpanMethodSelector spanMethodSelector;
     private final SusSelector susSelector;
 
@@ -53,7 +55,7 @@ public class SpanMethodSusSelector implements Selector {
     }
 
     @Override
-    public List<AdditionalSelectorProperty> getAdditionalSelectorProperties() {
-        return List.of(NI);
+    public Map<AdditionalSelectorProperty, Object> getAdditionalSelectorProperties() {
+        return Map.of(NI, NOT_USED_VALUE);
     }
 }
