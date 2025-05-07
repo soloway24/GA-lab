@@ -70,7 +70,7 @@ public class RwsSelector implements Selector {
                 return entry.getKey();
             }
         }
-        throw new IllegalStateException("Selection " + getName() + " did not find an individual for selection!");
+        throw new IllegalStateException("Selector " + getName() + " did not find an individual for selection!");
     }
 
 }
