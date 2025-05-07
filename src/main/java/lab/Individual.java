@@ -39,13 +39,22 @@ public class Individual {
         this.encoding = individual.getEncoding();
     }
 
-    public static Individual createRandomIndividual(int length, Encoding encoding) {
+    public static Individual createRandomIndividual(int length, int arity, Encoding encoding) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < arity; i++) {
+            sb.append(createRandomCode(length));
+        }
+        return new Individual(sb.toString(), encoding);
+    }
+
+    public static String createRandomCode(int length) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < length; i++) {
             sb.append(RANDOM.nextBoolean() ? "1" : "0");
         }
-        return new Individual(sb.toString(), encoding);
+        return sb.toString();
     }
+
 
     @Override
     public String toString() {

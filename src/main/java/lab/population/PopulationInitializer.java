@@ -45,8 +45,12 @@ public class PopulationInitializer {
     }
 
     private Population initializeRandomPopulation(PopulationConfiguration populationConfig) {
-        List<Individual> individuals = createRandomIndividuals(populationConfig.function().getChromosomeLength(),
-                populationConfig.encoding(), populationConfig.populationSize())
+        List<Individual> individuals = createRandomIndividuals(
+                populationConfig.function().getChromosomeLength(),
+                populationConfig.function().getArity(),
+                populationConfig.encoding(),
+                populationConfig.populationSize()
+        )
                 .toList();
         List<Individual> indexedIndividuals = getIndexedIndividuals(individuals);
         return new Population(populationConfig, indexedIndividuals);
@@ -96,15 +100,15 @@ public class PopulationInitializer {
         return new Population(populationConfiguration, indexedIndividuals);
     }
 
-    private Stream<Individual> createRandomIndividuals(int chromosomeLength, Encoding encoding, int quantity) {
+    private Stream<Individual> createRandomIndividuals(int chromosomeLength, int arity, Encoding encoding, int quantity) {
         return IntStream.range(0, quantity)
-                .mapToObj(i -> Individual.createRandomIndividual(chromosomeLength, encoding));
+                .mapToObj(i -> Individual.createRandomIndividual(chromosomeLength, arity, encoding));
     }
 
     private Stream<Individual> createRandomNotOptimalIndividuals(FitnessFunction<?, ?> function, Encoding encoding, int quantity) {
         Individual optimal = getOptimalIndividual(function, encoding);
         return IntStream.range(0, quantity)
-                .mapToObj(i -> createNotOptimalIndividual(function.getChromosomeLength(), encoding, optimal));
+                .mapToObj(i -> createNotOptimalIndividual(function.getChromosomeLength(), function.getArity(), encoding, optimal));
     }
 
     private Stream<Individual> createOptimalIndividuals(FitnessFunction<?, ?> function, Encoding encoding, int quantity) {
@@ -112,10 +116,10 @@ public class PopulationInitializer {
                 .mapToObj(i -> getOptimalIndividual(function, encoding));
     }
 
-    private Individual createNotOptimalIndividual(int chromosomeLength, Encoding encoding, Individual optimal) {
+    private Individual createNotOptimalIndividual(int chromosomeLength, int arity, Encoding encoding, Individual optimal) {
         Individual individual;
         do {
-            individual = Individual.createRandomIndividual(chromosomeLength, encoding);
+            individual = Individual.createRandomIndividual(chromosomeLength, arity, encoding);
         } while (isOptimal(individual, optimal));
         return individual;
     }

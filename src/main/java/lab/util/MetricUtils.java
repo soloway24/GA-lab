@@ -163,7 +163,11 @@ public class MetricUtils {
     }
 
     public static long getOnesCount(Individual individual) {
-        return individual.getBinaryCode().chars()
+        return getOnesCount(individual.getBinaryCode());
+    }
+
+    public static long getOnesCount(String binaryCode) {
+        return binaryCode.chars()
                 .filter(ch -> ch == '1')
                 .count();
     }

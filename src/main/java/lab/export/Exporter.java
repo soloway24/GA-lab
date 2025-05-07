@@ -289,7 +289,7 @@ public class Exporter {
                                           String filename,
                                           FitnessFunction<?, ?> function,
                                           int populationSize) {
-        List<Long> ones = getOnes(individualMetrics);
+        List<Double> ones = getOnes(individualMetrics);
         drawHistogram(ones, plotExportPath + "genotype/", filename, 0, function.getChromosomeLength(), populationSize);
         if (!function.isConstant()) {
             List<Double> phenotypes = getPhenotypes(individualMetrics);
@@ -351,7 +351,7 @@ public class Exporter {
         saveWorkbook(workbook, tablePath);
     }
 
-    private List<Long> getOnes(List<IndividualMetrics> individualMetrics) {
+    private List<Double> getOnes(List<IndividualMetrics> individualMetrics) {
         return individualMetrics.stream()
                 .map(IndividualMetrics::ones)
                 .toList();

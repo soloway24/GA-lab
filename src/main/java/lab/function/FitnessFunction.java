@@ -16,6 +16,10 @@ public interface FitnessFunction<ARG_T extends Number, RES_T extends Number> {
 
     String getName();
 
+    default int getArity() {
+        return 1;
+    }
+
     int getChromosomeLength();
 
     List<Encoding> getSupportedEncodings();

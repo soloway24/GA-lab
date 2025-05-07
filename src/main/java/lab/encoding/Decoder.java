@@ -3,8 +3,10 @@ package lab.encoding;
 import lab.Individual;
 import lab.function.FitnessFunction;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 
 import static java.lang.Long.parseLong;
 import static java.util.Optional.ofNullable;
@@ -20,17 +22,32 @@ public class Decoder {
             );
 
     public static <ARG_T extends Number> ARG_T decode(Individual individual, FitnessFunction<ARG_T, ?> fitnessFunction) {
-        long decimalValue = getDecimalValue(individual);
+        return decode(individual.getBinaryCode(), individual.getEncoding(), fitnessFunction);
+    }
+
+    public static <ARG_T extends Number> List<ARG_T> decodeMultipleArguments(Individual individual, FitnessFunction<ARG_T, ?> fitnessFunction) {
+        String binaryCode = individual.getBinaryCode();
+        int arity = fitnessFunction.getArity();
+        int chromosomeLength = fitnessFunction.getChromosomeLength();
+
+        verifyMultipleArgumentsBinaryCodes(binaryCode, arity, chromosomeLength);
+        List<String> binaryCodes = getMultipleArgumentCodes(binaryCode, arity, chromosomeLength);
+
+        return binaryCodes.stream()
+                .map(code -> Decoder.decode(code, individual.getEncoding(), fitnessFunction))
+                .toList();
+    }
+
+    private static <ARG_T extends Number> ARG_T decode(String binaryCode, Encoding encoding, FitnessFunction<ARG_T, ?> fitnessFunction) {
+        long decimalValue = getDecimalValue(binaryCode, encoding);
         return fitnessFunction.convertToX(decimalValue)
                 .orElseThrow(() -> new IllegalStateException("Provided function " + fitnessFunction.getName()
                         + " does not support decoding of individuals."));
     }
 
-    private static long getDecimalValue(Individual individual) {
-        String binaryCode = individual.getBinaryCode();
+    private static long getDecimalValue(String binaryCode, Encoding encoding) {
         verifyBinaryCode(binaryCode);
 
-        Encoding encoding = individual.getEncoding();
         return ofNullable(ENCODING_TO_DECODER.get(encoding))
                 .map(decoder -> decoder.apply(binaryCode))
                 .orElseThrow(() -> new IllegalStateException("No decoder exists for the provided Encoding type - " + encoding));
@@ -50,6 +67,12 @@ public class Decoder {
         return decimalValue;
     }
 
+    public static List<String> getMultipleArgumentCodes(String multipleArgumentsCode, int arity, int chromosomeLength) {
+        return IntStream.range(0, arity)
+                .mapToObj(i -> multipleArgumentsCode.substring(i * chromosomeLength, (i + 1) * chromosomeLength))
+                .toList();
+    }
+
     private static void verifyBinaryCode(String toDecode) {
         if (toDecode.length() > MAX_CHROMOSOME_LENGTH) {
             throw new IllegalArgumentException("Decoding of individuals of the length greater than " + MAX_CHROMOSOME_LENGTH
@@ -57,6 +80,13 @@ public class Decoder {
         }
         if (!toDecode.matches("[01]+")) {
             throw new IllegalArgumentException("String " + toDecode + " contains non-binary characters during binary decoding!");
+        }
+    }
+
+    private static void verifyMultipleArgumentsBinaryCodes(String multipleArgumentsCode, int arity, int chromosomeLength) {
+        if (multipleArgumentsCode.length() != arity * chromosomeLength) {
+            throw new IllegalArgumentException("Binary code with multiple arguments has length " + multipleArgumentsCode.length()
+                    + " which is not equal to argument quantity * chromosome length " + arity * chromosomeLength);
         }
     }
 }

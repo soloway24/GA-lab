@@ -61,7 +61,11 @@ public class CalculationUtils {
     }
 
     public static List<Double> getDoubleValues(Map<Individual, ? extends Number> individualToValue) {
-        return individualToValue.values().stream()
+        return getDoubleValues(individualToValue.values());
+    }
+
+    public static List<Double> getDoubleValues(Collection<? extends Number> values) {
+        return values.stream()
                 .map(Number::doubleValue)
                 .toList();
     }

@@ -3,7 +3,7 @@ package lab.metric;
 import lab.Individual;
 
 public record IndividualMetrics(Individual individual,
-                                Long ones,
+                                Double ones,
                                 Double phenotype,
                                 Double fitness) {
 }

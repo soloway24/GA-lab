@@ -1,6 +1,7 @@
 package lab;
 
 import lab.function.*;
+import lab.function.f.F1Function;
 import lab.operator.NoneOperator;
 import lab.operator.OnePointCrossoverOperator;
 import lab.operator.Operator;
@@ -89,6 +90,8 @@ public class Main {
         FitnessFunction<?, ?> testSin2 = new TestSin2Function(10, 0, 10.23, 2);
         FitnessFunction<?, ?> testSin500 = new TestSin500Function(10, 0, 10.23, 2);
 
+        FitnessFunction<?, ?> f1 = new F1Function(5, 10, -5.12, 5.11, 2);
+
 //        return List.of(constAllFunction);
 //        return List.of(fhFunction);
 //        return List.of(quadraticFunction);
@@ -103,7 +106,7 @@ public class Main {
 //                fhd100Function
 //                .constAllFunction
 //                ,
-                quadraticFunction
+//                quadraticFunction
 //                , quadratic512Function
 //                quadraticSqrt512Function
 //                , exponent025
@@ -115,6 +118,8 @@ public class Main {
 //                testSin2
 //                ,
 //                testSin500
+//                ,
+                f1
         );
     }
 
@@ -234,8 +239,8 @@ public class Main {
         AdaptivePowerLawScalingSelector adaptivePowerLawScaling5000 = new AdaptivePowerLawScalingSelector(scalingSelector, 5000);
         AdaptivePowerLawScalingSelector adaptivePowerLawScaling10000 = new AdaptivePowerLawScalingSelector(scalingSelector, 10000);
 
-        AdaptivePowerLawScalingRwsSelector AdaptivePowerLawScalingRws194 = new AdaptivePowerLawScalingRwsSelector(adaptivePowerLawScaling194, rwsSelector);
-        AdaptivePowerLawScalingSusSelector AdaptivePowerLawScalingSus5000 = new AdaptivePowerLawScalingSusSelector(adaptivePowerLawScaling5000, susSelector);
+        AdaptivePowerLawScalingRwsSelector adaptivePowerLawScalingRws194 = new AdaptivePowerLawScalingRwsSelector(adaptivePowerLawScaling194, rwsSelector);
+        AdaptivePowerLawScalingSusSelector adaptivePowerLawScalingSus5000 = new AdaptivePowerLawScalingSusSelector(adaptivePowerLawScaling5000, susSelector);
         AdaptivePowerLawScalingSusSelector AdaptivePowerLawScalingSus10000 = new AdaptivePowerLawScalingSusSelector(adaptivePowerLawScaling10000, susSelector);
 
         return List.of(
@@ -295,8 +300,8 @@ public class Main {
 //                spanMethodRws194,
 //                spanMethodSus5000
 
-                AdaptivePowerLawScalingRws194,
-                AdaptivePowerLawScalingSus5000
+                adaptivePowerLawScalingRws194,
+                adaptivePowerLawScalingSus5000
 
 //                windowScalingRws0,
 //                windowScalingRws1,

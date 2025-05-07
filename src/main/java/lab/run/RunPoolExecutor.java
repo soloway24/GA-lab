@@ -14,6 +14,7 @@ import lab.population.*;
 import lab.selection.SelectionContext;
 import lab.selection.Selector;
 import lab.util.CalculationUtils;
+import lab.util.MetricUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Component;
@@ -30,7 +31,7 @@ import static java.util.Collections.shuffle;
 import static java.util.Optional.ofNullable;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
-import static lab.encoding.Decoder.decode;
+import static lab.encoding.Decoder.*;
 import static lab.export.Homogeneity.NINETY_FIVE;
 import static lab.export.Homogeneity.NINETY_NINE;
 import static lab.export.Optimality.*;
@@ -779,10 +780,32 @@ public class RunPoolExecutor {
 
     private IndividualMetrics buildIndividualMetrics(Individual individual, FitnessFunction<?, ?> function) {
         return function.isConstant()
-                ? new IndividualMetrics(individual, getOnesCount(individual), null, null)
-                : new IndividualMetrics(individual, getOnesCount(individual),
-                function.supportsDecoding() ? decode(individual, function).doubleValue() : null,
-                function.evaluate(individual).doubleValue());
+                ? new IndividualMetrics(individual, (double) MetricUtils.getOnesCount(individual), null, null)
+                : new IndividualMetrics(
+                individual,
+                getOnesCount(individual, function),
+                function.supportsDecoding() ? getPhenotype(individual, function) : null,
+                function.evaluate(individual).doubleValue()
+        );
+    }
+
+    private double getPhenotype(Individual individual, FitnessFunction<?, ?> function) {
+        return function.getArity() == 1
+                ? decode(individual, function).doubleValue()
+                : getAverage(decodeMultipleArguments(individual, function));
+    }
+
+    private double getOnesCount(Individual individual, FitnessFunction<?, ?> function) {
+        return function.getArity() == 1
+                ? MetricUtils.getOnesCount(individual)
+                : getAverageOnesCount(getMultipleArgumentCodes(individual.getBinaryCode(), function.getArity(), function.getChromosomeLength()));
+    }
+
+    private double getAverageOnesCount(List<String> binaryCodes) {
+        List<Long> oneCounts = binaryCodes.stream()
+                .map(MetricUtils::getOnesCount)
+                .toList();
+        return getAverage(oneCounts);
     }
 
     private List<Double> getOrderedValues(Map<Integer, Double> iteratedValues) {
