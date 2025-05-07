@@ -4,6 +4,7 @@ import lab.function.*;
 import lab.function.f.F1Function;
 import lab.function.f.F1_1Function;
 import lab.function.f.F1_2Function;
+import lab.function.f.F2Function;
 import lab.operator.NoneOperator;
 import lab.operator.OnePointCrossoverOperator;
 import lab.operator.Operator;
@@ -95,6 +96,7 @@ public class Main {
         FitnessFunction<?, ?> f1 = new F1Function(5, 10, -5.12, 5.11, 2);
         FitnessFunction<?, ?> f1_1 = new F1_1Function(5, 10, -5.12, 5.11, 2);
         FitnessFunction<?, ?> f1_2 = new F1_2Function(5, 10, 0, 10.23, 2);
+        FitnessFunction<?, ?> f2 = new F2Function(5, 10, -5.12, 5.11, 2, 7);
 
 //        return List.of(constAllFunction);
 //        return List.of(fhFunction);
@@ -127,7 +129,9 @@ public class Main {
 //                ,
 //                f1_1
 //                ,
-                f1_2
+//                f1_2
+//                ,
+                f2
         );
     }
 
