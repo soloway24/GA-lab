@@ -95,6 +95,7 @@ public class Main {
         FitnessFunction<?, ?> f1_2 = new F1_2Function(5, 10, 0, 10.23, 2);
         FitnessFunction<?, ?> f2 = new F2Function(5, 10, -5.12, 5.11, 2, 7);
         FitnessFunction<?, ?> f4 = new F4Function(5, 16, -327.68, 327.67, 2);
+        FitnessFunction<?, ?> f5 = new F5Function(5, 10, -5.12, 5.11, 2);
 
 //        return List.of(constAllFunction);
 //        return List.of(fhFunction);
@@ -132,6 +133,8 @@ public class Main {
 //                f2
 //                ,
 //                f4 // TODO not working
+//                ,
+                f5
         );
     }
 
