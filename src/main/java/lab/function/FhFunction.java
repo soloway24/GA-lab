@@ -119,10 +119,4 @@ public class FhFunction implements FitnessFunction<Number, Long> {
         return false;
     }
 
-    //    @Override
-//    public List<SelectorType> getUnsupportedSelectorTypes(OperatorType operatorType) {
-//        return operatorType == NONE
-//                ? List.of(SUS)
-//                : List.of();
-//    }
 }

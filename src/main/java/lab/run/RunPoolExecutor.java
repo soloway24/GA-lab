@@ -177,11 +177,11 @@ public class RunPoolExecutor {
             individualToFitness = getIndividualToFitness(currentIndividuals, function);
 
             while (hasNotConverged(individualToFitness, operator) && i < maxIterations && shouldNotStop(individualToFitness, operator, selector, optimal)) {
+//                if (i % 10000 == 0 && i > 0) {
+//                    System.out.println("run " + (runIndex + 1) + "/" + runPoolSize + ", run pool " + (runPoolIndex + 1) + "/" + runPoolQuantity
+//                            + " iteration " + i);
+//                }
                 if (i % 10000 == 0 && i > 0) {
-                    System.out.println("run " + (runIndex + 1) + "/" + runPoolSize + ", run pool " + (runPoolIndex + 1) + "/" + runPoolQuantity
-                            + " iteration " + i);
-                }
-                if (i % 50000 == 0 && i > 0) {
                     Map<Pair<String, Double>, Long> fitnessToCount = individualToFitness.entrySet()
                             .stream()
                             .collect(groupingBy(entry -> Pair.of(entry.getKey().getBinaryCode(), entry.getValue().doubleValue()), counting()));

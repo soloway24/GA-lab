@@ -495,6 +495,7 @@ public class Exporter {
             plot.executeSilently();
         } catch (IOException | PythonExecutionException e) {
             e.printStackTrace();
+            System.err.println("X: " + x + " \nY: " + y + " \n out = " + out + " \n filename = " + filename);
         }
     }
 
@@ -508,6 +509,7 @@ public class Exporter {
             plot.executeSilently();
         } catch (IOException | PythonExecutionException e) {
             e.printStackTrace();
+            System.err.println("X: " + x + " \nY: " + y + " \n out = " + out + " \n filename = " + filename);
         }
     }
 

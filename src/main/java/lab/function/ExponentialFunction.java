@@ -57,8 +57,8 @@ public class ExponentialFunction implements FitnessFunction<Double, Double> {
 
     @Override
     public List<Encoding> getSupportedEncodings() {
-        return List.of(STANDARD, GRAY);
-//        return List.of(STANDARD);
+//        return List.of(STANDARD, GRAY);
+        return List.of(STANDARD);
 //        return List.of(GRAY);
     }
 
