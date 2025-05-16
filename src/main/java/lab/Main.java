@@ -121,7 +121,7 @@ public class Main {
 //                quadratic512Function
 //                quadraticSqrt512Function
 //                ,
-                exponent025
+//                exponent025
 //                ,
 //                exponent1
 //                ,
@@ -134,7 +134,7 @@ public class Main {
 //                ,
 //                testSin500
 //                ,
-//                f1
+                f1
 //                ,
 //                f1_1
 //                ,
@@ -275,9 +275,9 @@ public class Main {
         return List.of(
 //                rwsSelector
 //                ,
-//                susSelector
-//                ,
-//                powerScalingRws11,
+                susSelector
+                ,
+                powerScalingRws11,
 //                powerScalingRws12,
 //                powerScalingRws15,
 //                powerScalingRws2,
@@ -292,7 +292,7 @@ public class Main {
 //                dynamicPowerScalingRws0p9to1p1,
 //                dynamicPowerScalingRws0p8to1p2,
 //                dynamicPowerScalingRws0p5to1p5,
-//                dynamicPowerScalingRws0p5to2,
+                dynamicPowerScalingRws0p5to2,
 //                dynamicPowerScalingSus0p9to1p1,
 //                dynamicPowerScalingSus0p8to1p2,
 //                dynamicPowerScalingSus0p5to1p5,
@@ -303,23 +303,27 @@ public class Main {
 //                linearScalingRws15,
 //                linearScalingRws16,
 //                linearScalingRws18,
-//                linearScalingRws2,
+                linearScalingRws2
+                ,
 //                linearScalingSus12,
 //                linearScalingSus14,
 //                linearScalingSus15,
 //                linearScalingSus16,
-//                linearScalingSus18,
-//                linearScalingSus2,
+                linearScalingSus18,
+//                linearScalingSus2
+//                ,
 //
-//                averageLinearRws,
-//                medianLinearRws,
-//                maxAvgWorstLinearRws,
-//                averageLinearSus,
-//                medianLinearSus,
-//                maxAvgWorstLinearSus,
+                averageLinearRws,
+                medianLinearRws,
+                maxAvgWorstLinearRws,
+                averageLinearSus
+                ,
+                medianLinearSus,
+                maxAvgWorstLinearSus
+                ,
 //
 //                sigmaTruncationRws1,
-//                sigmaTruncationRws2,
+                sigmaTruncationRws2,
 //                sigmaTruncationRws3,
 //                sigmaTruncationRws4,
 //                sigmaTruncationSus1,
@@ -330,7 +334,7 @@ public class Main {
 //                spanMethodRws194,
 //                spanMethodSus5000,
 //
-                adaptivePowerLawScalingRws194,
+//                adaptivePowerLawScalingRws194,
                 adaptivePowerLawScalingSus5000
 //                ,
 //
@@ -349,8 +353,8 @@ public class Main {
         Operator noneOperator = new NoneOperator();
         Operator crossoverOperator = new OnePointCrossoverOperator(1);
 
-//        return List.of(noneOperator);
-        return List.of(crossoverOperator);
+        return List.of(noneOperator);
+//        return List.of(crossoverOperator);
     }
 
     private List<RunPoolConfiguration> getRunPoolConfigurations(List<FitnessFunction<?, ?>> functions,

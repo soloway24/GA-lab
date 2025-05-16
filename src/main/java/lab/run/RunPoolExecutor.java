@@ -184,7 +184,7 @@ public class RunPoolExecutor {
             while (
                     hasNotConverged(individualToFitness, prevAvgFs, operator)
                             && i < maxIterations
-                            && shouldNotStop(individualToFitness, operator, selector, optimal)
+//                            && shouldNotStop(individualToFitness, operator, selector, optimal)
             ) {
 //                if (i % 10000 == 0 && i > 0) {
 //                    System.out.println("run " + (runIndex + 1) + "/" + runPoolSize + ", run pool " + (runPoolIndex + 1) + "/" + runPoolQuantity
@@ -714,7 +714,7 @@ public class RunPoolExecutor {
     }
 
     private boolean shouldNotStop(Map<Individual, ? extends Number> individualToFitness, Operator operator, Selector selector, Individual optimal) {
-        if (selector.getSelectorType() != SUS || operator.getOperatorType() != OperatorType.CROSSOVER) {
+        if (operator.getOperatorType() != OperatorType.CROSSOVER) {
             return true;
         }
 
@@ -735,7 +735,7 @@ public class RunPoolExecutor {
         int hammingDist = hammingDist(code1, code2);
 
         if (hammingDist == 1) {
-            System.out.println("hammingDist == 1");
+            System.out.println("hammingDist == 1: " + code1 + ", " + code2);
             return false;
         }
         return true;
