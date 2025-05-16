@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import static java.lang.String.valueOf;
 import static lab.selection.AdditionalSelectorProperty.NI;
+import static lab.selection.AdditionalSelectorProperty.S0;
 
 @RequiredArgsConstructor
 public class AdaptivePowerLawScalingSusSelector implements Selector {
@@ -56,6 +57,9 @@ public class AdaptivePowerLawScalingSusSelector implements Selector {
 
     @Override
     public Map<AdditionalSelectorProperty, Object> getAdditionalSelectorProperties() {
-        return Map.of(NI, NOT_USED_VALUE);
+        return Map.of(
+                NI, NOT_USED_VALUE,
+                S0, NOT_USED_VALUE
+        );
     }
 }

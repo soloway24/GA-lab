@@ -275,7 +275,7 @@ public class Main {
         return List.of(
 //                rwsSelector
 //                ,
-                susSelector
+//                susSelector
 //                ,
 //                powerScalingRws11,
 //                powerScalingRws12,
@@ -330,8 +330,8 @@ public class Main {
 //                spanMethodRws194,
 //                spanMethodSus5000,
 //
-//                adaptivePowerLawScalingRws194,
-//                adaptivePowerLawScalingSus5000
+                adaptivePowerLawScalingRws194,
+                adaptivePowerLawScalingSus5000
 //                ,
 //
 //                windowScalingRws0,

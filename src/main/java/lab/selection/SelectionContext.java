@@ -13,6 +13,7 @@ public class SelectionContext {
     private final Map<Individual, ? extends Number> individualToFitness;
     private Integer ni;
     private Double worstFitness;
+    private Double s0;
 
     public SelectionContext(Map<Individual, ? extends Number> individualToFitness) {
         this.individualToFitness = individualToFitness;
@@ -20,9 +21,11 @@ public class SelectionContext {
 
     public SelectionContext(Map<Individual, ? extends Number> individualToFitness,
                             Integer ni,
-                            Double worstFitness) {
+                            Double worstFitness,
+                            Double s0) {
         this.individualToFitness = individualToFitness;
         this.ni = ni;
         this.worstFitness = worstFitness;
+        this.s0 = s0;
     }
 }

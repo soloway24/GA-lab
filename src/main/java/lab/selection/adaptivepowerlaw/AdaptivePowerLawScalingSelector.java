@@ -19,8 +19,6 @@ import static lab.util.MetricUtils.getStandardDeviation;
 @RequiredArgsConstructor
 public class AdaptivePowerLawScalingSelector {
 
-    private static final double MIN_SIGMA_F = 1e-8;
-
     private final ScalingSelector scalingSelector;
     @Getter
     private final int G;
@@ -39,9 +37,7 @@ public class AdaptivePowerLawScalingSelector {
     }
 
     private <T extends Number> double scale(T fitness, SelectionContext selectionContext) {
-        double fAvg = getAverageFitness(selectionContext.getIndividualToFitness());
-        double sigmaF = Math.max(getStandardDeviation(selectionContext.getIndividualToFitness().values(), fAvg), MIN_SIGMA_F);
-        double s0 = sigmaF / fAvg;
+        double s0 = selectionContext.getS0();
 
         double p1 = 0.05;
         double p2 = 0.1;

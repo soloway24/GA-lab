@@ -3,9 +3,7 @@ package lab.identifier;
 import lab.Individual;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import static java.util.function.Function.identity;
@@ -48,22 +46,26 @@ class ConvergenceIdentifierTest {
 
     @Test
     public void whenNoneOperatorThenConverged() {
-        assertThat(convergenceIdentifier.hasConverged(buildIndividuals(ALL_SAME_INDIVIDUALS), NONE), equalTo(true));
+        Deque<Double> prevAvgFs = new LinkedList<>();
+        assertThat(convergenceIdentifier.hasConverged(buildIndividuals(ALL_SAME_INDIVIDUALS), prevAvgFs, NONE), equalTo(true));
     }
 
     @Test
     public void whenNoneOperatorThenNotConverged() {
-        assertThat(convergenceIdentifier.hasConverged(buildIndividuals(HOMOGENOUS_INDIVIDUALS), NONE), equalTo(false));
+        Deque<Double> prevAvgFs = new LinkedList<>();
+        assertThat(convergenceIdentifier.hasConverged(buildIndividuals(HOMOGENOUS_INDIVIDUALS), prevAvgFs, NONE), equalTo(false));
     }
 
     @Test
     public void whenSomeOperatorThenConverged() {
-        assertThat(convergenceIdentifier.hasConverged(buildIndividuals(HOMOGENOUS_INDIVIDUALS), CROSSOVER), equalTo(true));
+        Deque<Double> prevAvgFs = new LinkedList<>();
+        assertThat(convergenceIdentifier.hasConverged(buildIndividuals(HOMOGENOUS_INDIVIDUALS), prevAvgFs, CROSSOVER), equalTo(true));
     }
 
     @Test
     public void whenSomeOperatorThenNotConverged() {
-        assertThat(convergenceIdentifier.hasConverged(buildIndividuals(NOT_HOMOGENOUS_INDIVIDUALS), CROSSOVER), equalTo(false));
+        Deque<Double> prevAvgFs = new LinkedList<>();
+        assertThat(convergenceIdentifier.hasConverged(buildIndividuals(NOT_HOMOGENOUS_INDIVIDUALS), prevAvgFs, CROSSOVER), equalTo(false));
     }
 
     @Test

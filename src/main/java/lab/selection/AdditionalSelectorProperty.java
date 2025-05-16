@@ -4,5 +4,6 @@ public enum AdditionalSelectorProperty {
 
     NI,
     WINDOW_WORST,
+    S0
 
 }

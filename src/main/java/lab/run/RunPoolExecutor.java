@@ -40,8 +40,7 @@ import static lab.export.Optimality.*;
 import static lab.identifier.ConvergenceIdentifier.*;
 import static lab.identifier.SuccessfulRunIdentifier.getBestIndividual;
 import static lab.operator.OperatorType.NONE;
-import static lab.selection.AdditionalSelectorProperty.NI;
-import static lab.selection.AdditionalSelectorProperty.WINDOW_WORST;
+import static lab.selection.AdditionalSelectorProperty.*;
 import static lab.selection.SelectorType.SUS;
 import static lab.util.CalculationUtils.*;
 import static lab.util.MetricUtils.*;
@@ -161,6 +160,8 @@ public class RunPoolExecutor {
             int niAlH = -1;
             double fAlH = -1;
 
+            double s0 = NOT_CALCULATED;
+
             Map<Integer, Double> generationToAvgF = new HashMap<>();
             Map<Integer, Double> generationToMaxF = new HashMap<>();
             Map<Integer, Double> generationToSigmaF = new HashMap<>();
@@ -181,10 +182,9 @@ public class RunPoolExecutor {
             individualToFitness = getIndividualToFitness(currentIndividuals, function);
 
             while (
-                    hasNotConverged(individualToFitness, operator)
+                    hasNotConverged(individualToFitness, prevAvgFs, operator)
                             && i < maxIterations
                             && shouldNotStop(individualToFitness, operator, selector, optimal)
-                            && !stoppedEvolving(individualToFitness, prevAvgFs, operator)
             ) {
 //                if (i % 10000 == 0 && i > 0) {
 //                    System.out.println("run " + (runIndex + 1) + "/" + runPoolSize + ", run pool " + (runPoolIndex + 1) + "/" + runPoolQuantity
@@ -207,22 +207,28 @@ public class RunPoolExecutor {
                     worstWindowFs.addLast(currentWorstF);
                 }
 
-                SelectionContext selectionContext = buildSelectionContext(selector, individualToFitness, i, worstWindowFs);
+                double avgF = getAverageFitness(individualToFitness);
+                generationToAvgF.put(i, avgF);
+
+                double sigmaF = getStandardDeviation(individualToFitness.values(), avgF);
+                generationToSigmaF.put(i, sigmaF);
+
+                if (i == 0) {
+                    s0 = sigmaF / avgF;
+                }
+
+                SelectionContext selectionContext = buildSelectionContext(selector, individualToFitness, i, worstWindowFs, s0);
 
                 parentPool = selector.select(selectionContext);
                 List<Individual> parentCopies = new ArrayList<>(parentPool);
                 shuffle(parentCopies);
                 offsprings = operator.apply(parentPool);
 
-                double avgF = getAverageFitness(individualToFitness);
-                generationToAvgF.put(i, avgF);
 
                 Individual best = getBestIndividual(individualToFitness);
                 double maxF = individualToFitness.get(best).doubleValue();
                 generationToMaxF.put(i, maxF);
 
-                double sigmaF = getStandardDeviation(individualToFitness.values(), avgF);
-                generationToSigmaF.put(i, sigmaF);
 
                 int unique = getUniqueBinaryCodes(currentIndividuals).size();
                 generationToUniqueX.put(i, unique);
@@ -320,7 +326,7 @@ public class RunPoolExecutor {
 
             // metrics for all functions
             int ni = i;
-            boolean hasConverged = convergenceIdentifier.hasConverged(individualToFitness, operator.getOperatorType());
+            boolean hasConverged = convergenceIdentifier.hasConverged(individualToFitness, prevAvgFs, operator.getOperatorType());
             boolean isSuc = function.isSuccessful(individualToFitness, operator.getOperatorType(), hasConverged);
 
             double rrStart = iterationToRR.get(1);
@@ -649,7 +655,8 @@ public class RunPoolExecutor {
     private SelectionContext buildSelectionContext(Selector selector,
                                                    Map<Individual, ? extends Number> individualToFitness,
                                                    int ni,
-                                                   Deque<Double> worstWindowFs) {
+                                                   Deque<Double> worstWindowFs,
+                                                   Double s0) {
         SelectionContext.SelectionContextBuilder builder = SelectionContext.builder()
                 .withIndividualToFitness(individualToFitness);
 
@@ -659,6 +666,9 @@ public class RunPoolExecutor {
         if (selector.getAdditionalSelectorProperties().containsKey(WINDOW_WORST)) {
             double worstWindowF = getMinDouble(worstWindowFs);
             builder.withWorstFitness(worstWindowF);
+        }
+        if (selector.getAdditionalSelectorProperties().containsKey(S0)) {
+            builder.withS0(s0);
         }
 
         return builder.build();
@@ -739,36 +749,6 @@ public class RunPoolExecutor {
             i++;
         }
         return count;
-    }
-
-    private boolean stoppedEvolving(Map<Individual, ? extends Number> individualToFitness,
-                                    Deque<Double> prevAvgFs,
-                                    Operator operator) {
-        if (operator.getOperatorType() != OperatorType.CROSSOVER) {
-            return false;
-        }
-
-        int prevAvgFSize = 1000;
-
-        double avgF = getAverage(individualToFitness.values());
-        if (prevAvgFs.size() == prevAvgFSize) {
-            prevAvgFs.removeFirst();
-            prevAvgFs.addLast(avgF);
-        } else {
-            prevAvgFs.addLast(avgF);
-        }
-
-        if (prevAvgFs.size() < prevAvgFSize) {
-            return false;
-        }
-
-        double minF = getMinDouble(prevAvgFs);
-        double maxF = getMaxDouble(prevAvgFs);
-        if (maxF - minF <= 0.0001) {
-            System.out.println("Stopped Evolving");
-            return true;
-        }
-        return false;
     }
 
     private void populateHistogramData(FitnessFunction<?, ? extends Number> function,
@@ -912,8 +892,8 @@ public class RunPoolExecutor {
                 .anyMatch(code -> optimal.getBinaryCode().equals(code));
     }
 
-    private boolean hasNotConverged(Map<Individual, ? extends Number> individualToFitness, Operator operator) {
-        return !convergenceIdentifier.hasConverged(individualToFitness, operator.getOperatorType());
+    private boolean hasNotConverged(Map<Individual, ? extends Number> individualToFitness, Deque<Double> prevAvgFs, Operator operator) {
+        return !convergenceIdentifier.hasConverged(individualToFitness, prevAvgFs, operator.getOperatorType());
     }
 
     private <ARG_T extends Number, RES_T extends Number> Map<Individual, RES_T> getIndividualToFitness(List<Individual> individuals,

@@ -9,21 +9,54 @@ import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
+import static lab.util.CalculationUtils.*;
 
 @Component
 public class ConvergenceIdentifier {
 
     private static final double HOMOGENOUS_PERCENTAGE = 0.99;
+    private static final int PREV_AVG_F_SIZE = 1000;
+    public static final double STOPPED_EVOLVING_EPSILON = 0.0001;
 
-    public boolean hasConverged(Map<Individual, ? extends Number> individualToFitness, OperatorType operatorType) {
+    public boolean hasConverged(Map<Individual, ? extends Number> individualToFitness,
+                                Deque<Double> prevAvgFs,
+                                OperatorType operatorType) {
         if (operatorType == OperatorType.NONE) {
             return areAllTheSame(individualToFitness.keySet())
                     // only for Rastrigin without operators
 //                    || areAllTheSameDoubles(individualToFitness.values())
                     ;
-
         }
-        return isHomogenous(individualToFitness.keySet(), HOMOGENOUS_PERCENTAGE);
+        return isHomogenous(individualToFitness.keySet(), HOMOGENOUS_PERCENTAGE)
+                || stoppedEvolving(individualToFitness, prevAvgFs, operatorType);
+    }
+
+    private boolean stoppedEvolving(Map<Individual, ? extends Number> individualToFitness,
+                                    Deque<Double> prevAvgFs,
+                                    OperatorType operatorType) {
+        if (operatorType != OperatorType.CROSSOVER) {
+            return false;
+        }
+
+        double avgF = getAverage(individualToFitness.values());
+        if (prevAvgFs.size() == PREV_AVG_F_SIZE) {
+            prevAvgFs.removeFirst();
+            prevAvgFs.addLast(avgF);
+        } else {
+            prevAvgFs.addLast(avgF);
+        }
+
+        if (prevAvgFs.size() < PREV_AVG_F_SIZE) {
+            return false;
+        }
+
+        double minF = getMinDouble(prevAvgFs);
+        double maxF = getMaxDouble(prevAvgFs);
+        if (maxF - minF <= STOPPED_EVOLVING_EPSILON) {
+            System.out.println("Stopped Evolving");
+            return true;
+        }
+        return false;
     }
 
     private boolean areAllTheSameDoubles(Collection<? extends Number> values) {
