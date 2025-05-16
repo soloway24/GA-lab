@@ -170,7 +170,7 @@ public class RunPoolExecutor {
             Map<Integer, Double> generationToBestRatio = new HashMap<>();
 
             Map<Integer, List<IndividualMetrics>> generationToIndMetrics = new HashMap<>();
-            Map<Homogeneity, List<IndividualMetrics>> homogeneityToIndMetrics = new HashMap<>();
+            Map<Homogeneity, Pair<Integer, List<IndividualMetrics>>> homogeneityToIndMetrics = new HashMap<>();
             Map<Homogeneity, Integer> homogeneityToGeneration = new HashMap<>();
             Map<PopulationTimingType, PopulationSnapshot> timingTypeToPopulationSnapshot = new HashMap<>();
 
@@ -775,7 +775,7 @@ public class RunPoolExecutor {
                                        List<Individual> currentIndividuals,
                                        int i,
                                        Map<Integer, List<IndividualMetrics>> generationToIndMetrics,
-                                       Map<Homogeneity, List<IndividualMetrics>> homogeneityToIndMetrics) {
+                                       Map<Homogeneity, Pair<Integer, List<IndividualMetrics>>> homogeneityToIndMetrics) {
         if (i < 3 || (i) % 10000 == 0) {
             List<IndividualMetrics> individualMetrics = buildAllIndividualMetrics(currentIndividuals, function);
             generationToIndMetrics.put(i, individualMetrics);
@@ -785,7 +785,7 @@ public class RunPoolExecutor {
         exportedHomogeneities
                 .forEach(h -> {
                     if (!homogeneityToIndMetrics.containsKey(h) && isHomogenous(currentIndividuals, h.getPercentage())) {
-                        homogeneityToIndMetrics.put(h, buildAllIndividualMetrics(currentIndividuals, function));
+                        homogeneityToIndMetrics.put(h, Pair.of(i, buildAllIndividualMetrics(currentIndividuals, function)));
                     }
                 });
     }

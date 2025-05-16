@@ -11,7 +11,7 @@ import lab.population.PopulationTimingType;
 import lab.run.RunConfiguration;
 import lab.run.RunPoolStats;
 import lab.run.RunStats;
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -244,9 +244,9 @@ public class Exporter {
 
         System.gc();
 
-        Map<Homogeneity, List<IndividualMetrics>> homogeneityToIndMetrics = runStats.homogeneityToIndMetrics();
+        Map<Homogeneity, Pair<Integer, List<IndividualMetrics>>> homogeneityToIndMetrics = runStats.homogeneityToIndMetrics();
         homogeneityToIndMetrics.forEach((h, individualMetrics) ->
-                drawGenerationHistograms(individualMetrics, plotExportPath, "homo-" + h.getPercentage(), function, populationSize));
+                drawGenerationHistograms(individualMetrics.getRight(), plotExportPath, individualMetrics.getLeft() + "-homo-" + h.getPercentage(), function, populationSize));
 
         System.gc();
 
@@ -255,7 +255,7 @@ public class Exporter {
 
     private void exportHistogramTable(String plotExportPath,
                                       Map<Integer, List<IndividualMetrics>> generationToIndMetrics,
-                                      Map<Homogeneity, List<IndividualMetrics>> homogeneityToIndMetrics,
+                                      Map<Homogeneity, Pair<Integer, List<IndividualMetrics>>> homogeneityToIndMetrics,
                                       boolean isConst,
                                       boolean supportsDecoding) {
 
@@ -265,13 +265,13 @@ public class Exporter {
 
         List<Homogeneity> exportedHomogeneities = List.of(SEVENTY_FIVE, NINETY, NINETY_FIVE, NINETY_NINE);
         exportedHomogeneities.stream()
-                .map(h -> Pair.create(h, homogeneityToIndMetrics.get(h)))
+                .map(h -> Pair.of(h, homogeneityToIndMetrics.get(h)))
                 .filter(pair -> pair.getValue() != null)
                 .forEach(pair ->
                         exportSingleHistogramData(
                                 plotExportPath,
-                                "homo-" + pair.getKey().getPercentage(),
-                                pair.getValue(),
+                                pair.getValue().getKey() + "-homo-" + pair.getKey().getPercentage(),
+                                pair.getValue().getValue(),
                                 isConst,
                                 supportsDecoding)
                 );
@@ -339,7 +339,7 @@ public class Exporter {
     private void exportPopulationSnapshotsTable(String plotExportPath, Map<PopulationTimingType, PopulationSnapshot> timingTypeToPopulationSnapshot) {
         List<PopulationTimingType> exportedTimingTypes = List.of(INITIAL, AVERAGE, CONVERGING);
         exportedTimingTypes.stream()
-                .map(timingType -> Pair.create(timingType, timingTypeToPopulationSnapshot.get(timingType)))
+                .map(timingType -> Pair.of(timingType, timingTypeToPopulationSnapshot.get(timingType)))
                 .filter(pair -> pair.getValue() != null)
                 .forEach(pair ->
                         exportSinglePopulationSnapshotData(
@@ -692,21 +692,21 @@ public class Exporter {
                 .collect(groupingBy(identity(), counting()))
                 .entrySet()
                 .stream()
-                .collect(toUnmodifiableMap(entry -> entry.getKey().individual().getBinaryCode(), entry -> Pair.create(entry.getKey(), entry.getValue()),
-                        (a, b) -> Pair.create(a.getFirst(), a.getSecond() + b.getSecond())));
+                .collect(toUnmodifiableMap(entry -> entry.getKey().individual().getBinaryCode(), entry -> Pair.of(entry.getKey(), entry.getValue()),
+                        (a, b) -> Pair.of(a.getLeft(), a.getRight() + b.getRight())));
 
         genotypeToMetrics.forEach((key, value) -> {
             Row row = sheet.createRow(rowIndex.getAndIncrement());
             AtomicInteger i = new AtomicInteger();
             row.createCell(i.getAndIncrement()).setCellValue(key);
-            row.createCell(i.getAndIncrement()).setCellValue(value.getFirst().ones());
+            row.createCell(i.getAndIncrement()).setCellValue(value.getLeft().ones());
 
-            ofNullable(value.getFirst().phenotype())
+            ofNullable(value.getLeft().phenotype())
                     .ifPresent(ph -> row.createCell(i.getAndIncrement()).setCellValue(ph));
-            ofNullable(value.getFirst().fitness())
+            ofNullable(value.getLeft().fitness())
                     .ifPresent(f -> row.createCell(i.getAndIncrement()).setCellValue(f));
 
-            row.createCell(i.getAndIncrement()).setCellValue(value.getSecond());
+            row.createCell(i.getAndIncrement()).setCellValue(value.getRight());
         });
     }
 

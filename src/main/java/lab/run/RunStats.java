@@ -7,6 +7,7 @@ import lab.metric.SingleHomogeneityMetrics;
 import lab.population.PopulationSnapshot;
 import lab.population.PopulationTimingType;
 import lombok.Builder;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 import java.util.Map;
@@ -116,7 +117,7 @@ public record RunStats(Map<Individual, ? extends Number> finalPopulation,
                        List<Double> fishes,
                        List<Double> kendalls,
                        Map<Integer, List<IndividualMetrics>> generationToIndMetrics,
-                       Map<Homogeneity, List<IndividualMetrics>> homogeneityToIndMetrics,
+                       Map<Homogeneity, Pair<Integer, List<IndividualMetrics>>> homogeneityToIndMetrics,
                        Map<PopulationTimingType, PopulationSnapshot> timingTypeToPopulationSnapshot,
                        SingleHomogeneityMetrics singleHomogeneityMetrics
 ) {

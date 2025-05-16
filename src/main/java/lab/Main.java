@@ -107,7 +107,7 @@ public class Main {
 //        return List.of(exponent1);
 //        return List.of(exponent2);
         return List.of(
-                fhFunction
+//                fhFunction
 //                ,
 //                fhd2Function
 //                fhd10Function
@@ -121,7 +121,7 @@ public class Main {
 //                quadratic512Function
 //                quadraticSqrt512Function
 //                ,
-//                exponent025
+                exponent025
 //                ,
 //                exponent1
 //                ,
