@@ -172,11 +172,17 @@ public class RunPoolExecutor {
             Map<PopulationTimingType, PopulationSnapshot> timingTypeToPopulationSnapshot = new HashMap<>();
 
             Deque<Double> worstWindowFs = new LinkedList<>();
+            Deque<Double> prevAvgFs = new LinkedList<>();
 
             int maxIterations = getMaxIterations(function, selector);
             individualToFitness = getIndividualToFitness(currentIndividuals, function);
 
-            while (hasNotConverged(individualToFitness, operator) && i < maxIterations && shouldNotStop(individualToFitness, operator, selector, optimal)) {
+            while (
+                    hasNotConverged(individualToFitness, operator)
+                            && i < maxIterations
+                            && shouldNotStop(individualToFitness, operator, selector, optimal)
+                            && !stoppedEvolving(individualToFitness, prevAvgFs, operator)
+            ) {
 //                if (i % 10000 == 0 && i > 0) {
 //                    System.out.println("run " + (runIndex + 1) + "/" + runPoolSize + ", run pool " + (runPoolIndex + 1) + "/" + runPoolQuantity
 //                            + " iteration " + i);
@@ -702,7 +708,12 @@ public class RunPoolExecutor {
             return true;
         }
         int hammingDist = hammingDist(code1, code2);
-        return hammingDist != 1;
+
+        if (hammingDist == 1) {
+            System.out.println("hammingDist == 1");
+            return false;
+        }
+        return true;
     }
 
     private int hammingDist(String str1, String str2) {
@@ -713,6 +724,36 @@ public class RunPoolExecutor {
             i++;
         }
         return count;
+    }
+
+    private boolean stoppedEvolving(Map<Individual, ? extends Number> individualToFitness,
+                                    Deque<Double> prevAvgFs,
+                                    Operator operator) {
+        if (operator.getOperatorType() != OperatorType.CROSSOVER) {
+            return true;
+        }
+
+        int prevAvgFSize = 1000;
+
+        double avgF = getAverage(individualToFitness.values());
+        if (prevAvgFs.size() == prevAvgFSize) {
+            prevAvgFs.removeFirst();
+            prevAvgFs.addLast(avgF);
+        } else {
+            prevAvgFs.addLast(avgF);
+        }
+
+        if (prevAvgFs.size() < prevAvgFSize) {
+            return false;
+        }
+
+        double minF = getMinDouble(prevAvgFs);
+        double maxF = getMaxDouble(prevAvgFs);
+        if (maxF - minF <= 0.0001) {
+            System.out.println("Stopped Evolving");
+            return true;
+        }
+        return false;
     }
 
     private void populateHistogramData(FitnessFunction<?, ? extends Number> function,

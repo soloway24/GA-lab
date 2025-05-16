@@ -482,10 +482,10 @@ public class Exporter {
 
         return functionName + "/" +
                 populationSize + "/" +
-                selectorName + "/" +
                 operatorName + "/" +
                 populationType + "/" +
-                encoding + "/";
+                encoding + "/" +
+                selectorName + "/";
     }
 
     private void drawPlot(List<? extends Number> x, List<? extends Number> y, String out, String filename) {
