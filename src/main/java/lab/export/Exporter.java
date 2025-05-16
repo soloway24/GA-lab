@@ -144,8 +144,8 @@ public class Exporter {
                         List<Double> is = runStats.is();
                         List<Double> prs = runStats.prs();
                         List<Double> grs = runStats.grs();
-                        List<Double> fishes = runStats.fishes();
-                        List<Double> kendalls = runStats.kendalls();
+//                        List<Double> fishes = runStats.fishes();
+//                        List<Double> kendalls = runStats.kendalls();
 
                         List<Runnable> nonConstantPlotTasks = List.of(
                                 () -> drawPlot(xGenerations, avgFs, plotExportPath, "avgFs"),
@@ -161,8 +161,8 @@ public class Exporter {
                                         drawPlot(xIterations, grs, plotExportPath, "Gr");
                                     }
                                 },
-                                () -> drawPlot(xIterations, fishes, plotExportPath, "Fisher's Exact Test"),
-                                () -> drawPlot(xIterations, kendalls, plotExportPath, "Kendall's Tau-B", -1.1, 1.1),
+//                                () -> drawPlot(xIterations, fishes, plotExportPath, "Fisher's Exact Test"),
+//                                () -> drawPlot(xIterations, kendalls, plotExportPath, "Kendall's Tau-B", -1.1, 1.1),
                                 () -> drawPlot(xGenerations, prs, sigmaFs, plotExportPath, "Pr and sigmaF", "Pr", "SigmaF")
                         );
                         nonConstantPlotTasks.parallelStream().forEach(Runnable::run);
@@ -172,14 +172,15 @@ public class Exporter {
                         createGenerationRows(sheet, 1, xGenerations, avgFs, maxFs, sigmaFs, optimalRatios, bestRatios, uniques, prs);
 
                         int freeIndex = getFirstNullRowIndex(sheet);
-                        createPlotsIterationDataHeader(sheet, freeIndex + 1);
-                        createIterationRows(sheet, freeIndex + 2, xIterations, rrs, tetas, ss, is, grs, fishes, kendalls);
+                        createPlotsIterationDataHeader(sheet, freeIndex + 1, runConfiguration);
+//                        createIterationRows(sheet, freeIndex + 2, xIterations, rrs, tetas, ss, is, grs, fishes, kendalls);
+                        createIterationRows(sheet, freeIndex + 2, runConfiguration, xIterations, rrs, tetas, ss, is, grs);
                     } else {
                         createPlotsGenerationDataHeaderConst(sheet);
                         createGenerationRows(sheet, 1, xGenerations, uniques);
 
                         int freeIndex = getFirstNullRowIndex(sheet);
-                        createPlotsIterationDataHeader(sheet, freeIndex + 1);
+                        createPlotsIterationDataHeader(sheet, freeIndex + 1, runConfiguration);
                         createIterationRows(sheet, freeIndex + 2, xIterations, rrs, tetas);
                     }
 
@@ -429,14 +430,16 @@ public class Exporter {
     }
 
     private void createIterationRows(Sheet sheet, int index,
+                                     RunConfiguration runConfiguration,
                                      List<Integer> xIterations,
                                      List<Double> rrs,
                                      List<Double> tetas,
                                      List<Double> ss,
                                      List<Double> is,
-                                     List<Double> grs,
-                                     List<Double> fishes,
-                                     List<Double> kendalls
+                                     List<Double> grs
+//            ,
+//                                     List<Double> fishes,
+//                                     List<Double> kendalls
     ) {
         int rowIndex = index;
         int size = xIterations.size();
@@ -459,9 +462,13 @@ public class Exporter {
             row.createCell(cellIndex++).setCellValue(tetas.get(j));
             row.createCell(cellIndex++).setCellValue(ss.get(j));
             row.createCell(cellIndex++).setCellValue(is.get(j));
-            row.createCell(cellIndex++).setCellValue(grs.get(j));
-            row.createCell(cellIndex++).setCellValue(fishes.get(j));
-            row.createCell(cellIndex++).setCellValue(kendalls.get(j));
+
+            if (runConfiguration.operator().getOperatorType() == NONE) {
+                row.createCell(cellIndex++).setCellValue(grs.get(j));
+            }
+
+//            row.createCell(cellIndex++).setCellValue(fishes.get(j));
+//            row.createCell(cellIndex++).setCellValue(kendalls.get(j));
         }
     }
 
@@ -725,7 +732,7 @@ public class Exporter {
         row.createCell(i++).setCellValue("unique_X");
     }
 
-    private void createPlotsIterationDataHeader(Sheet sheet, int rowIndex) {
+    private void createPlotsIterationDataHeader(Sheet sheet, int rowIndex, RunConfiguration runConfiguration) {
         Row row = sheet.createRow(rowIndex);
         int i = 0;
 
@@ -734,9 +741,12 @@ public class Exporter {
         row.createCell(i++).setCellValue("Teta");
         row.createCell(i++).setCellValue("difference");
         row.createCell(i++).setCellValue("intensity");
-        row.createCell(i++).setCellValue("Gr");
-        row.createCell(i++).setCellValue("Pfet");
-        row.createCell(i++).setCellValue("Ptau");
+
+        if (runConfiguration.operator().getOperatorType() == NONE) {
+            row.createCell(i++).setCellValue("Gr");
+        }
+//        row.createCell(i++).setCellValue("Pfet");
+//        row.createCell(i++).setCellValue("Ptau");
     }
 
     private void createRunHeaderRow(Sheet sheet, RunConfiguration runConfiguration) {
@@ -831,19 +841,19 @@ public class Exporter {
         row.createCell(i++).setCellValue("Avg_95h");
         row.createCell(i++).setCellValue("NumOpt_95h");
 
-        row.createCell(i++).setCellValue("Fish_start");
-        row.createCell(i++).setCellValue("Fish_min");
-        row.createCell(i++).setCellValue("NI_Fish_min");
-        row.createCell(i++).setCellValue("Fish_max");
-        row.createCell(i++).setCellValue("NI_Fish_max");
-        row.createCell(i++).setCellValue("Fish_avg");
-
-        row.createCell(i++).setCellValue("Kend_start");
-        row.createCell(i++).setCellValue("Kend_min");
-        row.createCell(i++).setCellValue("NI_Kend_min");
-        row.createCell(i++).setCellValue("Kend_max");
-        row.createCell(i++).setCellValue("NI_Kend_max");
-        row.createCell(i++).setCellValue("Kend_avg");
+//        row.createCell(i++).setCellValue("Fish_start");
+//        row.createCell(i++).setCellValue("Fish_min");
+//        row.createCell(i++).setCellValue("NI_Fish_min");
+//        row.createCell(i++).setCellValue("Fish_max");
+//        row.createCell(i++).setCellValue("NI_Fish_max");
+//        row.createCell(i++).setCellValue("Fish_avg");
+//
+//        row.createCell(i++).setCellValue("Kend_start");
+//        row.createCell(i++).setCellValue("Kend_min");
+//        row.createCell(i++).setCellValue("NI_Kend_min");
+//        row.createCell(i++).setCellValue("Kend_max");
+//        row.createCell(i++).setCellValue("NI_Kend_max");
+//        row.createCell(i++).setCellValue("Kend_avg");
     }
 
     private void createRunRow(Sheet sheet, int index, FitnessFunction<?, ?> function, RunStats runStats, RunConfiguration runConfiguration) {
@@ -939,19 +949,19 @@ public class Exporter {
             row.createCell(i++).setCellValue(runStats.singleHomogeneityMetrics().avg95h());
             row.createCell(i++).setCellValue(runStats.singleHomogeneityMetrics().numOpt95h());
 
-            row.createCell(i++).setCellValue(runStats.fishStart());
-            row.createCell(i++).setCellValue(runStats.fishMin());
-            row.createCell(i++).setCellValue(runStats.niFishMin());
-            row.createCell(i++).setCellValue(runStats.fishMax());
-            row.createCell(i++).setCellValue(runStats.niFishMax());
-            row.createCell(i++).setCellValue(runStats.fishAvg());
-
-            row.createCell(i++).setCellValue(runStats.kendallStart());
-            row.createCell(i++).setCellValue(runStats.kendallMin());
-            row.createCell(i++).setCellValue(runStats.niKendallMin());
-            row.createCell(i++).setCellValue(runStats.kendallMax());
-            row.createCell(i++).setCellValue(runStats.niKendallMax());
-            row.createCell(i++).setCellValue(runStats.kendallAvg());
+//            row.createCell(i++).setCellValue(runStats.fishStart());
+//            row.createCell(i++).setCellValue(runStats.fishMin());
+//            row.createCell(i++).setCellValue(runStats.niFishMin());
+//            row.createCell(i++).setCellValue(runStats.fishMax());
+//            row.createCell(i++).setCellValue(runStats.niFishMax());
+//            row.createCell(i++).setCellValue(runStats.fishAvg());
+//
+//            row.createCell(i++).setCellValue(runStats.kendallStart());
+//            row.createCell(i++).setCellValue(runStats.kendallMin());
+//            row.createCell(i++).setCellValue(runStats.niKendallMin());
+//            row.createCell(i++).setCellValue(runStats.kendallMax());
+//            row.createCell(i++).setCellValue(runStats.niKendallMax());
+//            row.createCell(i++).setCellValue(runStats.kendallAvg());
         }
     }
 
@@ -1096,35 +1106,35 @@ public class Exporter {
         row.createCell(i++).setCellValue("Avg_Pr_start");
         row.createCell(i++).setCellValue("Sigma_Pr_start");
 
-        row.createCell(i++).setCellValue("Min_Fish_min");
-        row.createCell(i++).setCellValue("NI_Fish_min");
-        row.createCell(i++).setCellValue("Max_Fish_max");
-        row.createCell(i++).setCellValue("NI_Fish_max");
-        row.createCell(i++).setCellValue("Avg_Fish_min");
-        row.createCell(i++).setCellValue("Avg_Fish_max");
-        row.createCell(i++).setCellValue("Avg_Fish_avg");
-        row.createCell(i++).setCellValue("Sigma_Fish_min");
-        row.createCell(i++).setCellValue("Sigma_Fish_max");
-        row.createCell(i++).setCellValue("Sigma_Fish_avg");
-        row.createCell(i++).setCellValue("Min_Fish_start");
-        row.createCell(i++).setCellValue("Max_Fish_start");
-        row.createCell(i++).setCellValue("Avg_Fish_start");
-        row.createCell(i++).setCellValue("Sigma_Fish_start");
-
-        row.createCell(i++).setCellValue("Min_Kend_min");
-        row.createCell(i++).setCellValue("NI_Kend_min");
-        row.createCell(i++).setCellValue("Max_Kend_max");
-        row.createCell(i++).setCellValue("NI_Kend_max");
-        row.createCell(i++).setCellValue("Avg_Kend_min");
-        row.createCell(i++).setCellValue("Avg_Kend_max");
-        row.createCell(i++).setCellValue("Avg_Kend_avg");
-        row.createCell(i++).setCellValue("Sigma_Kend_min");
-        row.createCell(i++).setCellValue("Sigma_Kend_max");
-        row.createCell(i++).setCellValue("Sigma_Kend_avg");
-        row.createCell(i++).setCellValue("Min_Kend_start");
-        row.createCell(i++).setCellValue("Max_Kend_start");
-        row.createCell(i++).setCellValue("Avg_Kend_start");
-        row.createCell(i++).setCellValue("Sigma_Kend_start");
+//        row.createCell(i++).setCellValue("Min_Fish_min");
+//        row.createCell(i++).setCellValue("NI_Fish_min");
+//        row.createCell(i++).setCellValue("Max_Fish_max");
+//        row.createCell(i++).setCellValue("NI_Fish_max");
+//        row.createCell(i++).setCellValue("Avg_Fish_min");
+//        row.createCell(i++).setCellValue("Avg_Fish_max");
+//        row.createCell(i++).setCellValue("Avg_Fish_avg");
+//        row.createCell(i++).setCellValue("Sigma_Fish_min");
+//        row.createCell(i++).setCellValue("Sigma_Fish_max");
+//        row.createCell(i++).setCellValue("Sigma_Fish_avg");
+//        row.createCell(i++).setCellValue("Min_Fish_start");
+//        row.createCell(i++).setCellValue("Max_Fish_start");
+//        row.createCell(i++).setCellValue("Avg_Fish_start");
+//        row.createCell(i++).setCellValue("Sigma_Fish_start");
+//
+//        row.createCell(i++).setCellValue("Min_Kend_min");
+//        row.createCell(i++).setCellValue("NI_Kend_min");
+//        row.createCell(i++).setCellValue("Max_Kend_max");
+//        row.createCell(i++).setCellValue("NI_Kend_max");
+//        row.createCell(i++).setCellValue("Avg_Kend_min");
+//        row.createCell(i++).setCellValue("Avg_Kend_max");
+//        row.createCell(i++).setCellValue("Avg_Kend_avg");
+//        row.createCell(i++).setCellValue("Sigma_Kend_min");
+//        row.createCell(i++).setCellValue("Sigma_Kend_max");
+//        row.createCell(i++).setCellValue("Sigma_Kend_avg");
+//        row.createCell(i++).setCellValue("Min_Kend_start");
+//        row.createCell(i++).setCellValue("Max_Kend_start");
+//        row.createCell(i++).setCellValue("Avg_Kend_start");
+//        row.createCell(i++).setCellValue("Sigma_Kend_start");
 
         // all runs
         row.createCell(i++).setCellValue("NI_with_Loose");
@@ -1385,35 +1395,35 @@ public class Exporter {
             row.createCell(i++).setCellValue(runPoolStats.avgPrStart());
             row.createCell(i++).setCellValue(runPoolStats.sigmaPrStart());
 
-            row.createCell(i++).setCellValue(runPoolStats.minFishMin());
-            row.createCell(i++).setCellValue(runPoolStats.niMinFishMin());
-            row.createCell(i++).setCellValue(runPoolStats.maxFishMax());
-            row.createCell(i++).setCellValue(runPoolStats.niMaxFishMax());
-            row.createCell(i++).setCellValue(runPoolStats.avgFishMin());
-            row.createCell(i++).setCellValue(runPoolStats.avgFishMax());
-            row.createCell(i++).setCellValue(runPoolStats.avgFishAvg());
-            row.createCell(i++).setCellValue(runPoolStats.sigmaFishMin());
-            row.createCell(i++).setCellValue(runPoolStats.sigmaFishMax());
-            row.createCell(i++).setCellValue(runPoolStats.sigmaFishAvg());
-            row.createCell(i++).setCellValue(runPoolStats.minFishStart());
-            row.createCell(i++).setCellValue(runPoolStats.maxFishStart());
-            row.createCell(i++).setCellValue(runPoolStats.avgFishStart());
-            row.createCell(i++).setCellValue(runPoolStats.sigmaFishStart());
+//            row.createCell(i++).setCellValue(runPoolStats.minFishMin());
+//            row.createCell(i++).setCellValue(runPoolStats.niMinFishMin());
+//            row.createCell(i++).setCellValue(runPoolStats.maxFishMax());
+//            row.createCell(i++).setCellValue(runPoolStats.niMaxFishMax());
+//            row.createCell(i++).setCellValue(runPoolStats.avgFishMin());
+//            row.createCell(i++).setCellValue(runPoolStats.avgFishMax());
+//            row.createCell(i++).setCellValue(runPoolStats.avgFishAvg());
+//            row.createCell(i++).setCellValue(runPoolStats.sigmaFishMin());
+//            row.createCell(i++).setCellValue(runPoolStats.sigmaFishMax());
+//            row.createCell(i++).setCellValue(runPoolStats.sigmaFishAvg());
+//            row.createCell(i++).setCellValue(runPoolStats.minFishStart());
+//            row.createCell(i++).setCellValue(runPoolStats.maxFishStart());
+//            row.createCell(i++).setCellValue(runPoolStats.avgFishStart());
+//            row.createCell(i++).setCellValue(runPoolStats.sigmaFishStart());
 
-            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().minKendallMin());
-            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().niMinKendallMin());
-            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().maxKendallMax());
-            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().niMaxKendallMax());
-            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().avgKendallMin());
-            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().avgKendallMax());
-            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().avgKendallAvg());
-            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().sigmaKendallMin());
-            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().sigmaKendallMax());
-            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().sigmaKendallAvg());
-            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().minKendallStart());
-            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().maxKendallStart());
-            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().avgKendallStart());
-            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().sigmaKendallStart());
+//            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().minKendallMin());
+//            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().niMinKendallMin());
+//            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().maxKendallMax());
+//            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().niMaxKendallMax());
+//            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().avgKendallMin());
+//            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().avgKendallMax());
+//            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().avgKendallAvg());
+//            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().sigmaKendallMin());
+//            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().sigmaKendallMax());
+//            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().sigmaKendallAvg());
+//            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().minKendallStart());
+//            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().maxKendallStart());
+//            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().avgKendallStart());
+//            row.createCell(i++).setCellValue(runPoolStats.kendallMetrics().sigmaKendallStart());
 
             // all runs
             row.createCell(i++).setCellValue(runPoolStats.niWithLoose());

@@ -1,7 +1,6 @@
 package lab.run;
 
 import lab.metric.AlleleHomogeneityMetrics;
-import lab.metric.KendallMetrics;
 import lab.metric.NiOfMetrics;
 import lab.metric.RunPoolHomogeneityMetrics;
 import lombok.Builder;
@@ -135,22 +134,22 @@ public record RunPoolStats(RunConfiguration runConfiguration,
                            double avgPrStart,
                            double sigmaPrStart,
 
-                           double minFishMin,
-                           int niMinFishMin,
-                           double maxFishMax,
-                           int niMaxFishMax,
-                           double avgFishMin,
-                           double avgFishMax,
-                           double avgFishAvg,
-                           double sigmaFishMin,
-                           double sigmaFishMax,
-                           double sigmaFishAvg,
-                           double minFishStart,
-                           double maxFishStart,
-                           double avgFishStart,
-                           double sigmaFishStart,
+//                           double minFishMin,
+//                           int niMinFishMin,
+//                           double maxFishMax,
+//                           int niMaxFishMax,
+//                           double avgFishMin,
+//                           double avgFishMax,
+//                           double avgFishAvg,
+//                           double sigmaFishMin,
+//                           double sigmaFishMax,
+//                           double sigmaFishAvg,
+//                           double minFishStart,
+//                           double maxFishStart,
+//                           double avgFishStart,
+//                           double sigmaFishStart,
 
-                           KendallMetrics kendallMetrics,
+//                           KendallMetrics kendallMetrics,
 
                            // all runs
                            int niWithLoose,

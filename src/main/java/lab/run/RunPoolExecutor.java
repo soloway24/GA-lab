@@ -142,14 +142,14 @@ public class RunPoolExecutor {
             double currentS = 0;
             double currentI = 0;
             double currentPr = 0;
-            double currentFish = 0;
-            double currentKendall = 0;
+//            double currentFish = 0;
+//            double currentKendall = 0;
 
             Map<Integer, Double> iterationToS = new HashMap<>();
             Map<Integer, Double> iterationToI = new HashMap<>();
             Map<Integer, Double> generationToPr = new HashMap<>();
-            Map<Integer, Double> iterationToFish = new HashMap<>();
-            Map<Integer, Double> iterationToKendall = new HashMap<>();
+//            Map<Integer, Double> iterationToFish = new HashMap<>();
+//            Map<Integer, Double> iterationToKendall = new HashMap<>();
 
             Map<Integer, Double> iterationToGr = new HashMap<>();
             int previousBestQ = NOT_CALCULATED_INT;
@@ -290,11 +290,11 @@ public class RunPoolExecutor {
                         }
                     }
 
-                    currentFish = computePFET(individualToFitness, parentPool);
-                    iterationToFish.put(i + 1, currentFish);
-
-                    currentKendall = computeKendallTauB(individualToFitness, parentPool);
-                    iterationToKendall.put(i + 1, currentKendall);
+//                    currentFish = computePFET(individualToFitness, parentPool);
+//                    iterationToFish.put(i + 1, currentFish);
+//
+//                    currentKendall = computeKendallTauB(individualToFitness, parentPool);
+//                    iterationToKendall.put(i + 1, currentKendall);
                 }
 
                 if (isAtLeastOneAlleleHomogenous(currentIndividuals) && niAlH == -1) {
@@ -416,19 +416,19 @@ public class RunPoolExecutor {
             int niPrMax = 0;
             double prAvg = 0;
 
-            double fishStart = 0;
-            double fishMin = 0;
-            int niFishMin = 0;
-            double fishMax = 0;
-            int niFishMax = 0;
-            double fishAvg = 0;
-
-            double kendallStart = 0;
-            double kendallMin = 0;
-            int niKendallMin = 0;
-            double kendallMax = 0;
-            int niKendallMax = 0;
-            double kendallAvg = 0;
+//            double fishStart = 0;
+//            double fishMin = 0;
+//            int niFishMin = 0;
+//            double fishMax = 0;
+//            int niFishMax = 0;
+//            double fishAvg = 0;
+//
+//            double kendallStart = 0;
+//            double kendallMin = 0;
+//            int niKendallMin = 0;
+//            double kendallMax = 0;
+//            int niKendallMax = 0;
+//            double kendallAvg = 0;
 
 
             if (!function.isConstant()) {
@@ -476,23 +476,23 @@ public class RunPoolExecutor {
                 niPrMax = maxGenerationPr.getKey();
                 prAvg = CalculationUtils.getAverage(generationToPr.values());
 
-                Map.Entry<Integer, ? extends Number> minIterationFish = getMinIteratedValue(iterationToFish);
-                Map.Entry<Integer, ? extends Number> maxIterationFish = getMaxIteratedValue(iterationToFish);
-                fishStart = iterationToFish.get(1);
-                fishMin = minIterationFish.getValue().doubleValue();
-                niFishMin = minIterationFish.getKey();
-                fishMax = maxIterationFish.getValue().doubleValue();
-                niFishMax = maxIterationFish.getKey();
-                fishAvg = CalculationUtils.getAverage(iterationToFish.values());
-
-                Map.Entry<Integer, ? extends Number> minIterationKendall = getMinIteratedValue(iterationToKendall);
-                Map.Entry<Integer, ? extends Number> maxIterationKendall = getMaxIteratedValue(iterationToKendall);
-                kendallStart = iterationToKendall.get(1);
-                kendallMin = minIterationKendall.getValue().doubleValue();
-                niKendallMin = minIterationKendall.getKey();
-                kendallMax = maxIterationKendall.getValue().doubleValue();
-                niKendallMax = maxIterationKendall.getKey();
-                kendallAvg = CalculationUtils.getAverage(iterationToKendall.values());
+//                Map.Entry<Integer, ? extends Number> minIterationFish = getMinIteratedValue(iterationToFish);
+//                Map.Entry<Integer, ? extends Number> maxIterationFish = getMaxIteratedValue(iterationToFish);
+//                fishStart = iterationToFish.get(1);
+//                fishMin = minIterationFish.getValue().doubleValue();
+//                niFishMin = minIterationFish.getKey();
+//                fishMax = maxIterationFish.getValue().doubleValue();
+//                niFishMax = maxIterationFish.getKey();
+//                fishAvg = CalculationUtils.getAverage(iterationToFish.values());
+//
+//                Map.Entry<Integer, ? extends Number> minIterationKendall = getMinIteratedValue(iterationToKendall);
+//                Map.Entry<Integer, ? extends Number> maxIterationKendall = getMaxIteratedValue(iterationToKendall);
+//                kendallStart = iterationToKendall.get(1);
+//                kendallMin = minIterationKendall.getValue().doubleValue();
+//                niKendallMin = minIterationKendall.getKey();
+//                kendallMax = maxIterationKendall.getValue().doubleValue();
+//                niKendallMax = maxIterationKendall.getKey();
+//                kendallAvg = CalculationUtils.getAverage(iterationToKendall.values());
             }
 
             int ni75h = ofNullable(homogeneityToGeneration.get(Homogeneity.SEVENTY_FIVE)).orElse(-1);
@@ -581,19 +581,19 @@ public class RunPoolExecutor {
                     .withNiAlH(niAlH)
                     .withFAlH(fAlH)
 
-                    .withFishStart(fishStart)
-                    .withFishMin(fishMin)
-                    .withNiFishMin(niFishMin)
-                    .withFishMax(fishMax)
-                    .withNiFishMax(niFishMax)
-                    .withFishAvg(fishAvg)
-
-                    .withKendallStart(kendallStart)
-                    .withKendallMin(kendallMin)
-                    .withNiKendallMin(niKendallMin)
-                    .withKendallMax(kendallMax)
-                    .withNiKendallMax(niKendallMax)
-                    .withKendallAvg(kendallAvg)
+//                    .withFishStart(fishStart)
+//                    .withFishMin(fishMin)
+//                    .withNiFishMin(niFishMin)
+//                    .withFishMax(fishMax)
+//                    .withNiFishMax(niFishMax)
+//                    .withFishAvg(fishAvg)
+//
+//                    .withKendallStart(kendallStart)
+//                    .withKendallMin(kendallMin)
+//                    .withNiKendallMin(niKendallMin)
+//                    .withKendallMax(kendallMax)
+//                    .withNiKendallMax(niKendallMax)
+//                    .withKendallAvg(kendallAvg)
 
                     .withAvgFs(getOrderedValues(generationToAvgF))
                     .withMaxFs(getOrderedValues(generationToMaxF))
@@ -606,8 +606,8 @@ public class RunPoolExecutor {
                     .withUniques(getOrderedIntValues(generationToUniqueX))
                     .withIs(getOrderedValuesFrom1(iterationToI))
                     .withPrs(getOrderedValues(generationToPr))
-                    .withFishes(getOrderedValuesFrom1(iterationToFish))
-                    .withKendalls(getOrderedValuesFrom1(iterationToKendall))
+//                    .withFishes(getOrderedValuesFrom1(iterationToFish))
+//                    .withKendalls(getOrderedValuesFrom1(iterationToKendall))
 
                     .withGenerationToIndMetrics(generationToIndMetrics)
                     .withHomogeneityToIndMetrics(homogeneityToIndMetrics)
