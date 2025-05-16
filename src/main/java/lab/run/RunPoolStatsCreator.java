@@ -10,6 +10,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
+import static lab.Constants.NOT_CALCULATED;
+import static lab.operator.OperatorType.NONE;
+
 @Component
 public class RunPoolStatsCreator {
 
@@ -204,19 +207,19 @@ public class RunPoolStatsCreator {
         double avgIstart = 0;
         double sigmaIstart = 0;
 
-        double minGrEarly = 0;
-        double maxGrEarly = 0;
-        double avgGrEarly = 0;
-        double minGrLate = 0;
-        double maxGrLate = 0;
-        double avgGrLate = 0;
-        double minGrAvg = 0;
-        double maxGrAvg = 0;
-        double avgGrAvg = 0;
-        double minGrStart = 0;
-        double maxGrStart = 0;
-        double avgGrStart = 0;
-        double sigmaGrStart = 0;
+        double minGrEarly = NOT_CALCULATED;
+        double maxGrEarly = NOT_CALCULATED;
+        double avgGrEarly = NOT_CALCULATED;
+        double minGrLate = NOT_CALCULATED;
+        double maxGrLate = NOT_CALCULATED;
+        double avgGrLate = NOT_CALCULATED;
+        double minGrAvg = NOT_CALCULATED;
+        double maxGrAvg = NOT_CALCULATED;
+        double avgGrAvg = NOT_CALCULATED;
+        double minGrStart = NOT_CALCULATED;
+        double maxGrStart = NOT_CALCULATED;
+        double avgGrStart = NOT_CALCULATED;
+        double sigmaGrStart = NOT_CALCULATED;
 
         double minPrMin = 0;
         int niMinPrMin = 0;
@@ -417,27 +420,29 @@ public class RunPoolStatsCreator {
                 sigmaIstart = MetricUtils.getStandardDeviation(iStarts, avgIstart);
 
                 // Growth rate
-                List<Double> grEarlys = getDoubleValues(sucRunStats, RunStats::grEarly);
-                List<Double> grLates = getDoubleValues(sucRunStats, RunStats::grLate);
-                List<Double> grAvgs = getDoubleValues(sucRunStats, RunStats::grAvg);
-                List<Double> grStarts = getDoubleValues(sucRunStats, RunStats::grStart);
+                if (runConfiguration.operator().getOperatorType() == NONE) {
+                    List<Double> grEarlys = getDoubleValues(sucRunStats, RunStats::grEarly);
+                    List<Double> grLates = getDoubleValues(sucRunStats, RunStats::grLate);
+                    List<Double> grAvgs = getDoubleValues(sucRunStats, RunStats::grAvg);
+                    List<Double> grStarts = getDoubleValues(sucRunStats, RunStats::grStart);
 
-                minGrEarly = CalculationUtils.getMinDouble(grEarlys);
-                maxGrEarly = CalculationUtils.getMaxDouble(grEarlys);
-                avgGrEarly = CalculationUtils.getAverage(grEarlys);
+                    minGrEarly = CalculationUtils.getMinDouble(grEarlys);
+                    maxGrEarly = CalculationUtils.getMaxDouble(grEarlys);
+                    avgGrEarly = CalculationUtils.getAverage(grEarlys);
 
-                minGrLate = CalculationUtils.getMinDouble(grLates);
-                maxGrLate = CalculationUtils.getMaxDouble(grLates);
-                avgGrLate = CalculationUtils.getAverage(grLates);
+                    minGrLate = CalculationUtils.getMinDouble(grLates);
+                    maxGrLate = CalculationUtils.getMaxDouble(grLates);
+                    avgGrLate = CalculationUtils.getAverage(grLates);
 
-                minGrAvg = CalculationUtils.getMinDouble(grAvgs);
-                maxGrAvg = CalculationUtils.getMaxDouble(grAvgs);
-                avgGrAvg = CalculationUtils.getAverage(grAvgs);
+                    minGrAvg = CalculationUtils.getMinDouble(grAvgs);
+                    maxGrAvg = CalculationUtils.getMaxDouble(grAvgs);
+                    avgGrAvg = CalculationUtils.getAverage(grAvgs);
 
-                minGrStart = CalculationUtils.getMinDouble(grStarts);
-                maxGrStart = CalculationUtils.getMaxDouble(grStarts);
-                avgGrStart = CalculationUtils.getAverage(grStarts);
-                sigmaGrStart = MetricUtils.getStandardDeviation(grStarts, avgGrStart);
+                    minGrStart = CalculationUtils.getMinDouble(grStarts);
+                    maxGrStart = CalculationUtils.getMaxDouble(grStarts);
+                    avgGrStart = CalculationUtils.getAverage(grStarts);
+                    sigmaGrStart = MetricUtils.getStandardDeviation(grStarts, avgGrStart);
+                }
 
                 // Selection pressure
                 List<Pair<Double, Integer>> prMinGenerations = getMetricValueToIteration(sucRunStats, RunStats::prMin, RunStats::niPrMin);
@@ -681,7 +686,7 @@ public class RunPoolStatsCreator {
         }
 
 
-        return RunPoolStats.builder()
+        RunPoolStats.RunPoolStatsBuilder runPoolStatsBuilder = RunPoolStats.builder()
                 .withRunConfiguration(runConfiguration)
                 .withAllRunStats(allRunStats)
 
@@ -779,20 +784,6 @@ public class RunPoolStatsCreator {
                 .withMaxIstart(maxIstart)
                 .withAvgIstart(avgIstart)
                 .withSigmaIstart(sigmaIstart)
-
-                .withMinGrEarly(minGrEarly)
-                .withMaxGrEarly(maxGrEarly)
-                .withAvgGrEarly(avgGrEarly)
-                .withMinGrLate(minGrLate)
-                .withMaxGrLate(maxGrLate)
-                .withAvgGrLate(avgGrLate)
-                .withMinGrAvg(minGrAvg)
-                .withMaxGrAvg(maxGrAvg)
-                .withAvgGrAvg(avgGrAvg)
-                .withMinGrStart(minGrStart)
-                .withMaxGrStart(maxGrStart)
-                .withAvgGrStart(avgGrStart)
-                .withSigmaGrStart(sigmaGrStart)
 
                 .withMinPrMin(minPrMin)
                 .withNiMinPrMin(niMinPrMin)
@@ -946,9 +937,25 @@ public class RunPoolStatsCreator {
                         .withMaxFAlH(maxFAlH)
                         .withAvgFAlH(avgFAlH)
                         .withSigmaFAlH(sigmaFAlH)
-                        .build())
+                        .build());
 
-                .build();
+        if (runConfiguration.operator().getOperatorType() == NONE) {
+            runPoolStatsBuilder.withMinGrEarly(minGrEarly)
+                    .withMaxGrEarly(maxGrEarly)
+                    .withAvgGrEarly(avgGrEarly)
+                    .withMinGrLate(minGrLate)
+                    .withMaxGrLate(maxGrLate)
+                    .withAvgGrLate(avgGrLate)
+                    .withMinGrAvg(minGrAvg)
+                    .withMaxGrAvg(maxGrAvg)
+                    .withAvgGrAvg(avgGrAvg)
+                    .withMinGrStart(minGrStart)
+                    .withMaxGrStart(maxGrStart)
+                    .withAvgGrStart(avgGrStart)
+                    .withSigmaGrStart(sigmaGrStart);
+        }
+
+        return runPoolStatsBuilder.build();
     }
 
     private List<Pair<Double, Integer>> getMetricValueToIteration(List<RunStats> sucRunStats,

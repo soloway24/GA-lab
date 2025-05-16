@@ -31,12 +31,15 @@ import static java.util.Collections.shuffle;
 import static java.util.Optional.ofNullable;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
+import static lab.Constants.NOT_CALCULATED;
+import static lab.Constants.NOT_CALCULATED_INT;
 import static lab.encoding.Decoder.*;
 import static lab.export.Homogeneity.NINETY_FIVE;
 import static lab.export.Homogeneity.NINETY_NINE;
 import static lab.export.Optimality.*;
 import static lab.identifier.ConvergenceIdentifier.*;
 import static lab.identifier.SuccessfulRunIdentifier.getBestIndividual;
+import static lab.operator.OperatorType.NONE;
 import static lab.selection.AdditionalSelectorProperty.NI;
 import static lab.selection.AdditionalSelectorProperty.WINDOW_WORST;
 import static lab.selection.SelectorType.SUS;
@@ -145,15 +148,15 @@ public class RunPoolExecutor {
             Map<Integer, Double> iterationToS = new HashMap<>();
             Map<Integer, Double> iterationToI = new HashMap<>();
             Map<Integer, Double> generationToPr = new HashMap<>();
-            Map<Integer, Double> iterationToGr = new HashMap<>();
             Map<Integer, Double> iterationToFish = new HashMap<>();
             Map<Integer, Double> iterationToKendall = new HashMap<>();
 
-            int previousBestQ = Integer.MIN_VALUE;
-            double previousBestF = Double.MIN_VALUE;
-            double currentGr = 0;
-            double grLate = Double.MIN_VALUE;
-            int niGrLate = Integer.MIN_VALUE;
+            Map<Integer, Double> iterationToGr = new HashMap<>();
+            int previousBestQ = NOT_CALCULATED_INT;
+            double previousBestF = NOT_CALCULATED;
+            double currentGr = NOT_CALCULATED;
+            double grLate = NOT_CALCULATED;
+            int niGrLate = NOT_CALCULATED_INT;
 
             int niAlH = -1;
             double fAlH = -1;
@@ -276,15 +279,16 @@ public class RunPoolExecutor {
                     currentPr = bestScaledF / avgScaledF;
                     generationToPr.put(i, currentPr);
 
-                    currentGr = maxF >= previousBestF
-                            ? (double) bestQ / previousBestQ
-                            : 0;
-                    iterationToGr.put(i, currentGr);
-                    if (optimalQ >= 0.5 * runConfiguration.populationSize() && grLate == Double.MIN_VALUE) {
-                        grLate = currentGr;
-                        niGrLate = i;
+                    if (operator.getOperatorType() == NONE) {
+                        currentGr = maxF == previousBestF
+                                ? (double) bestQ / previousBestQ
+                                : 0;
+                        iterationToGr.put(i, currentGr);
+                        if (optimalQ >= 0.5 * runConfiguration.populationSize() && grLate == NOT_CALCULATED) {
+                            grLate = currentGr;
+                            niGrLate = i;
+                        }
                     }
-
 
                     currentFish = computePFET(individualToFitness, parentPool);
                     iterationToFish.put(i + 1, currentFish);
@@ -401,9 +405,9 @@ public class RunPoolExecutor {
             int niImax = 0;
             double iAvg = 0;
 
-            double grStart = 0;
-            double grEarly = 0;
-            double grAvg = 0;
+            double grStart = NOT_CALCULATED;
+            double grEarly = NOT_CALCULATED;
+            double grAvg = NOT_CALCULATED;
 
             double prStart = 0;
             double prMin = 0;
@@ -447,14 +451,21 @@ public class RunPoolExecutor {
                 niImax = maxIterationI.getKey();
                 iAvg = CalculationUtils.getAverage(iterationToI.values());
 
-                iterationToGr.remove(0);
-                currentGr = fFound >= previousBestF
-                        ? (double) bestQ / previousBestQ
-                        : 0;
-                iterationToGr.put(ni, currentGr);
-                grStart = iterationToGr.get(1);
-                grEarly = ofNullable(iterationToGr.get(2)).orElse(Double.MIN_VALUE);
-                grAvg = CalculationUtils.getAverage(iterationToGr.values());
+                if (operator.getOperatorType() == NONE) {
+                    iterationToGr.remove(0);
+                    currentGr = fFound == previousBestF
+                            ? (double) bestQ / previousBestQ
+                            : 0;
+                    iterationToGr.put(ni, currentGr);
+                    if (optimalQ >= 0.5 * runConfiguration.populationSize() && grLate == NOT_CALCULATED) {
+                        grLate = currentGr;
+                        niGrLate = ni;
+                    }
+
+                    grStart = ofNullable(iterationToGr.get(1)).orElse(NOT_CALCULATED);
+                    grEarly = ofNullable(iterationToGr.get(2)).orElse(NOT_CALCULATED);
+                    grAvg = CalculationUtils.getAverage(iterationToGr.values());
+                }
 
                 Map.Entry<Integer, ? extends Number> minGenerationPr = getMinIteratedValue(generationToPr);
                 Map.Entry<Integer, ? extends Number> maxGenerationPr = getMaxIteratedValue(generationToPr);
@@ -501,7 +512,7 @@ public class RunPoolExecutor {
                 fAlH = fAvg;
             }
 
-            return RunStats.builder()
+            RunStats.RunStatsBuilder runStatsBuilder = RunStats.builder()
                     .withFinalPopulation(individualToFitness)
 
                     // metrics for all functions
@@ -552,12 +563,6 @@ public class RunPoolExecutor {
                     .withNiImax(niImax)
                     .withIAvg(iAvg)
 
-                    .withGrStart(grStart)
-                    .withGrEarly(grEarly)
-                    .withGrLate(grLate)
-                    .withNiGrLate(niGrLate)
-                    .withGrAvg(grAvg)
-
                     .withPrStart(prStart)
                     .withPrMin(prMin)
                     .withNiPrMin(niPrMin)
@@ -595,15 +600,14 @@ public class RunPoolExecutor {
                     .withSigmaFs(getOrderedValues(generationToSigmaF))
                     .withOptimalRatios(getOrderedValues(generationToOptimalRatio))
                     .withBestRatios(getOrderedValues(generationToBestRatio))
-                    .withSs(getOrderedValuesPlus1(iterationToS))
-                    .withRrs(getOrderedValuesPlus1(iterationToRR))
-                    .withTetas(getOrderedValuesPlus1(iterationToTeta))
+                    .withSs(getOrderedValuesFrom1(iterationToS))
+                    .withRrs(getOrderedValuesFrom1(iterationToRR))
+                    .withTetas(getOrderedValuesFrom1(iterationToTeta))
                     .withUniques(getOrderedIntValues(generationToUniqueX))
-                    .withIs(getOrderedValuesPlus1(iterationToI))
+                    .withIs(getOrderedValuesFrom1(iterationToI))
                     .withPrs(getOrderedValues(generationToPr))
-                    .withGrs(getOrderedValuesPlus1(iterationToGr))
-                    .withFishes(getOrderedValuesPlus1(iterationToFish))
-                    .withKendalls(getOrderedValuesPlus1(iterationToKendall))
+                    .withFishes(getOrderedValuesFrom1(iterationToFish))
+                    .withKendalls(getOrderedValuesFrom1(iterationToKendall))
 
                     .withGenerationToIndMetrics(generationToIndMetrics)
                     .withHomogeneityToIndMetrics(homogeneityToIndMetrics)
@@ -622,9 +626,20 @@ public class RunPoolExecutor {
                             .withNi95h(ni95h)
                             .withNumOpt95h(numOpt95h)
 
-                            .build())
+                            .build());
 
-                    .build();
+            if (operator.getOperatorType() == NONE) {
+                runStatsBuilder
+                        .withGrs(getOrderedValuesFrom1(iterationToGr))
+
+                        .withGrStart(grStart)
+                        .withGrEarly(grEarly)
+                        .withGrLate(grLate)
+                        .withNiGrLate(niGrLate)
+                        .withGrAvg(grAvg);
+            }
+
+            return runStatsBuilder.build();
         } catch (Exception e) {
             System.out.println(Thread.currentThread() + " exception: " + e.getMessage() + ", " + Arrays.toString(e.getStackTrace()));
             throw new RuntimeException(e);
@@ -730,7 +745,7 @@ public class RunPoolExecutor {
                                     Deque<Double> prevAvgFs,
                                     Operator operator) {
         if (operator.getOperatorType() != OperatorType.CROSSOVER) {
-            return true;
+            return false;
         }
 
         int prevAvgFSize = 1000;
@@ -855,7 +870,7 @@ public class RunPoolExecutor {
                 .collect(toList());
     }
 
-    private List<Double> getOrderedValuesPlus1(Map<Integer, Double> iteratedValues) {
+    private List<Double> getOrderedValuesFrom1(Map<Integer, Double> iteratedValues) {
         return IntStream.rangeClosed(1, iteratedValues.size())
                 .mapToObj(iteratedValues::get)
                 .collect(toList());

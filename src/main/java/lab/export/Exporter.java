@@ -5,6 +5,7 @@ import com.github.sh0nk.matplotlib4j.PythonExecutionException;
 import com.github.sh0nk.matplotlib4j.builder.HistBuilder;
 import lab.function.FitnessFunction;
 import lab.metric.IndividualMetrics;
+import lab.operator.Operator;
 import lab.population.PopulationSnapshot;
 import lab.population.PopulationTimingType;
 import lab.run.RunConfiguration;
@@ -39,6 +40,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 import static lab.export.Homogeneity.*;
+import static lab.operator.OperatorType.NONE;
 import static lab.population.PopulationTimingType.*;
 
 @Component
@@ -68,13 +70,13 @@ public class Exporter {
 
         String tablePath = TABLES_PATH + runConfiguration.populationSize() + "/" + filename + ".xlsx";
 
-        createRunHeaderRow(sheet);
+        createRunHeaderRow(sheet, runConfiguration);
         IntStream.range(0, allRunStats.size())
-                .forEach(i -> createRunRow(sheet, i + 1, function, allRunStats.get(i)));
+                .forEach(i -> createRunRow(sheet, i + 1, function, allRunStats.get(i), runConfiguration));
 
         int runPoolStatsRowIndex = allRunStats.size() + 1 + 2;
-        createRunPoolHeaderRow(sheet, runPoolStatsRowIndex);
-        createRunPoolRow(sheet, runPoolStatsRowIndex + 1, 1, runPoolStats);
+        createRunPoolHeaderRow(sheet, runPoolStatsRowIndex, false, runConfiguration);
+        createRunPoolRow(sheet, runPoolStatsRowIndex + 1, 1, false, runPoolStats);
 
         saveWorkbook(workbook, tablePath);
     }
@@ -88,7 +90,7 @@ public class Exporter {
         int runPoolRowIndex = getFirstNullRowIndex(allStatsSheet);
 
         IntStream.range(0, allRunPoolStats.size())
-                .forEach(i -> createRunPoolRow(allStatsSheet, runPoolRowIndex + i, runPoolRowIndex + i, allRunPoolStats.get(i)));
+                .forEach(i -> createRunPoolRow(allStatsSheet, runPoolRowIndex + i, runPoolRowIndex + i, true, allRunPoolStats.get(i)));
 
         saveWorkbook(allStatsWorkbook, allStatsTablePath);
     }
@@ -102,6 +104,8 @@ public class Exporter {
         if (!theDir1.exists()) {
             theDir1.mkdirs();
         }
+
+        Operator operator = runConfiguration.operator();
 
         int threads = Math.min(EXPORT_RUN_Q, Runtime.getRuntime().availableProcessors());
         ExecutorService perRunExecutor = Executors.newFixedThreadPool(threads);
@@ -152,7 +156,11 @@ public class Exporter {
                                 () -> drawPlot(xIterations, ss, plotExportPath, "difference"),
                                 () -> drawPlot(xIterations, is, plotExportPath, "intensity"),
                                 () -> drawPlot(xGenerations, prs, plotExportPath, "Pr"),
-                                () -> drawPlot(xIterations, grs, plotExportPath, "Gr"),
+                                () -> {
+                                    if (operator.getOperatorType() == NONE) {
+                                        drawPlot(xIterations, grs, plotExportPath, "Gr");
+                                    }
+                                },
                                 () -> drawPlot(xIterations, fishes, plotExportPath, "Fisher's Exact Test"),
                                 () -> drawPlot(xIterations, kendalls, plotExportPath, "Kendall's Tau-B", -1.1, 1.1),
                                 () -> drawPlot(xGenerations, prs, sigmaFs, plotExportPath, "Pr and sigmaF", "Pr", "SigmaF")
@@ -619,7 +627,7 @@ public class Exporter {
         try (FileOutputStream outputStream = new FileOutputStream(allStatsPath);
              Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("All Stats");
-            createRunPoolHeaderRow(sheet, 0);
+            createRunPoolHeaderRow(sheet, 0, true, null);
             workbook.write(outputStream);
         }
     }
@@ -731,7 +739,7 @@ public class Exporter {
         row.createCell(i++).setCellValue("Ptau");
     }
 
-    private void createRunHeaderRow(Sheet sheet) {
+    private void createRunHeaderRow(Sheet sheet, RunConfiguration runConfiguration) {
         Row row = sheet.createRow(0);
         int i = 0;
 
@@ -785,11 +793,13 @@ public class Exporter {
         row.createCell(i++).setCellValue("NI_I_max");
         row.createCell(i++).setCellValue("I_avg");
 
-        row.createCell(i++).setCellValue("GR_start");
-        row.createCell(i++).setCellValue("GR_early");
-        row.createCell(i++).setCellValue("GR_late");
-        row.createCell(i++).setCellValue("NI_GR_late");
-        row.createCell(i++).setCellValue("GR_avg");
+        if (runConfiguration.operator().getOperatorType() == NONE) {
+            row.createCell(i++).setCellValue("GR_start");
+            row.createCell(i++).setCellValue("GR_early");
+            row.createCell(i++).setCellValue("GR_late");
+            row.createCell(i++).setCellValue("NI_GR_late");
+            row.createCell(i++).setCellValue("GR_avg");
+        }
 
         row.createCell(i++).setCellValue("Pr_start");
         row.createCell(i++).setCellValue("Pr_min");
@@ -836,7 +846,7 @@ public class Exporter {
         row.createCell(i++).setCellValue("Kend_avg");
     }
 
-    private void createRunRow(Sheet sheet, int index, FitnessFunction<?, ?> function, RunStats runStats) {
+    private void createRunRow(Sheet sheet, int index, FitnessFunction<?, ?> function, RunStats runStats, RunConfiguration runConfiguration) {
         Row row = sheet.createRow(index);
         int i = 0;
 
@@ -891,11 +901,13 @@ public class Exporter {
             row.createCell(i++).setCellValue(runStats.niImax());
             row.createCell(i++).setCellValue(runStats.iAvg());
 
-            row.createCell(i++).setCellValue(runStats.grStart());
-            row.createCell(i++).setCellValue(runStats.grEarly());
-            row.createCell(i++).setCellValue(runStats.grLate());
-            row.createCell(i++).setCellValue(runStats.niGrLate());
-            row.createCell(i++).setCellValue(runStats.grAvg());
+            if (runConfiguration.operator().getOperatorType() == NONE) {
+                row.createCell(i++).setCellValue(runStats.grStart());
+                row.createCell(i++).setCellValue(runStats.grEarly());
+                row.createCell(i++).setCellValue(runStats.grLate());
+                row.createCell(i++).setCellValue(runStats.niGrLate());
+                row.createCell(i++).setCellValue(runStats.grAvg());
+            }
 
             row.createCell(i++).setCellValue(runStats.prStart());
             row.createCell(i++).setCellValue(runStats.prMin());
@@ -943,7 +955,7 @@ public class Exporter {
         }
     }
 
-    private void createRunPoolHeaderRow(Sheet sheet, int index) {
+    private void createRunPoolHeaderRow(Sheet sheet, int index, boolean includeAllHeaders, RunConfiguration runConfiguration) {
         Row row = sheet.createRow(index);
         int i = 0;
 
@@ -1053,19 +1065,21 @@ public class Exporter {
         row.createCell(i++).setCellValue("Avg_I_start");
         row.createCell(i++).setCellValue("Sigma_I_start");
 
-        row.createCell(i++).setCellValue("MinGR_early");
-        row.createCell(i++).setCellValue("MaxGR_early");
-        row.createCell(i++).setCellValue("AvgGR_early");
-        row.createCell(i++).setCellValue("MinGR_late");
-        row.createCell(i++).setCellValue("MaxGR_late");
-        row.createCell(i++).setCellValue("AvgGR_late");
-        row.createCell(i++).setCellValue("MinGR_avg");
-        row.createCell(i++).setCellValue("MaxGR_avg");
-        row.createCell(i++).setCellValue("AvgGR_avg");
-        row.createCell(i++).setCellValue("Min_GR_start");
-        row.createCell(i++).setCellValue("Max_GR_start");
-        row.createCell(i++).setCellValue("Avg_GR_start");
-        row.createCell(i++).setCellValue("Sigma_GR_start");
+        if (includeAllHeaders || runConfiguration.operator().getOperatorType() == NONE) {
+            row.createCell(i++).setCellValue("MinGR_early");
+            row.createCell(i++).setCellValue("MaxGR_early");
+            row.createCell(i++).setCellValue("AvgGR_early");
+            row.createCell(i++).setCellValue("MinGR_late");
+            row.createCell(i++).setCellValue("MaxGR_late");
+            row.createCell(i++).setCellValue("AvgGR_late");
+            row.createCell(i++).setCellValue("MinGR_avg");
+            row.createCell(i++).setCellValue("MaxGR_avg");
+            row.createCell(i++).setCellValue("AvgGR_avg");
+            row.createCell(i++).setCellValue("Min_GR_start");
+            row.createCell(i++).setCellValue("Max_GR_start");
+            row.createCell(i++).setCellValue("Avg_GR_start");
+            row.createCell(i++).setCellValue("Sigma_GR_start");
+        }
 
         row.createCell(i++).setCellValue("Min_Pr_min");
         row.createCell(i++).setCellValue("NI_Pr_min");
@@ -1212,7 +1226,7 @@ public class Exporter {
         row.createCell(i++).setCellValue("Sigma_F_AlH");
     }
 
-    private void createRunPoolRow(Sheet sheet, int index, int configNumber, RunPoolStats runPoolStats) {
+    private void createRunPoolRow(Sheet sheet, int index, int configNumber, boolean includeAllHeaders, RunPoolStats runPoolStats) {
         Row row = sheet.createRow(index);
         int i = 0;
 
@@ -1336,19 +1350,25 @@ public class Exporter {
             row.createCell(i++).setCellValue(runPoolStats.avgIstart());
             row.createCell(i++).setCellValue(runPoolStats.sigmaIstart());
 
-            row.createCell(i++).setCellValue(runPoolStats.minGrEarly());
-            row.createCell(i++).setCellValue(runPoolStats.maxGrEarly());
-            row.createCell(i++).setCellValue(runPoolStats.avgGrEarly());
-            row.createCell(i++).setCellValue(runPoolStats.minGrLate());
-            row.createCell(i++).setCellValue(runPoolStats.maxGrLate());
-            row.createCell(i++).setCellValue(runPoolStats.avgGrLate());
-            row.createCell(i++).setCellValue(runPoolStats.minGrAvg());
-            row.createCell(i++).setCellValue(runPoolStats.maxGrAvg());
-            row.createCell(i++).setCellValue(runPoolStats.avgGrAvg());
-            row.createCell(i++).setCellValue(runPoolStats.minGrStart());
-            row.createCell(i++).setCellValue(runPoolStats.maxGrStart());
-            row.createCell(i++).setCellValue(runPoolStats.avgGrStart());
-            row.createCell(i++).setCellValue(runPoolStats.sigmaGrStart());
+            if (runConfiguration.operator().getOperatorType() == NONE) {
+                row.createCell(i++).setCellValue(runPoolStats.minGrEarly());
+                row.createCell(i++).setCellValue(runPoolStats.maxGrEarly());
+                row.createCell(i++).setCellValue(runPoolStats.avgGrEarly());
+                row.createCell(i++).setCellValue(runPoolStats.minGrLate());
+                row.createCell(i++).setCellValue(runPoolStats.maxGrLate());
+                row.createCell(i++).setCellValue(runPoolStats.avgGrLate());
+                row.createCell(i++).setCellValue(runPoolStats.minGrAvg());
+                row.createCell(i++).setCellValue(runPoolStats.maxGrAvg());
+                row.createCell(i++).setCellValue(runPoolStats.avgGrAvg());
+                row.createCell(i++).setCellValue(runPoolStats.minGrStart());
+                row.createCell(i++).setCellValue(runPoolStats.maxGrStart());
+                row.createCell(i++).setCellValue(runPoolStats.avgGrStart());
+                row.createCell(i++).setCellValue(runPoolStats.sigmaGrStart());
+            } else if (includeAllHeaders) {
+                for (int j = 0; j < 13; j++) {
+                    row.createCell(i++).setCellValue("");
+                }
+            }
 
             row.createCell(i++).setCellValue(runPoolStats.minPrMin());
             row.createCell(i++).setCellValue(runPoolStats.niMinPrMin());
