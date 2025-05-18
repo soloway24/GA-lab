@@ -32,6 +32,8 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static lab.selection.linear.DynamicLinearScaler.*;
 
@@ -56,15 +58,22 @@ public class Main {
         List<RunPool> runPools = getRunPools(runPoolConfigurations);
 
 
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
+        Map<FitnessFunction<?, ?>, List<RunPool>> functionToRunPools = runPools.stream()
+                .collect(Collectors.groupingBy(runPool -> runPool.runConfiguration().function(), Collectors.toList()));
 
 //        executor.executeAllSingleThread(runPools);
 //        executor.executeAll(runPools);
-        executor.executeAllParallel(runPools);
 
-        stopWatch.stop();
-        System.out.println("Time Elapsed: " + stopWatch.getTime() / 1000.0);
+        functionToRunPools.forEach((function, fRunPools) -> {
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
+            System.out.println("Running function " + function.getName());
+
+            executor.executeAllParallel(fRunPools);
+
+            stopWatch.stop();
+            System.out.println("Time Elapsed: " + stopWatch.getTime() / 1000.0);
+        });
     }
 
     private List<Integer> getPopulationSizes() {
@@ -118,7 +127,7 @@ public class Main {
 //                ,
 //                quadraticFunction
 //                ,
-//                quadratic512Function
+                quadratic512Function
 //                quadraticSqrt512Function
 //                ,
 //                exponent025
@@ -134,7 +143,7 @@ public class Main {
 //                ,
 //                testSin500
 //                ,
-                f1
+//                f1
 //                ,
 //                f1_1
 //                ,
@@ -241,10 +250,14 @@ public class Main {
 
         // span method
         SpanMethodSelector spanMethod194 = new SpanMethodSelector(scalingSelector, 194);
+        SpanMethodSelector spanMethod300 = new SpanMethodSelector(scalingSelector, 300);
+        SpanMethodSelector spanMethod500 = new SpanMethodSelector(scalingSelector, 500);
         SpanMethodSelector spanMethod5000 = new SpanMethodSelector(scalingSelector, 5000);
         SpanMethodSelector spanMethod10000 = new SpanMethodSelector(scalingSelector, 10000);
 
         SpanMethodRwsSelector spanMethodRws194 = new SpanMethodRwsSelector(spanMethod194, rwsSelector);
+        SpanMethodRwsSelector spanMethodRws300 = new SpanMethodRwsSelector(spanMethod300, rwsSelector);
+        SpanMethodRwsSelector spanMethodRws500 = new SpanMethodRwsSelector(spanMethod500, rwsSelector);
         SpanMethodSusSelector spanMethodSus5000 = new SpanMethodSusSelector(spanMethod5000, susSelector);
         SpanMethodSusSelector spanMethodSus10000 = new SpanMethodSusSelector(spanMethod10000, susSelector);
 
@@ -265,83 +278,91 @@ public class Main {
         WindowScalingSusSelector windowScalingSus10 = new WindowScalingSusSelector(windowScaling10, susSelector);
 
         AdaptivePowerLawScalingSelector adaptivePowerLawScaling194 = new AdaptivePowerLawScalingSelector(scalingSelector, 194);
+        AdaptivePowerLawScalingSelector adaptivePowerLawScaling300 = new AdaptivePowerLawScalingSelector(scalingSelector, 300);
+        AdaptivePowerLawScalingSelector adaptivePowerLawScaling500 = new AdaptivePowerLawScalingSelector(scalingSelector, 500);
         AdaptivePowerLawScalingSelector adaptivePowerLawScaling5000 = new AdaptivePowerLawScalingSelector(scalingSelector, 5000);
         AdaptivePowerLawScalingSelector adaptivePowerLawScaling10000 = new AdaptivePowerLawScalingSelector(scalingSelector, 10000);
 
         AdaptivePowerLawScalingRwsSelector adaptivePowerLawScalingRws194 = new AdaptivePowerLawScalingRwsSelector(adaptivePowerLawScaling194, rwsSelector);
+        AdaptivePowerLawScalingRwsSelector adaptivePowerLawScalingRws300 = new AdaptivePowerLawScalingRwsSelector(adaptivePowerLawScaling300, rwsSelector);
+        AdaptivePowerLawScalingRwsSelector adaptivePowerLawScalingRws500 = new AdaptivePowerLawScalingRwsSelector(adaptivePowerLawScaling500, rwsSelector);
         AdaptivePowerLawScalingSusSelector adaptivePowerLawScalingSus5000 = new AdaptivePowerLawScalingSusSelector(adaptivePowerLawScaling5000, susSelector);
         AdaptivePowerLawScalingSusSelector AdaptivePowerLawScalingSus10000 = new AdaptivePowerLawScalingSusSelector(adaptivePowerLawScaling10000, susSelector);
 
         return List.of(
 //                rwsSelector
 //                ,
-                susSelector
-                ,
-                powerScalingRws11,
+//                powerScalingRws11,
 //                powerScalingRws12,
 //                powerScalingRws15,
 //                powerScalingRws2,
 //                powerScalingRws3,
-//                powerScalingSus11
-//                ,
-//                powerScalingSus12,
-//                powerScalingSus15,
-//                powerScalingSus2,
-//                powerScalingSus3,
-//
 //                dynamicPowerScalingRws0p9to1p1,
 //                dynamicPowerScalingRws0p8to1p2,
 //                dynamicPowerScalingRws0p5to1p5,
-                dynamicPowerScalingRws0p5to2,
-//                dynamicPowerScalingSus0p9to1p1,
-//                dynamicPowerScalingSus0p8to1p2,
-//                dynamicPowerScalingSus0p5to1p5,
-//                dynamicPowerScalingSus0p5to2,
-//
+//                dynamicPowerScalingRws0p5to2,
 //                linearScalingRws12,
 //                linearScalingRws14,
 //                linearScalingRws15,
 //                linearScalingRws16,
 //                linearScalingRws18,
-                linearScalingRws2
-                ,
+//                linearScalingRws2,
+//                averageLinearRws,
+//                medianLinearRws,
+//                maxAvgWorstLinearRws,
+//                sigmaTruncationRws1,
+//                sigmaTruncationRws2,
+//                sigmaTruncationRws3,
+//                sigmaTruncationRws4,
+//                spanMethodRws194,
+//                spanMethodRws300,
+//                spanMethodRws500,
+//                adaptivePowerLawScalingRws194,
+//                adaptivePowerLawScalingRws300,
+//                adaptivePowerLawScalingRws500,
+//                windowScalingRws0,
+//                windowScalingRws1,
+//                windowScalingRws2,
+//                windowScalingRws10
+
+//                susSelector
+//                ,
+//                powerScalingSus11
+//                ,
+//                powerScalingSus12,
+//                powerScalingSus15,
+//                powerScalingSus2,
+//                powerScalingSus3
+//                ,
+
+//                dynamicPowerScalingSus0p9to1p1,
+//                dynamicPowerScalingSus0p8to1p2,
+//                dynamicPowerScalingSus0p5to1p5,
+//                dynamicPowerScalingSus0p5to2,
+//
 //                linearScalingSus12,
 //                linearScalingSus14,
 //                linearScalingSus15,
 //                linearScalingSus16,
-                linearScalingSus18,
+//                linearScalingSus18,
 //                linearScalingSus2
 //                ,
 //
-                averageLinearRws,
-                medianLinearRws,
-                maxAvgWorstLinearRws,
-                averageLinearSus
-                ,
-                medianLinearSus,
+//                averageLinearSus
+//                ,
+//                medianLinearSus,
                 maxAvgWorstLinearSus
-                ,
+//                ,
 //
-//                sigmaTruncationRws1,
-                sigmaTruncationRws2,
-//                sigmaTruncationRws3,
-//                sigmaTruncationRws4,
 //                sigmaTruncationSus1,
 //                sigmaTruncationSus2,
 //                sigmaTruncationSus3,
 //                sigmaTruncationSus4,
 //
-//                spanMethodRws194,
 //                spanMethodSus5000,
-//
-//                adaptivePowerLawScalingRws194,
-                adaptivePowerLawScalingSus5000
+//                adaptivePowerLawScalingSus5000
 //                ,
 //
-//                windowScalingRws0,
-//                windowScalingRws1,
-//                windowScalingRws2,
-//                windowScalingRws10,
 //                windowScalingSus0,
 //                windowScalingSus1,
 //                windowScalingSus2,

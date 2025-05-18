@@ -5,8 +5,7 @@ import lab.run.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.IntStream;
 
@@ -90,119 +89,96 @@ public class Executor {
     }
 
     public void executeAllParallel(List<RunPool> runPools) {
-        ExecutorService executorService = new ForkJoinPool();
+        int availableThreads = Runtime.getRuntime().availableProcessors();
+        ExecutorService executorService = Executors.newFixedThreadPool(availableThreads);
+        CompletionService<RunStatsWithConfig> completionService = new ExecutorCompletionService<>(executorService);
 
-        List<List<Future<RunStats>>> allFutures = new ArrayList<>();
+        Map<RunConfiguration, List<RunStatsWithConfig>> configToRunStats = new HashMap<>();
+        Map<RunConfiguration, Integer> configToExpectedCount = new HashMap<>();
 
-        for (int i = 0; i < runPools.size(); i++) {
-            RunPool runPool = runPools.get(i);
-            int finalI = i;
-            System.out.println("Submitting run pool " + finalI + "/" + runPools.size() + " : " + runPool.runConfiguration());
-            List<Future<RunStats>> runPoolFutures = new ArrayList<>();
+        int totalSubmitted = 0;
+
+        System.out.println("SUBMITTING RUNS -----------------");
+
+        for (int poolIndex = 0; poolIndex < runPools.size(); poolIndex++) {
+            RunPool runPool = runPools.get(poolIndex);
+            RunConfiguration runConfiguration = runPool.runConfiguration();
             List<Run> runs = runPool.runs();
-            for (int j = 0; j < runs.size(); j++) {
-                Run run = runs.get(j);
-                int finalJ = j;
+            int runCount = runs.size();
 
-                Future<RunStats> future = executorService.submit(() -> runPoolExecutor.executeRun(run,
-                        finalJ, runs.size(), finalI, runPools.size()));
-                runPoolFutures.add(future);
+            configToRunStats.put(runConfiguration, new ArrayList<>(runCount));
+            configToExpectedCount.put(runConfiguration, runCount);
+
+            for (int runIndex = 0; runIndex < runCount; runIndex++) {
+                Run run = runs.get(runIndex);
+                int finalRunIndex = runIndex;
+                int finalPoolIndex = poolIndex;
+
+                completionService.submit(() -> {
+                    RunStats runStats = runPoolExecutor.executeRun(
+                            run,
+                            finalRunIndex,
+                            runCount,
+                            finalPoolIndex,
+                            runPools.size()
+                    );
+                    return new RunStatsWithConfig(runConfiguration, runStats, finalRunIndex, finalPoolIndex);
+                });
+
+                totalSubmitted++;
             }
-            allFutures.add(runPoolFutures);
         }
 
-        List<List<RunStats>> allRunStats = new ArrayList<>();
+        System.out.println("WAITING AND PROCESSING RESULTS -----------------");
 
-        System.out.println("WAITING FOR COMPLETION-----------------");
-
-        for (int i = 0; i < runPools.size(); i++) {
-            List<RunStats> runPoolStats = new ArrayList<>();
-            List<Future<RunStats>> runPoolFutures = allFutures.get(i);
-            for (Future<RunStats> runFuture : runPoolFutures) {
-                RunStats runStats;
-                try {
-                    runStats = runFuture.get();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                runPoolStats.add(runStats);
-            }
-            allRunStats.add(runPoolStats);
-        }
-
-
-        if (allRunStats.size() != runPools.size()) {
-            throw new IllegalStateException("Incorrect number of allRunStats: " + allRunStats.size() + ". Should be " + runPools.size());
-        }
-        System.out.println("CREATING RUN POOL STATS-----------------");
-        List<Future<RunPoolStats>> runPoolStatsFutures = new ArrayList<>();
-        for (int i = 0; i < allRunStats.size(); i++) {
-            int finalI = i;
-            Future<RunPoolStats> future = executorService.submit(() -> runPoolStatsCreator.create(allRunStats.get(finalI), runPools.get(finalI).runConfiguration())
-            );
-            runPoolStatsFutures.add(future);
-        }
-
-        System.out.println("WAITING FOR RUN POOL STATS-----------------");
-        List<RunPoolStats> allRunPoolStats = new ArrayList<>();
-        for (Future<RunPoolStats> future : runPoolStatsFutures) {
-            RunPoolStats runPoolStats;
+        for (int i = 0; i < totalSubmitted; i++) {
             try {
-                runPoolStats = future.get();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+                Future<RunStatsWithConfig> future = completionService.take();
+                RunStatsWithConfig runStatsWithConfig = future.get();
+
+                RunConfiguration runConfiguration = runStatsWithConfig.runConfiguration();
+                List<RunStatsWithConfig> collectedRunStats = configToRunStats.get(runConfiguration);
+                collectedRunStats.add(runStatsWithConfig);
+
+                if (collectedRunStats.size() == configToExpectedCount.get(runConfiguration)) {
+                    System.out.println("EXPORTING RUN POOL for run pool " + runStatsWithConfig.runPoolIndex() + 1);
+
+                    List<RunStats> orderedRunStats = collectedRunStats.stream()
+                            .sorted(Comparator.comparing(RunStatsWithConfig::runIndex))
+                            .map(RunStatsWithConfig::runStats)
+                            .toList();
+
+                    RunPoolStats runPoolStats = runPoolStatsCreator.create(orderedRunStats, runConfiguration);
+
+                    exporter.exportSingleRunPoolStats(runPoolStats);
+                    exporter.exportPlots(runPoolStats.allRunStats(), runConfiguration);
+                    System.out.println("EXPORTING COMPLETED for RUN POOL for run pool " + runStatsWithConfig.runPoolIndex() + 1);
+
+                    System.out.println("EXPORTING RUN POOL TO GENERAL TABLE for run pool " + runStatsWithConfig.runPoolIndex() + 1);
+                    exporter.appendRunPoolStatsToAllStatsTable(runPoolStats);
+                    System.out.println("EXPORTING RUN POOL TO GENERAL TABLE FINISHED for run pool " + runStatsWithConfig.runPoolIndex() + 1);
+
+                    configToRunStats.remove(runConfiguration);
+                    System.gc(); // encourage cleanup of completed pool
+                }
+
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException("Interrupted while waiting for run completion", e);
+            } catch (ExecutionException e) {
+                throw new RuntimeException("Run failed", e.getCause());
             }
-            allRunPoolStats.add(runPoolStats);
         }
-
-        if (allRunPoolStats.size() != runPools.size()) {
-            throw new IllegalStateException("Incorrect number of allRunPoolStats: " + allRunPoolStats.size() + ". Should be " + runPools.size());
-        }
-
-        System.out.println("EXPORTING SINGLE RUN POOLS -----------------");
-        allRunPoolStats.forEach(stats -> executorService.submit(() -> exporter.exportSingleRunPoolStats(stats)));
 
         executorService.shutdown();
         try {
-            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        int parallelism = Runtime.getRuntime().availableProcessors();
-        ExecutorService plotsExecutorService = Executors.newFixedThreadPool(parallelism);
-
-        System.out.println("EXPORTING SINGLE RUN POOL PLOTS -----------------");
-        int size = allRunPoolStats.size();
-
-        List<Callable<Void>> tasks = IntStream.range(0, size)
-                .mapToObj(i -> (Callable<Void>) () -> {
-                    System.out.println("Plots " + (i + 1) + "/" + size);
-                    exporter.exportPlots(
-                            allRunPoolStats.get(i).allRunStats(),
-                            allRunPoolStats.get(i).runConfiguration()
-                    );
-                    return null;
-                })
-                .toList();
-
-        try {
-            plotsExecutorService.invokeAll(tasks);
-        } catch (InterruptedException e) {
-            throw new RuntimeException("Plot export interrupted", e);
-        } finally {
-            plotsExecutorService.shutdown();
-            try {
-                if (!plotsExecutorService.awaitTermination(1, TimeUnit.HOURS)) {
-                    System.err.println("Timeout waiting for tasks to complete.");
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+            if (!executorService.awaitTermination(1, TimeUnit.HOURS)) {
+                System.err.println("Timeout waiting for executor termination.");
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
 
-
-        System.out.println("EXPORTING ALL RUN POOLS -----------------");
-        exporter.exportAllRunPools(allRunPoolStats);
+        System.out.println("ALL RUN POOLS COMPLETED");
     }
 }

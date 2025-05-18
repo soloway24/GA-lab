@@ -16,6 +16,6 @@ public class PopulationPoolInitializer {
         List<Population> populations = IntStream.range(0, poolSize)
                 .mapToObj(i -> populationInitializer.initializePopulation(populationConfiguration))
                 .toList();
-        return new PopulationPool(populationConfiguration, populations);
+        return new PopulationPool(populations);
     }
 }

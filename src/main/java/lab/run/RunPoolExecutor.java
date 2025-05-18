@@ -109,7 +109,7 @@ public class RunPoolExecutor {
             Population population = run.population();
             Selector selector = runConfiguration.selector();
             Operator operator = runConfiguration.operator();
-            Encoding encoding = population.populationConfiguration().encoding();
+            Encoding encoding = runConfiguration.encoding();
             Individual optimal = function.getOptimalIndividual(encoding)
                     .orElseThrow(() -> new IllegalStateException("Function " + function + " does not support encoding " + encoding + " !"));
 
@@ -310,7 +310,7 @@ public class RunPoolExecutor {
 
                 populateHomogeneityToGeneration(currentIndividuals, i, homogeneityToGeneration);
                 populateHistogramData(function, currentIndividuals, i, generationToIndMetrics, homogeneityToIndMetrics);
-                populateSnapshotData(population.populationConfiguration(), individualToFitness, timingTypeToPopulationSnapshot, i, avgF, maxF);
+                populateSnapshotData(individualToFitness, timingTypeToPopulationSnapshot, i, avgF, maxF);
 
                 previousBestF = maxF;
                 previousBestQ = bestQ;
@@ -770,8 +770,7 @@ public class RunPoolExecutor {
                 });
     }
 
-    private void populateSnapshotData(PopulationConfiguration populationConfiguration,
-                                      Map<Individual, ? extends Number> individualToFitness,
+    private void populateSnapshotData(Map<Individual, ? extends Number> individualToFitness,
                                       Map<PopulationTimingType, PopulationSnapshot> timingTypeToPopulationSnapshot,
                                       int iteration,
                                       double avgF,
@@ -779,7 +778,7 @@ public class RunPoolExecutor {
         Arrays.stream(PopulationTimingType.values())
                 .forEach(timingType -> {
                     if (shouldAddTiming(timingType, timingTypeToPopulationSnapshot, iteration, avgF, maxF)) {
-                        addTiming(populationConfiguration, timingType, individualToFitness, timingTypeToPopulationSnapshot, iteration, avgF, maxF);
+                        addTiming(timingType, individualToFitness, timingTypeToPopulationSnapshot, iteration, avgF, maxF);
                     }
                 });
     }
@@ -793,8 +792,7 @@ public class RunPoolExecutor {
                 && timingTypeIdentifier.isTiming(timingType, iteration, avgF, maxF);
     }
 
-    private void addTiming(PopulationConfiguration populationConfiguration,
-                           PopulationTimingType timingType,
+    private void addTiming(PopulationTimingType timingType,
                            Map<Individual, ? extends Number> individualToFitness,
                            Map<PopulationTimingType, PopulationSnapshot> timingTypeToPopulationSnapshot,
                            int iteration,
@@ -805,7 +803,7 @@ public class RunPoolExecutor {
                 .map(entry -> Pair.of(entry.getKey(), entry.getValue().doubleValue()))
                 .sorted(Map.Entry.comparingByValue())
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, LinkedHashMap::new));
-        timingTypeToPopulationSnapshot.put(timingType, new PopulationSnapshot(populationTiming, populationConfiguration, sortedIndividualToFitness));
+        timingTypeToPopulationSnapshot.put(timingType, new PopulationSnapshot(populationTiming, sortedIndividualToFitness));
     }
 
     private List<IndividualMetrics> buildAllIndividualMetrics(List<Individual> individuals, FitnessFunction<?, ?> function) {

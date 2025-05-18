@@ -95,6 +95,21 @@ public class Exporter {
         saveWorkbook(allStatsWorkbook, allStatsTablePath);
     }
 
+    private final Object allStatsLock = new Object();
+
+    public void appendRunPoolStatsToAllStatsTable(RunPoolStats runPoolStats) {
+        RunConfiguration runConfiguration = runPoolStats.runConfiguration();
+        String allStatsTablePath = TABLES_PATH + runConfiguration.populationSize() + "/" + ALL_STATS_TABLE_NAME;
+
+        synchronized (allStatsLock) {
+            Workbook workbook = getAllConfigsWorkbook(allStatsTablePath);
+            Sheet sheet = workbook.getSheetAt(0);
+            int nextRowIndex = getFirstNullRowIndex(sheet);
+
+            createRunPoolRow(sheet, nextRowIndex, nextRowIndex, true, runPoolStats);
+            saveWorkbook(workbook, allStatsTablePath);
+        }
+    }
 
     public void exportPlots(List<RunStats> allRunStats, RunConfiguration runConfiguration) {
         String plotFilepath = getPlotFilepath(runConfiguration);

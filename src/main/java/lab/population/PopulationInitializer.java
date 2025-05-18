@@ -53,7 +53,7 @@ public class PopulationInitializer {
         )
                 .toList();
         List<Individual> indexedIndividuals = getIndexedIndividuals(individuals);
-        return new Population(populationConfig, indexedIndividuals);
+        return new Population(indexedIndividuals);
     }
 
     private Population initializeRandomPopulationWithOptimalQuantity(PopulationConfiguration populationConfig) {
@@ -89,7 +89,7 @@ public class PopulationInitializer {
                 .collect(toList());
         shuffle(wholePopulation);
         List<Individual> individuals = getIndexedIndividuals(wholePopulation);
-        return new Population(populationConfig, individuals);
+        return new Population(individuals);
     }
 
     private Population initializeRandomPopulationWithoutOptimal(PopulationConfiguration populationConfiguration) {
@@ -97,7 +97,7 @@ public class PopulationInitializer {
                 populationConfiguration.encoding(), populationConfiguration.populationSize())
                 .toList();
         List<Individual> indexedIndividuals = getIndexedIndividuals(individuals);
-        return new Population(populationConfiguration, indexedIndividuals);
+        return new Population(indexedIndividuals);
     }
 
     private Stream<Individual> createRandomIndividuals(int chromosomeLength, int arity, Encoding encoding, int quantity) {
