@@ -116,32 +116,30 @@ public class Main {
 //        return List.of(exponent1);
 //        return List.of(exponent2);
         return List.of(
-//                fhFunction
-//                ,
-//                fhd2Function
-//                fhd10Function
-//                ,
-//                fhd100Function
-//                ,
-//                constAllFunction
-//                ,
-//                quadraticFunction
-//                ,
-                quadratic512Function
-//                quadraticSqrt512Function
-//                ,
-//                exponent025
-//                ,
-//                exponent1
-//                ,
-//                exponent2
+                fhFunction
+                ,
+                fhd2Function,
+                fhd10Function
+                ,
+                fhd100Function
+                ,
+
+                quadraticFunction
+                ,
+//                quadratic512Function
+                quadraticSqrt512Function
+                ,
+                exponent025
+                ,
+                exponent1
+                ,
+                exponent2,
 
 //                 rastriginFunction
-//                , deb2Function
-//                , deb4Function
-//                testSin2
-//                ,
-//                testSin500
+
+                testSin2
+                ,
+                testSin500
 //                ,
 //                f1
 //                ,
@@ -158,6 +156,13 @@ public class Main {
 //                f6_1 // TODO not working - contains negative values
 //                ,
 //                f6_250 // TODO not working - contains negative values
+
+
+
+//                constAllFunction
+//                ,
+//                , deb2Function
+//                , deb4Function
         );
     }
 
@@ -301,7 +306,8 @@ public class Main {
 //                dynamicPowerScalingRws0p8to1p2,
 //                dynamicPowerScalingRws0p5to1p5,
 //                dynamicPowerScalingRws0p5to2,
-//                linearScalingRws12,
+//                linearScalingRws12
+//                ,
 //                linearScalingRws14,
 //                linearScalingRws15,
 //                linearScalingRws16,
@@ -338,7 +344,8 @@ public class Main {
 //                dynamicPowerScalingSus0p9to1p1,
 //                dynamicPowerScalingSus0p8to1p2,
 //                dynamicPowerScalingSus0p5to1p5,
-//                dynamicPowerScalingSus0p5to2,
+//                dynamicPowerScalingSus0p5to2
+//                ,
 //
 //                linearScalingSus12,
 //                linearScalingSus14,
@@ -348,11 +355,11 @@ public class Main {
 //                linearScalingSus2
 //                ,
 //
+//                maxAvgWorstLinearSus
+//                ,
 //                averageLinearSus
 //                ,
 //                medianLinearSus,
-                maxAvgWorstLinearSus
-//                ,
 //
 //                sigmaTruncationSus1,
 //                sigmaTruncationSus2,
@@ -362,7 +369,7 @@ public class Main {
 //                spanMethodSus5000,
 //                adaptivePowerLawScalingSus5000
 //                ,
-//
+
 //                windowScalingSus0,
 //                windowScalingSus1,
 //                windowScalingSus2,
