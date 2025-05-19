@@ -93,7 +93,7 @@ public class Main {
         FitnessFunction<?, ?> exponent025 = new ExponentialFunction(10, 0, 10.23, 2, 0.25);
         FitnessFunction<?, ?> exponent1 = new ExponentialFunction(10, 0, 10.23, 2, 1);
         FitnessFunction<?, ?> exponent2 = new ExponentialFunction(10, 0, 10.23, 2, 2);
-//        FitnessFunction<?, ?> rastriginFunction = new RastriginFunction(10, -5.12, 5.11, 2, 7);
+        FitnessFunction<?, ?> rastriginFunction = new RastriginFunction(10, -5.12, 5.11, 2, 7);
 //        FitnessFunction<?, ?> deb2Function = new Deb2Function(10, 0, 1.023, 3);
 //        FitnessFunction<?, ?> deb4Function = new Deb4Function(10, 0, 1.023, 3);
         FitnessFunction<?, ?> testSin2 = new TestSin2Function(10, 0, 10.23, 2);
@@ -123,25 +123,25 @@ public class Main {
 //                fhd10Function
 //                ,
                 fhd100Function
-//                ,
+                ,
 //
-//                quadraticFunction
-//                ,
-//                quadratic512Function
-//                quadraticSqrt512Function
-//                ,
-//                exponent025
-//                ,
-//                exponent1
-//                ,
-//                exponent2
-//                ,
+                quadraticFunction
+                ,
+                quadraticSqrt512Function
+                ,
+                exponent025
+                ,
+                exponent1
+                ,
+                exponent2
+                ,
+
 //
-//                 rastriginFunction
-//
-//                testSin2
-//                ,
-//                testSin500
+                testSin2,
+                testSin500
+                ,
+                 rastriginFunction,
+                quadratic512Function
 //                ,
 //                f1
 //                ,
