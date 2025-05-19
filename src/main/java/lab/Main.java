@@ -93,9 +93,9 @@ public class Main {
         FitnessFunction<?, ?> exponent025 = new ExponentialFunction(10, 0, 10.23, 2, 0.25);
         FitnessFunction<?, ?> exponent1 = new ExponentialFunction(10, 0, 10.23, 2, 1);
         FitnessFunction<?, ?> exponent2 = new ExponentialFunction(10, 0, 10.23, 2, 2);
-        FitnessFunction<?, ?> rastriginFunction = new RastriginFunction(10, -5.12, 5.11, 2, 7);
-        FitnessFunction<?, ?> deb2Function = new Deb2Function(10, 0, 1.023, 3);
-        FitnessFunction<?, ?> deb4Function = new Deb4Function(10, 0, 1.023, 3);
+//        FitnessFunction<?, ?> rastriginFunction = new RastriginFunction(10, -5.12, 5.11, 2, 7);
+//        FitnessFunction<?, ?> deb2Function = new Deb2Function(10, 0, 1.023, 3);
+//        FitnessFunction<?, ?> deb4Function = new Deb4Function(10, 0, 1.023, 3);
         FitnessFunction<?, ?> testSin2 = new TestSin2Function(10, 0, 10.23, 2);
         FitnessFunction<?, ?> testSin500 = new TestSin500Function(10, 0, 10.23, 2);
 
@@ -116,7 +116,7 @@ public class Main {
 //        return List.of(exponent1);
 //        return List.of(exponent2);
         return List.of(
-//                fhFunction
+                fhFunction
 //                ,
 //                fhd2Function
 //                ,
@@ -141,7 +141,7 @@ public class Main {
 //
 //                testSin2
 //                ,
-                testSin500
+//                testSin500
 //                ,
 //                f1
 //                ,
@@ -387,9 +387,9 @@ public class Main {
     private List<Operator> getOperators() {
         Operator noneOperator = new NoneOperator();
         Operator crossoverOperator = new OnePointCrossoverOperator(1);
-
-        return List.of(noneOperator);
-//        return List.of(crossoverOperator);
+//
+//        return List.of(noneOperator);
+        return List.of(crossoverOperator);
     }
 
     private List<RunPoolConfiguration> getRunPoolConfigurations(List<FitnessFunction<?, ?>> functions,

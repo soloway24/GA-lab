@@ -101,8 +101,8 @@ public class FhFunction implements FitnessFunction<Number, Long> {
 //            return List.of(PopulationType.ONE_OPTIMAL, PopulationType.FIVE_PERCENT_OPTIMAL, PopulationType.TEN_PERCENT_OPTIMAL);
         }
 
-//        return List.of(PopulationType.ZERO_OPTIMAL, PopulationType.ONE_OPTIMAL);
-        return List.of(PopulationType.ZERO_OPTIMAL);
+        return List.of(PopulationType.ZERO_OPTIMAL, PopulationType.ONE_OPTIMAL);
+//        return List.of(PopulationType.ZERO_OPTIMAL);
 //        return List.of(PopulationType.ONE_OPTIMAL);
 //        return List.of(PopulationType.ZERO_OPTIMAL, PopulationType.ONE_OPTIMAL, PopulationType.FIVE_PERCENT_OPTIMAL, PopulationType.TEN_PERCENT_OPTIMAL);
     }
