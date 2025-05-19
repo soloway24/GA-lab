@@ -45,8 +45,7 @@ public class AdaptivePowerLawScalingSelector {
         double a = 0.1;
 
         int g = ofNullable(selectionContext.getNi())
-                .map(ni -> ni + 1)
-                .orElseThrow(() -> new IllegalArgumentException("Ni value is not present in span method selector."));
+                .orElseThrow(() -> new IllegalArgumentException("Ni value is not present in adaptive power law scaling selector."));
 
         double tan = tan(g * PI / ((G + 1) * 2.0));
         double tanExponent = p2 * pow(s0 / s_star, a);

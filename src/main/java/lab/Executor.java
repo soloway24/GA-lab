@@ -131,6 +131,7 @@ public class Executor {
         }
 
         System.out.println("WAITING AND PROCESSING RESULTS -----------------");
+        ExecutorService exportExecutor = Executors.newFixedThreadPool(availableThreads);
 
         for (int i = 0; i < totalSubmitted; i++) {
             try {
@@ -143,25 +144,27 @@ public class Executor {
 
                 if (collectedRunStats.size() == configToExpectedCount.get(runConfiguration)) {
 
-                    List<RunStats> orderedRunStats = collectedRunStats.stream()
-                            .sorted(Comparator.comparing(RunStatsWithConfig::runIndex))
-                            .map(RunStatsWithConfig::runStats)
-                            .toList();
+                    exportExecutor.submit(() -> {
+                        List<RunStats> orderedRunStats = collectedRunStats.stream()
+                                .sorted(Comparator.comparing(RunStatsWithConfig::runIndex))
+                                .map(RunStatsWithConfig::runStats)
+                                .toList();
 
-                    RunPoolStats runPoolStats = runPoolStatsCreator.create(orderedRunStats, runConfiguration);
+                        RunPoolStats runPoolStats = runPoolStatsCreator.create(orderedRunStats, runConfiguration);
 
-                    System.out.println("EXPORTING RUN POOL " + (runStatsWithConfig.runPoolIndex() + 1));
-                    exporter.exportSingleRunPoolStats(runPoolStats);
-                    System.out.println("EXPORTING PLOTS for RUN POOL " + (runStatsWithConfig.runPoolIndex() + 1));
-                    exporter.exportPlots(runPoolStats.allRunStats(), runConfiguration);
-                    System.out.println("EXPORTING PLOTS COMPLETED for RUN POOL " + (runStatsWithConfig.runPoolIndex() + 1));
+                        System.out.println("EXPORTING RUN POOL " + (runStatsWithConfig.runPoolIndex() + 1));
+                        exporter.exportSingleRunPoolStats(runPoolStats);
+                        System.out.println("EXPORTING PLOTS for RUN POOL " + (runStatsWithConfig.runPoolIndex() + 1));
+                        exporter.exportPlots(runPoolStats.allRunStats(), runConfiguration);
+                        System.out.println("EXPORTING PLOTS COMPLETED for RUN POOL " + (runStatsWithConfig.runPoolIndex() + 1));
 
-                    System.out.println("EXPORTING RUN POOL TO GENERAL TABLE for run pool " + (runStatsWithConfig.runPoolIndex() + 1));
-                    exporter.appendRunPoolStatsToAllStatsTable(runPoolStats);
-                    System.out.println("EXPORTING RUN POOL TO GENERAL TABLE FINISHED for run pool " + (runStatsWithConfig.runPoolIndex() + 1));
+                        System.out.println("EXPORTING RUN POOL TO GENERAL TABLE for run pool " + (runStatsWithConfig.runPoolIndex() + 1));
+                        exporter.appendRunPoolStatsToAllStatsTable(runPoolStats);
+                        System.out.println("EXPORTING RUN POOL TO GENERAL TABLE FINISHED for run pool " + (runStatsWithConfig.runPoolIndex() + 1));
 
-                    configToRunStats.remove(runConfiguration);
-                    System.gc(); // encourage cleanup of completed pool
+                        configToRunStats.remove(runConfiguration);
+                        System.gc(); // encourage cleanup of completed pool
+                    });
                 }
 
             } catch (InterruptedException e) {
@@ -174,8 +177,17 @@ public class Executor {
 
         executorService.shutdown();
         try {
-            if (!executorService.awaitTermination(1, TimeUnit.HOURS)) {
+            if (!executorService.awaitTermination(10, TimeUnit.HOURS)) {
                 System.err.println("Timeout waiting for executor termination.");
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        exportExecutor.shutdown();
+        try {
+            if (!exportExecutor.awaitTermination(10, TimeUnit.HOURS)) {
+                System.err.println("Timeout waiting for export executor termination.");
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

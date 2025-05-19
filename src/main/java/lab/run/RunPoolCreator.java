@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toMap;
 
 @Component
 @RequiredArgsConstructor
@@ -29,18 +30,18 @@ public class RunPoolCreator {
 
     private static final Type CONFIG_TYPE = new TypeToken<Map<PopulationConfigurationKey, PopulationPool>>() {
     }.getType();
-    private static final String CONFIG_PATH = "src/main/resources/populations_config.json";
+    private static final String CONFIG_PATH = "src/main/resources/populations_config_%s.json";
     private static final int MAX_RUN_POOL_SIZE = 100;
 
     private final PopulationPoolInitializer populationPoolInitializer;
-    private final Map<PopulationConfigurationKey, PopulationPool> populationConfigToPool = readOrCreateConfig();
+    private final Map<String, Map<PopulationConfigurationKey, PopulationPool>> functionToConfigs = new HashMap<>();
 
     public List<RunPool> createAll(List<RunPoolConfiguration> runPoolConfigurations) {
         List<RunPool> runPools = runPoolConfigurations.stream()
                 .map(this::create)
                 .toList();
 
-        saveConfigToFile();
+        saveConfigsToFiles();
         return runPools;
     }
 
@@ -52,9 +53,14 @@ public class RunPoolCreator {
 
     private PopulationPool getPopulationPool(RunPoolConfiguration runPoolConfiguration) {
         PopulationConfiguration populationConfiguration = convert(runPoolConfiguration.runConfiguration());
+
+        String functionName = populationConfiguration.function().getName();
+        Map<PopulationConfigurationKey, PopulationPool> configs = ofNullable(functionToConfigs.get(functionName))
+                .orElseGet(() -> addAndGetFunctionConfig(functionName));
+
         PopulationConfigurationKey key = new PopulationConfigurationKey(populationConfiguration);
-        PopulationPool maxPopulationPool = ofNullable(populationConfigToPool.get(key))
-                .orElseGet(() -> addAndGetPopulationPool(populationConfiguration));
+        PopulationPool maxPopulationPool = ofNullable(configs.get(key))
+                .orElseGet(() -> addAndGetPopulationPool(populationConfiguration, functionName));
         return getLimitedPopulationPool(runPoolConfiguration, maxPopulationPool);
     }
 
@@ -75,10 +81,16 @@ public class RunPoolCreator {
         );
     }
 
-    private PopulationPool addAndGetPopulationPool(PopulationConfiguration populationConfiguration) {
+    Map<PopulationConfigurationKey, PopulationPool> addAndGetFunctionConfig(String functionName) {
+        var config = readOrCreateConfig(functionName);
+        functionToConfigs.put(functionName, config);
+        return config;
+    }
+
+    private PopulationPool addAndGetPopulationPool(PopulationConfiguration populationConfiguration, String functionName) {
         PopulationPool populationPool = populationPoolInitializer.initializePopulationPool(populationConfiguration, MAX_RUN_POOL_SIZE);
         PopulationConfigurationKey key = new PopulationConfigurationKey(populationConfiguration);
-        populationConfigToPool.put(key, populationPool);
+        functionToConfigs.get(functionName).put(key, populationPool);
         return populationPool;
     }
 
@@ -89,8 +101,9 @@ public class RunPoolCreator {
                 .toList();
     }
 
-    private Map<PopulationConfigurationKey, PopulationPool> readOrCreateConfig() {
-        File configFile = new File(CONFIG_PATH);
+    private Map<PopulationConfigurationKey, PopulationPool> readOrCreateConfig(String functionName) {
+        String configPath = String.format(CONFIG_PATH, functionName);
+        File configFile = new File(configPath);
         if (configFile.exists()) {
             try (FileReader fileReader = new FileReader(configFile)) {
                 return GSON.fromJson(fileReader, CONFIG_TYPE);
@@ -101,11 +114,45 @@ public class RunPoolCreator {
         return new HashMap<>();
     }
 
-    private void saveConfigToFile() {
-        try (FileWriter writer = new FileWriter(CONFIG_PATH)) {
-            GSON.toJson(populationConfigToPool, CONFIG_TYPE, writer);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to write population config to file", e);
+    private void saveConfigsToFiles() {
+        functionToConfigs.forEach((functionName, config) -> {
+            String configPath = String.format(CONFIG_PATH, functionName);
+            try (FileWriter writer = new FileWriter(configPath)) {
+                GSON.toJson(config, CONFIG_TYPE, writer);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to write population config for function " + functionName + " to file", e);
+            }
+        });
+    }
+
+    public static void main(String[] args) {
+        String configPath = "src/main/resources/populations_config_4.json";
+        String functionName = "x^2.0";
+        File configFile = new File(configPath);
+        if (configFile.exists()) {
+            try (FileReader fileReader = new FileReader(configFile)) {
+                Map<PopulationConfigurationKey, PopulationPool> config = GSON.fromJson(fileReader, CONFIG_TYPE);
+                var selectedConfig = config.entrySet().stream()
+                        .filter(entry -> entry.getKey().functionName().equals(functionName))
+                        .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+                String newConfigPath = String.format(CONFIG_PATH, functionName);
+                try (FileWriter writer = new FileWriter(newConfigPath)) {
+                    GSON.toJson(selectedConfig, CONFIG_TYPE, writer);
+                } catch (IOException e) {
+                    throw new RuntimeException("Failed to write population config for function " + functionName + " to file", e);
+                }
+
+                File newConfigFile = new File(newConfigPath);
+                if (configFile.exists()) {
+                    try (FileReader newFileReader = new FileReader(newConfigFile)) {
+                        Map<PopulationConfigurationKey, PopulationPool> newConfig = GSON.fromJson(newFileReader, CONFIG_TYPE);
+                        System.out.println(newConfig);
+                    }
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to read population config from file", e);
+            }
         }
     }
 }

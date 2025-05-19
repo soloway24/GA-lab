@@ -61,19 +61,19 @@ public class Main {
         Map<FitnessFunction<?, ?>, List<RunPool>> functionToRunPools = runPools.stream()
                 .collect(Collectors.groupingBy(runPool -> runPool.runConfiguration().function(), Collectors.toList()));
 
-//        executor.executeAllSingleThread(runPools);
+        executor.executeAllSingleThread(runPools);
 //        executor.executeAll(runPools);
 
-        functionToRunPools.forEach((function, fRunPools) -> {
-            StopWatch stopWatch = new StopWatch();
-            stopWatch.start();
-            System.out.println("Running function " + function.getName());
-
-            executor.executeAllParallel(fRunPools);
-
-            stopWatch.stop();
-            System.out.println("Time Elapsed: " + stopWatch.getTime() / 1000.0);
-        });
+//        functionToRunPools.forEach((function, fRunPools) -> {
+//            StopWatch stopWatch = new StopWatch();
+//            stopWatch.start();
+//            System.out.println("Running function " + function.getName());
+//
+//            executor.executeAllParallel(fRunPools);
+//
+//            stopWatch.stop();
+//            System.out.println("Time Elapsed: " + stopWatch.getTime() / 1000.0);
+//        });
     }
 
     private List<Integer> getPopulationSizes() {
@@ -116,30 +116,32 @@ public class Main {
 //        return List.of(exponent1);
 //        return List.of(exponent2);
         return List.of(
-                fhFunction
-                ,
-                fhd2Function,
-                fhd10Function
-                ,
-                fhd100Function
-                ,
-
+//                fhFunction
+//                ,
+//                fhd2Function
+//                ,
+//                fhd10Function
+//                ,
+//                fhd100Function
+//                ,
+//
                 quadraticFunction
-                ,
-//                quadratic512Function
-                quadraticSqrt512Function
-                ,
-                exponent025
-                ,
-                exponent1
-                ,
-                exponent2,
-
-//                 rastriginFunction
-
-                testSin2
-                ,
-                testSin500
+//                ,
+////                quadratic512Function
+//                quadraticSqrt512Function
+//                ,
+//                exponent025
+//                ,
+//                exponent1
+//                ,
+//                exponent2
+//                ,
+//
+////                 rastriginFunction
+//
+//                testSin2
+//                ,
+//                testSin500
 //                ,
 //                f1
 //                ,
@@ -320,17 +322,17 @@ public class Main {
 //                sigmaTruncationRws2,
 //                sigmaTruncationRws3,
 //                sigmaTruncationRws4,
-//                spanMethodRws194,
-//                spanMethodRws300,
-//                spanMethodRws500,
-//                adaptivePowerLawScalingRws194,
-//                adaptivePowerLawScalingRws300,
-//                adaptivePowerLawScalingRws500,
+                spanMethodRws194,
+                spanMethodRws300,
+                spanMethodRws500,
+                adaptivePowerLawScalingRws194,
+                adaptivePowerLawScalingRws300,
+                adaptivePowerLawScalingRws500,
 //                windowScalingRws0,
 //                windowScalingRws1,
 //                windowScalingRws2,
-//                windowScalingRws10
-
+//                windowScalingRws10,
+////
 //                susSelector
 //                ,
 //                powerScalingSus11
@@ -340,13 +342,13 @@ public class Main {
 //                powerScalingSus2,
 //                powerScalingSus3
 //                ,
-
+//
 //                dynamicPowerScalingSus0p9to1p1,
 //                dynamicPowerScalingSus0p8to1p2,
 //                dynamicPowerScalingSus0p5to1p5,
 //                dynamicPowerScalingSus0p5to2
 //                ,
-//
+
 //                linearScalingSus12,
 //                linearScalingSus14,
 //                linearScalingSus15,
@@ -360,16 +362,16 @@ public class Main {
 //                averageLinearSus
 //                ,
 //                medianLinearSus,
-//
+////
 //                sigmaTruncationSus1,
 //                sigmaTruncationSus2,
 //                sigmaTruncationSus3,
 //                sigmaTruncationSus4,
-//
-//                spanMethodSus5000,
-//                adaptivePowerLawScalingSus5000
-//                ,
 
+                spanMethodSus5000,
+                adaptivePowerLawScalingSus5000
+//                ,
+//
 //                windowScalingSus0,
 //                windowScalingSus1,
 //                windowScalingSus2,
