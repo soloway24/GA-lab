@@ -116,13 +116,13 @@ public class Main {
 //        return List.of(exponent1);
 //        return List.of(exponent2);
         return List.of(
-                fhFunction
+//                fhFunction
 //                ,
 //                fhd2Function
 //                ,
 //                fhd10Function
 //                ,
-//                fhd100Function
+                fhd100Function
 //                ,
 //
 //                quadraticFunction
