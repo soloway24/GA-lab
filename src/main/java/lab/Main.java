@@ -61,19 +61,19 @@ public class Main {
         Map<FitnessFunction<?, ?>, List<RunPool>> functionToRunPools = runPools.stream()
                 .collect(Collectors.groupingBy(runPool -> runPool.runConfiguration().function(), Collectors.toList()));
 
-        executor.executeAllSingleThread(runPools);
+//        executor.executeAllSingleThread(runPools);
 //        executor.executeAll(runPools);
 
-//        functionToRunPools.forEach((function, fRunPools) -> {
-//            StopWatch stopWatch = new StopWatch();
-//            stopWatch.start();
-//            System.out.println("Running function " + function.getName());
-//
-//            executor.executeAllParallel(fRunPools);
-//
-//            stopWatch.stop();
-//            System.out.println("Time Elapsed: " + stopWatch.getTime() / 1000.0);
-//        });
+        functionToRunPools.forEach((function, fRunPools) -> {
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
+            System.out.println("Running function " + function.getName());
+
+            executor.executeAllParallel(fRunPools);
+
+            stopWatch.stop();
+            System.out.println("Time Elapsed: " + stopWatch.getTime() / 1000.0);
+        });
     }
 
     private List<Integer> getPopulationSizes() {
@@ -125,9 +125,9 @@ public class Main {
 //                fhd100Function
 //                ,
 //
-                quadraticFunction
+//                quadraticFunction
 //                ,
-////                quadratic512Function
+//                quadratic512Function
 //                quadraticSqrt512Function
 //                ,
 //                exponent025
@@ -137,11 +137,11 @@ public class Main {
 //                exponent2
 //                ,
 //
-////                 rastriginFunction
+//                 rastriginFunction
 //
 //                testSin2
 //                ,
-//                testSin500
+                testSin500
 //                ,
 //                f1
 //                ,
@@ -297,85 +297,90 @@ public class Main {
         AdaptivePowerLawScalingSusSelector AdaptivePowerLawScalingSus10000 = new AdaptivePowerLawScalingSusSelector(adaptivePowerLawScaling10000, susSelector);
 
         return List.of(
-//                rwsSelector
-//                ,
-//                powerScalingRws11,
-//                powerScalingRws12,
-//                powerScalingRws15,
-//                powerScalingRws2,
-//                powerScalingRws3,
-//                dynamicPowerScalingRws0p9to1p1,
-//                dynamicPowerScalingRws0p8to1p2,
-//                dynamicPowerScalingRws0p5to1p5,
-//                dynamicPowerScalingRws0p5to2,
-//                linearScalingRws12
-//                ,
-//                linearScalingRws14,
-//                linearScalingRws15,
-//                linearScalingRws16,
-//                linearScalingRws18,
-//                linearScalingRws2,
-//                averageLinearRws,
-//                medianLinearRws,
-//                maxAvgWorstLinearRws,
-//                sigmaTruncationRws1,
-//                sigmaTruncationRws2,
-//                sigmaTruncationRws3,
-//                sigmaTruncationRws4,
+                rwsSelector
+                ,
+                powerScalingRws11,
+                powerScalingRws12,
+                powerScalingRws15,
+                powerScalingRws2,
+                powerScalingRws3,
+                dynamicPowerScalingRws0p9to1p1,
+                dynamicPowerScalingRws0p8to1p2,
+                dynamicPowerScalingRws0p5to1p5,
+                dynamicPowerScalingRws0p5to2,
+                linearScalingRws12
+                ,
+                linearScalingRws14,
+                linearScalingRws15,
+                linearScalingRws16,
+                linearScalingRws18,
+                linearScalingRws2,
+                averageLinearRws,
+                medianLinearRws,
+                maxAvgWorstLinearRws,
+                sigmaTruncationRws1,
+                sigmaTruncationRws2,
+                sigmaTruncationRws3,
+                sigmaTruncationRws4,
                 spanMethodRws194,
                 spanMethodRws300,
-                spanMethodRws500,
-                adaptivePowerLawScalingRws194,
-                adaptivePowerLawScalingRws300,
-                adaptivePowerLawScalingRws500,
-//                windowScalingRws0,
-//                windowScalingRws1,
-//                windowScalingRws2,
-//                windowScalingRws10,
-////
-//                susSelector
-//                ,
-//                powerScalingSus11
-//                ,
-//                powerScalingSus12,
-//                powerScalingSus15,
-//                powerScalingSus2,
-//                powerScalingSus3
-//                ,
-//
-//                dynamicPowerScalingSus0p9to1p1,
-//                dynamicPowerScalingSus0p8to1p2,
-//                dynamicPowerScalingSus0p5to1p5,
-//                dynamicPowerScalingSus0p5to2
-//                ,
+                spanMethodRws500
+                ,
+                adaptivePowerLawScalingRws194
+                ,
+                adaptivePowerLawScalingRws300
+                ,
+                adaptivePowerLawScalingRws500
+                ,
+                windowScalingRws0,
+                windowScalingRws1,
+                windowScalingRws2,
+                windowScalingRws10,
 
-//                linearScalingSus12,
-//                linearScalingSus14,
-//                linearScalingSus15,
-//                linearScalingSus16,
-//                linearScalingSus18,
-//                linearScalingSus2
-//                ,
-//
-//                maxAvgWorstLinearSus
-//                ,
-//                averageLinearSus
-//                ,
-//                medianLinearSus,
-////
-//                sigmaTruncationSus1,
-//                sigmaTruncationSus2,
-//                sigmaTruncationSus3,
-//                sigmaTruncationSus4,
+                susSelector
+                ,
+                powerScalingSus11
+                ,
+                powerScalingSus12,
+                powerScalingSus15,
+                powerScalingSus2,
+                powerScalingSus3
+                ,
 
-                spanMethodSus5000,
+                dynamicPowerScalingSus0p9to1p1,
+                dynamicPowerScalingSus0p8to1p2,
+                dynamicPowerScalingSus0p5to1p5,
+                dynamicPowerScalingSus0p5to2
+                ,
+
+                linearScalingSus12,
+                linearScalingSus14,
+                linearScalingSus15,
+                linearScalingSus16,
+                linearScalingSus18,
+                linearScalingSus2
+                ,
+
+                maxAvgWorstLinearSus
+                ,
+                averageLinearSus
+                ,
+                medianLinearSus,
+//
+                sigmaTruncationSus1,
+                sigmaTruncationSus2,
+                sigmaTruncationSus3,
+                sigmaTruncationSus4,
+//
+                spanMethodSus5000
+                ,
                 adaptivePowerLawScalingSus5000
-//                ,
-//
-//                windowScalingSus0,
-//                windowScalingSus1,
-//                windowScalingSus2,
-//                windowScalingSus10
+                ,
+
+                windowScalingSus0,
+                windowScalingSus1,
+                windowScalingSus2,
+                windowScalingSus10
         );
     }
 

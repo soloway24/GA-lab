@@ -521,7 +521,7 @@ public class Exporter {
     private void drawPlot(List<? extends Number> x, List<? extends Number> y, String out, String filename) {
         try {
             Plot plot = getPlot(x, y, out, filename);
-            plot.savefig(out + filename + ".png");
+            plot.savefig(out + filename + ".png").dpi(150);
             plot.executeSilently();
         } catch (IOException | PythonExecutionException e) {
             e.printStackTrace();
@@ -535,7 +535,7 @@ public class Exporter {
         try {
             Plot plot = getPlot(x, y, out, filename);
             plot.ylim(minY, maxY);
-            plot.savefig(out + filename + ".png");
+            plot.savefig(out + filename + ".png").dpi(150);
             plot.executeSilently();
         } catch (IOException | PythonExecutionException e) {
             e.printStackTrace();
@@ -571,7 +571,7 @@ public class Exporter {
             plt.legend().loc("center right");
             plt.ylim(minY, maxY);
             plt.title(filename);
-            plt.savefig(out + filename + ".png");
+            plt.savefig(out + filename + ".png").dpi(150);
             plt.executeSilently();
         } catch (IOException | PythonExecutionException e) {
             e.printStackTrace();
@@ -592,7 +592,7 @@ public class Exporter {
             plt.plot().add(x, y1).color("blue").label(secondLabel);
             plt.legend().loc("center right");
             plt.title(filename);
-            plt.savefig(out + filename + ".png");
+            plt.savefig(out + filename + ".png").dpi(150);
             plt.executeSilently();
         } catch (IOException | PythonExecutionException e) {
             e.printStackTrace();
@@ -1568,7 +1568,7 @@ public class Exporter {
 
             double dist = (maxX - minX) / 10.0;
             plt.xlim(minX - dist, maxX + dist);
-            plt.savefig(out + filename + ".png");
+            plt.savefig(out + filename + ".png").dpi(150);
 
             plt.executeSilently();
         } catch (IOException | PythonExecutionException e) {
@@ -1594,7 +1594,7 @@ public class Exporter {
 
             double dist = (maxX - minX) / 10.0;
             plt.xlim(minX - dist, maxX + dist);
-            plt.savefig(out + filename + ".png");
+            plt.savefig(out + filename + ".png").dpi(150);
 
             plt.executeSilently();
         } catch (IOException | PythonExecutionException e) {

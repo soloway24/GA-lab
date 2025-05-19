@@ -39,9 +39,7 @@ public class SpanMethodSelector {
     private <T extends Number> double scale(T fitness, SelectionContext selectionContext) {
         double fAvg = getAverageFitness(selectionContext.getIndividualToFitness());
         double sigmaF = getStandardDeviation(selectionContext.getIndividualToFitness().values(), fAvg);
-        // TODO should be + 1 ?
         int g = ofNullable(selectionContext.getNi())
-                .map(ni -> ni + 1)
                 .orElseThrow(() -> new IllegalArgumentException("Ni value is not present in span method selector."));
         double t = 15.0 * g / G - 10;
         double W = 20 - 16 * (1 / (1 + pow(Math.E, -t)));
