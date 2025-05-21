@@ -56,7 +56,7 @@ public interface FitnessFunction<ARG_T extends Number, RES_T extends Number> {
         return false;
     }
 
-    default Optional<Integer> getCustomRunPoolSize(SelectorType selectorType) {
+    default Optional<Integer> getCustomRunPoolSize(SelectorType selectorType, OperatorType operatorType) {
         return empty();
     }
 

@@ -2,10 +2,8 @@ package lab.operator;
 
 import lab.Individual;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.math3.distribution.BinomialDistribution;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
 import static lab.operator.OperatorType.MUTATION;
@@ -17,7 +15,6 @@ public class MutationOperator implements Operator {
             Pair.of(10, 100), 0.0001,
             Pair.of(100, 100), 0.00001
     );
-    private static final Map<Pair<Integer, Integer>, BinomialDistribution> MUTATION_DISTRIBUTIONS = buildDistributions();
 
     private final Random random = new Random();
 
@@ -45,11 +42,12 @@ public class MutationOperator implements Operator {
         int chromosomeLength = first.getBinaryCode().length();
 
         int totalBits = shuffledParentPool.size() * chromosomeLength;
-        BinomialDistribution binomialDistribution = ofNullable(MUTATION_DISTRIBUTIONS.get(Pair.of(chromosomeLength, shuffledParentPool.size())))
+
+        double probability = ofNullable(MUTATION_PROBABILITIES.get(Pair.of(chromosomeLength, shuffledParentPool.size())))
                 .orElseThrow(() -> new IllegalArgumentException("No mutation distribution config present for chromosome length: "
                         + chromosomeLength + " and population size: " + shuffledParentPool.size()));
 
-        int mutationCount = binomialDistribution.sample();
+        int mutationCount = getMutationCount(totalBits, probability);
         return mutateWithBitCount(shuffledParentPool, chromosomeLength, totalBits, mutationCount);
     }
 
@@ -114,13 +112,5 @@ public class MutationOperator implements Operator {
         return bit == '0'
                 ? '1'
                 : '0';
-    }
-
-    private static Map<Pair<Integer, Integer>, BinomialDistribution> buildDistributions() {
-        return MUTATION_PROBABILITIES.entrySet().stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        entry -> new BinomialDistribution(entry.getKey().getKey() * entry.getKey().getValue(), entry.getValue()))
-                );
     }
 }

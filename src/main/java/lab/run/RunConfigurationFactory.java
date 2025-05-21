@@ -27,7 +27,7 @@ public class RunConfigurationFactory {
     }
 
     private int getRunPoolSize(RunConfiguration runConfiguration) {
-        return runConfiguration.function().getCustomRunPoolSize(runConfiguration.selector().getSelectorType())
+        return runConfiguration.function().getCustomRunPoolSize(runConfiguration.selector().getSelectorType(), runConfiguration.operator().getOperatorType())
                 .orElse(100);
     }
 

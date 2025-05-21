@@ -4,15 +4,16 @@ import lab.Individual;
 import lab.encoding.Encoding;
 import lab.operator.OperatorType;
 import lab.population.PopulationType;
+import lab.selection.SelectorType;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static java.util.Optional.empty;
-import static java.util.Optional.ofNullable;
+import static java.util.Optional.*;
 import static lab.encoding.Encoding.STANDARD;
-import static lab.identifier.ConvergenceIdentifier.*;
+import static lab.identifier.ConvergenceIdentifier.areAllEqualTo;
+import static lab.identifier.ConvergenceIdentifier.areEqualToWithPercentage;
 import static lab.util.MetricUtils.getZeroCount;
 
 public class FhdFunction implements FitnessFunction<Number, Long> {
@@ -114,10 +115,10 @@ public class FhdFunction implements FitnessFunction<Number, Long> {
         return false;
     }
 
-    //    @Override
-//    public List<SelectorType> getUnsupportedSelectorTypes(OperatorType operatorType) {
-//        return operatorType == NONE
-//                ? List.of(SUS)
-//                : List.of();
-//    }
+    @Override
+    public Optional<Integer> getCustomRunPoolSize(SelectorType selectorType, OperatorType operatorType) {
+        return selectorType == SelectorType.SUS && operatorType == OperatorType.MUTATION
+                ? of(10)
+                : of(100);
+    }
 }
