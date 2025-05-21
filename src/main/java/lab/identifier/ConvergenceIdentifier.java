@@ -5,6 +5,7 @@ import lab.operator.OperatorType;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.counting;
@@ -102,7 +103,7 @@ public class ConvergenceIdentifier {
     }
 
     public static boolean isHomogenous(Collection<Individual> individuals, double minPercentage) {
-        Map<Integer, List<Boolean>> indexToBits = new HashMap<>();
+        Map<Integer, List<Boolean>> indexToBits = new ConcurrentHashMap<>();
         individuals.stream()
                 .map(Individual::getBinaryCode)
                 .forEach(binaryCode -> putBits(binaryCode, indexToBits));
@@ -110,7 +111,7 @@ public class ConvergenceIdentifier {
     }
 
     public static boolean isAtLeastOneAlleleHomogenous(Collection<Individual> individuals) {
-        Map<Integer, List<Boolean>> indexToBits = new HashMap<>();
+        Map<Integer, List<Boolean>> indexToBits = new ConcurrentHashMap<>();
         individuals.stream()
                 .map(Individual::getBinaryCode)
                 .forEach(binaryCode -> putBits(binaryCode, indexToBits));

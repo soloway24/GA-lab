@@ -27,7 +27,7 @@ public class Individual {
         this.encoding = encoding;
     }
 
-    public Individual(int index, String binaryCode, Encoding encoding) {
+    public Individual(Integer index, String binaryCode, Encoding encoding) {
         this.index = index;
         this.binaryCode = binaryCode;
         this.encoding = encoding;

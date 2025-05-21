@@ -2,6 +2,7 @@ package lab;
 
 import lab.function.*;
 import lab.function.f.*;
+import lab.operator.MutationOperator;
 import lab.operator.NoneOperator;
 import lab.operator.OnePointCrossoverOperator;
 import lab.operator.Operator;
@@ -69,7 +70,8 @@ public class Main {
             stopWatch.start();
             System.out.println("Running function " + function.getName());
 
-            executor.executeAllParallel(fRunPools);
+//            executor.executeAllParallel(fRunPools);
+            executor.executeAllParallelOld(fRunPools);
 
             stopWatch.stop();
             System.out.println("Time Elapsed: " + stopWatch.getTime() / 1000.0);
@@ -116,32 +118,33 @@ public class Main {
 //        return List.of(exponent1);
 //        return List.of(exponent2);
         return List.of(
-//                fhFunction
+                fhFunction
 //                ,
 //                fhd2Function
 //                ,
 //                fhd10Function
 //                ,
-                fhd100Function
-                ,
+//                fhd100Function
+//                ,
+/////
+//                quadraticFunction
+//                ,
+//                quadraticSqrt512Function
+//                ,
+//                exponent025
+//                ,
+//                exponent1
+//                ,
+//                exponent2
+//                ,
 //
-                quadraticFunction
-                ,
-                quadraticSqrt512Function
-                ,
-                exponent025
-                ,
-                exponent1
-                ,
-                exponent2
-                ,
-
-//
-                testSin2,
-                testSin500
-                ,
-                 rastriginFunction,
-                quadratic512Function
+////
+//                testSin2,
+//                testSin500
+//                ,
+//                 rastriginFunction
+//                ,
+//                quadratic512Function
 //                ,
 //                f1
 //                ,
@@ -297,99 +300,103 @@ public class Main {
         AdaptivePowerLawScalingSusSelector AdaptivePowerLawScalingSus10000 = new AdaptivePowerLawScalingSusSelector(adaptivePowerLawScaling10000, susSelector);
 
         return List.of(
-                rwsSelector
-                ,
-                powerScalingRws11,
-                powerScalingRws12,
-                powerScalingRws15,
-                powerScalingRws2,
-                powerScalingRws3,
-                dynamicPowerScalingRws0p9to1p1,
-                dynamicPowerScalingRws0p8to1p2,
-                dynamicPowerScalingRws0p5to1p5,
-                dynamicPowerScalingRws0p5to2,
-                linearScalingRws12
-                ,
-                linearScalingRws14,
-                linearScalingRws15,
-                linearScalingRws16,
-                linearScalingRws18,
-                linearScalingRws2,
-                averageLinearRws,
-                medianLinearRws,
-                maxAvgWorstLinearRws,
-                sigmaTruncationRws1,
-                sigmaTruncationRws2,
-                sigmaTruncationRws3,
-                sigmaTruncationRws4,
-                spanMethodRws194,
-                spanMethodRws300,
-                spanMethodRws500
-                ,
-                adaptivePowerLawScalingRws194
-                ,
-                adaptivePowerLawScalingRws300
-                ,
-                adaptivePowerLawScalingRws500
-                ,
-                windowScalingRws0,
-                windowScalingRws1,
-                windowScalingRws2,
-                windowScalingRws10,
-
+//                rwsSelector
+//                ,
+//                powerScalingRws11,
+//                powerScalingRws12,
+//                powerScalingRws15,
+//                powerScalingRws2,
+//                powerScalingRws3,
+//                dynamicPowerScalingRws0p9to1p1,
+//                dynamicPowerScalingRws0p8to1p2,
+//                dynamicPowerScalingRws0p5to1p5,
+//                dynamicPowerScalingRws0p5to2,
+//                linearScalingRws12
+//                ,
+//                linearScalingRws14,
+//                linearScalingRws15,
+//                linearScalingRws16,
+//                linearScalingRws18,
+//                linearScalingRws2
+//                ,
+//                averageLinearRws,
+//                medianLinearRws,
+//                maxAvgWorstLinearRws,
+//                sigmaTruncationRws1,
+//                sigmaTruncationRws2,
+//                sigmaTruncationRws3,
+//                sigmaTruncationRws4,
+//                spanMethodRws194
+//                ,
+//                spanMethodRws300,
+//                spanMethodRws500
+//                ,
+//                adaptivePowerLawScalingRws194
+//                ,
+//                adaptivePowerLawScalingRws300
+//                ,
+//                adaptivePowerLawScalingRws500
+//                ,
+//                windowScalingRws0,
+//                windowScalingRws1,
+//                windowScalingRws2,
+//                windowScalingRws10,
+//
                 susSelector
-                ,
-                powerScalingSus11
-                ,
-                powerScalingSus12,
-                powerScalingSus15,
-                powerScalingSus2,
-                powerScalingSus3
-                ,
-
-                dynamicPowerScalingSus0p9to1p1,
-                dynamicPowerScalingSus0p8to1p2,
-                dynamicPowerScalingSus0p5to1p5,
-                dynamicPowerScalingSus0p5to2
-                ,
-
-                linearScalingSus12,
-                linearScalingSus14,
-                linearScalingSus15,
-                linearScalingSus16,
-                linearScalingSus18,
-                linearScalingSus2
-                ,
-
-                maxAvgWorstLinearSus
-                ,
-                averageLinearSus
-                ,
-                medianLinearSus,
+//                ,
+//                powerScalingSus11
+//                ,
+//                powerScalingSus12,
+//                powerScalingSus15,
+//                powerScalingSus2,
+//                powerScalingSus3
+//                ,
 //
-                sigmaTruncationSus1,
-                sigmaTruncationSus2,
-                sigmaTruncationSus3,
-                sigmaTruncationSus4,
+//                dynamicPowerScalingSus0p9to1p1,
+//                dynamicPowerScalingSus0p8to1p2,
+//                dynamicPowerScalingSus0p5to1p5,
+//                dynamicPowerScalingSus0p5to2
+//                ,
 //
-                spanMethodSus5000
-                ,
-                adaptivePowerLawScalingSus5000
-                ,
-
-                windowScalingSus0,
-                windowScalingSus1,
-                windowScalingSus2,
-                windowScalingSus10
+//                linearScalingSus12,
+//                linearScalingSus14,
+//                linearScalingSus15,
+//                linearScalingSus16,
+//                linearScalingSus18,
+//                linearScalingSus2
+//                ,
+//
+//                maxAvgWorstLinearSus
+//                ,
+//                averageLinearSus
+//                ,
+//                medianLinearSus,
+//
+//                sigmaTruncationSus1,
+//                sigmaTruncationSus2,
+//                sigmaTruncationSus3,
+//                sigmaTruncationSus4,
+////
+//                spanMethodSus5000
+//                ,
+//                adaptivePowerLawScalingSus5000
+//                ,
+////
+//                windowScalingSus0,
+//                windowScalingSus1,
+//                windowScalingSus2,
+//                windowScalingSus10
         );
     }
 
     private List<Operator> getOperators() {
         Operator noneOperator = new NoneOperator();
         Operator crossoverOperator = new OnePointCrossoverOperator(1);
+        Operator mutationOperator = new MutationOperator();
 //
 //        return List.of(noneOperator);
-        return List.of(crossoverOperator);
+//        return List.of(crossoverOperator);
+        return List.of(mutationOperator);
     }
 
     private List<RunPoolConfiguration> getRunPoolConfigurations(List<FitnessFunction<?, ?>> functions,

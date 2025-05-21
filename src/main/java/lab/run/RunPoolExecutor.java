@@ -220,8 +220,6 @@ public class RunPoolExecutor {
                 SelectionContext selectionContext = buildSelectionContext(selector, individualToFitness, i, worstWindowFs, s0);
 
                 parentPool = selector.select(selectionContext);
-                List<Individual> parentCopies = new ArrayList<>(parentPool);
-                shuffle(parentCopies);
                 offsprings = operator.apply(parentPool);
 
 

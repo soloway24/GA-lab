@@ -12,8 +12,7 @@ import java.util.Optional;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static lab.encoding.Encoding.STANDARD;
-import static lab.identifier.ConvergenceIdentifier.areAllEqualTo;
-import static lab.identifier.ConvergenceIdentifier.areTheSameWithPercentage;
+import static lab.identifier.ConvergenceIdentifier.*;
 import static lab.util.MetricUtils.getZeroCount;
 
 public class FhdFunction implements FitnessFunction<Number, Long> {
@@ -107,7 +106,7 @@ public class FhdFunction implements FitnessFunction<Number, Long> {
             return hasConverged && areAllEqualTo(individualToFitness.keySet(), OPTIMAL_INDIVIDUAL);
         }
 
-        return hasConverged && areTheSameWithPercentage(individualToFitness.keySet(), SAME_PERCENTAGE);
+        return hasConverged && areEqualToWithPercentage(individualToFitness.keySet(), OPTIMAL_INDIVIDUAL, SAME_PERCENTAGE);
     }
 
     @Override

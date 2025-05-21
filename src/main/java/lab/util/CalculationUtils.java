@@ -5,7 +5,9 @@ import lab.Individual;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class CalculationUtils {
 
@@ -80,6 +82,13 @@ public class CalculationUtils {
     public static List<Individual> getIndexedIndividuals(List<Individual> individuals) {
         return IntStream.range(0, individuals.size())
                 .mapToObj(i -> getIndividualWithIndex(individuals.get(i), i + 1))
+                .toList();
+    }
+
+    public static List<Individual> getIndexedIndividuals(Stream<Individual> individuals) {
+        AtomicInteger i = new AtomicInteger(1);
+        return individuals
+                .map(individual -> getIndividualWithIndex(individual, i.getAndIncrement()))
                 .toList();
     }
 

@@ -52,25 +52,25 @@ public class RwsSelector implements Selector {
     private List<Individual> selectRWS(Map<Individual, Double> individualToPercentage) {
         int selectionSize = individualToPercentage.size();
 
+        List<Entry<Individual, Double>> individualToPercentageShuffled = new ArrayList<>(individualToPercentage.entrySet());
+        shuffle(individualToPercentageShuffled);
         return IntStream.range(0, selectionSize)
-                .mapToObj(i -> selectOne(individualToPercentage))
+                .mapToObj(i -> selectOne(individualToPercentageShuffled))
                 .map(Individual::new)
                 .toList();
     }
 
-    private Individual selectOne(Map<Individual, Double> individualToPercentage) {
+    private Individual selectOne(List<Entry<Individual, Double>> individualToPercentageShuffled) {
         double spin = random.nextDouble();
         double currentPercentage = 0;
 
-        List<Entry<Individual, Double>> individualToPercentageShuffled = new ArrayList<>(individualToPercentage.entrySet());
-        shuffle(individualToPercentageShuffled);
         for (Entry<Individual, Double> entry : individualToPercentageShuffled) {
             currentPercentage += entry.getValue();
             if (currentPercentage >= spin) {
                 return entry.getKey();
             }
         }
-        throw new IllegalStateException("Selector " + getName() + " did not find an individual for selection! Individual to percentage: " + individualToPercentage);
+        throw new IllegalStateException("Selector " + getName() + " did not find an individual for selection! Individual to percentage shuffled: " + individualToPercentageShuffled);
     }
 
 }

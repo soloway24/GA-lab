@@ -81,8 +81,8 @@ public class OnePointCrossoverOperator implements Operator {
 
         int length = chromosome1.length();
 
-        StringBuilder offspring1 = new StringBuilder();
-        StringBuilder offspring2 = new StringBuilder();
+        StringBuilder offspring1 = new StringBuilder(length);
+        StringBuilder offspring2 = new StringBuilder(length);
 
         int splitIndex = random.nextInt(1, length - 1);
 

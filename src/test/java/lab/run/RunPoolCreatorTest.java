@@ -60,7 +60,7 @@ class RunPoolCreatorTest {
         );
         runPoolConfigurations = List.of(runPoolConfiguration1, runPoolConfiguration2);
         List<Population> populations = List.of(population1, population2);
-        PopulationPool populationPool = new PopulationPool(populationConfiguration, populations);
+        PopulationPool populationPool = new PopulationPool(populations);
 
         when(populationPoolInitializer.initializePopulationPool(populationConfiguration, MAX_POOL_SIZE)).thenReturn(populationPool);
     }

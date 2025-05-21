@@ -125,11 +125,10 @@ public class PowerFunctionSqrt5_12 implements FitnessFunction<Double, Double> {
         return isSuccessfulRealFunction(this, individualToFitness, hasConverged);
     }
 
-    // TODO why?
-    @Override
-    public Optional<Integer> getCustomRunPoolSize(SelectorType selectorType) {
-        return selectorType == SelectorType.SUS
-                ? of(10)
-                : empty();
-    }
+//    @Override
+//    public Optional<Integer> getCustomRunPoolSize(SelectorType selectorType) {
+//        return selectorType == SelectorType.SUS
+//                ? of(10)
+//                : empty();
+//    }
 }
