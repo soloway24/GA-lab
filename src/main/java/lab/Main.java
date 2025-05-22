@@ -70,8 +70,10 @@ public class Main {
             stopWatch.start();
             System.out.println("Running function " + function.getName());
 
-//            executor.executeAllParallel(fRunPools);
-            executor.executeAllParallelOld(fRunPools);
+            executor.executeAllParallel(fRunPools);
+
+            // Causes Access violation exception sometimes. May be related to Intel processors issues under heavy load.
+//            executor.executeAllParallelOld(fRunPools);
 
             stopWatch.stop();
             System.out.println("Time Elapsed: " + stopWatch.getTime() / 1000.0);
@@ -119,32 +121,33 @@ public class Main {
 //        return List.of(exponent2);
         return List.of(
                 fhFunction
-//                ,
-//                fhd2Function
-//                ,
-//                fhd10Function
-//                ,
-//                fhd100Function
-//                ,
-/////
-//                quadraticFunction
-//                ,
-//                quadraticSqrt512Function
-//                ,
-//                exponent025
-//                ,
-//                exponent1
-//                ,
-//                exponent2
-//                ,
-//
-////
-//                testSin2,
-//                testSin500
-//                ,
-//                 rastriginFunction
-//                ,
-//                quadratic512Function
+                ,
+                fhd2Function
+                ,
+                fhd10Function
+                ,
+                fhd100Function
+                ,
+
+                quadraticFunction
+                ,
+                quadraticSqrt512Function
+                ,
+                exponent025
+                ,
+                exponent1
+                ,
+                exponent2
+                ,
+
+
+                testSin2
+                ,
+                testSin500
+                ,
+                 rastriginFunction
+                ,
+                quadratic512Function
 //                ,
 //                f1
 //                ,
@@ -300,92 +303,92 @@ public class Main {
         AdaptivePowerLawScalingSusSelector AdaptivePowerLawScalingSus10000 = new AdaptivePowerLawScalingSusSelector(adaptivePowerLawScaling10000, susSelector);
 
         return List.of(
-//                rwsSelector
-//                ,
-//                powerScalingRws11,
-//                powerScalingRws12,
-//                powerScalingRws15,
-//                powerScalingRws2,
-//                powerScalingRws3,
-//                dynamicPowerScalingRws0p9to1p1,
-//                dynamicPowerScalingRws0p8to1p2,
-//                dynamicPowerScalingRws0p5to1p5,
-//                dynamicPowerScalingRws0p5to2,
-//                linearScalingRws12
-//                ,
-//                linearScalingRws14,
-//                linearScalingRws15,
-//                linearScalingRws16,
-//                linearScalingRws18,
-//                linearScalingRws2
-//                ,
-//                averageLinearRws,
-//                medianLinearRws,
-//                maxAvgWorstLinearRws,
-//                sigmaTruncationRws1,
-//                sigmaTruncationRws2,
-//                sigmaTruncationRws3,
-//                sigmaTruncationRws4,
-//                spanMethodRws194
-//                ,
-//                spanMethodRws300,
-//                spanMethodRws500
-//                ,
+                rwsSelector
+                ,
+                powerScalingRws11,
+                powerScalingRws12,
+                powerScalingRws15,
+                powerScalingRws2,
+                powerScalingRws3,
+                dynamicPowerScalingRws0p9to1p1,
+                dynamicPowerScalingRws0p8to1p2,
+                dynamicPowerScalingRws0p5to1p5,
+                dynamicPowerScalingRws0p5to2,
+                linearScalingRws12
+                ,
+                linearScalingRws14,
+                linearScalingRws15,
+                linearScalingRws16,
+                linearScalingRws18,
+                linearScalingRws2
+                ,
+                averageLinearRws,
+                medianLinearRws,
+                maxAvgWorstLinearRws,
+                sigmaTruncationRws1,
+                sigmaTruncationRws2,
+                sigmaTruncationRws3,
+                sigmaTruncationRws4,
+                spanMethodRws194
+                ,
+                spanMethodRws300,
+                spanMethodRws500
+                ,
 //                adaptivePowerLawScalingRws194
 //                ,
 //                adaptivePowerLawScalingRws300
 //                ,
 //                adaptivePowerLawScalingRws500
 //                ,
-//                windowScalingRws0,
-//                windowScalingRws1,
-//                windowScalingRws2,
-//                windowScalingRws10,
-//
-//                susSelector
-//                ,
-//                powerScalingSus11
-//                ,
-//                powerScalingSus12,
-//                powerScalingSus15,
-//                powerScalingSus2,
-//                powerScalingSus3
-//                ,
-//
-//                dynamicPowerScalingSus0p9to1p1,
-//                dynamicPowerScalingSus0p8to1p2,
-//                dynamicPowerScalingSus0p5to1p5,
-//                dynamicPowerScalingSus0p5to2
-//                ,
-//
-//                linearScalingSus12,
-//                linearScalingSus14,
-//                linearScalingSus15,
-//                linearScalingSus16,
-//                linearScalingSus18,
-//                linearScalingSus2
-//                ,
-//
-//                maxAvgWorstLinearSus
-//                ,
-//                averageLinearSus
-//                ,
-//                medianLinearSus,
-//
-//                sigmaTruncationSus1,
-//                sigmaTruncationSus2,
-//                sigmaTruncationSus3,
-//                sigmaTruncationSus4,
-////
-//                spanMethodSus5000
-//                ,
+                windowScalingRws0,
+                windowScalingRws1,
+                windowScalingRws2,
+                windowScalingRws10,
+
+                susSelector
+                ,
+                powerScalingSus11
+                ,
+                powerScalingSus12,
+                powerScalingSus15,
+                powerScalingSus2,
+                powerScalingSus3
+                ,
+
+                dynamicPowerScalingSus0p9to1p1,
+                dynamicPowerScalingSus0p8to1p2,
+                dynamicPowerScalingSus0p5to1p5,
+                dynamicPowerScalingSus0p5to2
+                ,
+
+                linearScalingSus12,
+                linearScalingSus14,
+                linearScalingSus15,
+                linearScalingSus16,
+                linearScalingSus18,
+                linearScalingSus2
+                ,
+
+                maxAvgWorstLinearSus
+                ,
+                averageLinearSus
+                ,
+                medianLinearSus,
+
+                sigmaTruncationSus1,
+                sigmaTruncationSus2,
+                sigmaTruncationSus3,
+                sigmaTruncationSus4,
+
+                spanMethodSus5000
+                ,
 //                adaptivePowerLawScalingSus5000
 //                ,
-////
-//                windowScalingSus0,
-//                windowScalingSus1,
-//                windowScalingSus2,
-//                windowScalingSus10
+
+                windowScalingSus0,
+                windowScalingSus1,
+                windowScalingSus2,
+                windowScalingSus10
         );
     }
 

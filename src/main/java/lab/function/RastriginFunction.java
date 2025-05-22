@@ -5,17 +5,18 @@ import lab.encoding.Encoding;
 import lab.identifier.SuccessfulRunIdentifier;
 import lab.operator.OperatorType;
 import lab.population.PopulationType;
+import lab.selection.SelectorType;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.Math.*;
-import static java.util.Optional.of;
-import static java.util.Optional.ofNullable;
+import static java.util.Optional.*;
 import static lab.encoding.Decoder.decode;
 import static lab.encoding.Encoding.GRAY;
 import static lab.encoding.Encoding.STANDARD;
+import static lab.selection.SelectorType.SUS;
 import static lab.util.Constants.PRECISION_BASE;
 import static lab.validators.EncodingSpaceValidator.validateEncodingSpace;
 
@@ -120,10 +121,10 @@ public class RastriginFunction implements FitnessFunction<Double, Double> {
         return SuccessfulRunIdentifier.isSuccessfulRealFunction(this, individualToFitness, hasConverged);
     }
 
-//    @Override
-//    public Optional<Integer> getCustomRunPoolSize(SelectorType selectorType) {
-//        return selectorType == SUS
-//                ? of(10)
-//                : empty();
-//    }
+    @Override
+    public Optional<Integer> getCustomRunPoolSize(SelectorType selectorType, OperatorType operatorType) {
+        return selectorType == SUS && operatorType == OperatorType.MUTATION
+                ? of(20)
+                : empty();
+    }
 }

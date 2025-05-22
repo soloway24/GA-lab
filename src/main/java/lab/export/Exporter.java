@@ -125,6 +125,13 @@ public class Exporter {
         int threads = Math.min(EXPORT_RUN_Q, Runtime.getRuntime().availableProcessors());
         ExecutorService perRunExecutor = Executors.newFixedThreadPool(threads);
 
+        Optional<RunStats> successfulRunStats = allRunStats.stream()
+                .filter(RunStats::isSuc)
+                .findFirst();
+        Optional<RunStats> unsuccessfulRunStats = allRunStats.stream()
+                .filter(runStats -> !runStats.isSuc())
+                .findFirst();
+
         List<Callable<Void>> runTasks = IntStream.range(0, EXPORT_RUN_Q)
                 .mapToObj(i -> (Callable<Void>) () -> {
                     System.out.println("Run I = " + (i + 1) + "/" + EXPORT_RUN_Q);
