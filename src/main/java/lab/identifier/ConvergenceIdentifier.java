@@ -29,16 +29,11 @@ public class ConvergenceIdentifier {
                     ;
         }
         return isHomogenous(individualToFitness.keySet(), HOMOGENOUS_PERCENTAGE)
-                || stoppedEvolving(individualToFitness, prevAvgFs, operatorType);
+                || stoppedEvolving(individualToFitness, prevAvgFs);
     }
 
     private boolean stoppedEvolving(Map<Individual, ? extends Number> individualToFitness,
-                                    Deque<Double> prevAvgFs,
-                                    OperatorType operatorType) {
-        if (operatorType != OperatorType.CROSSOVER) {
-            return false;
-        }
-
+                                    Deque<Double> prevAvgFs) {
         double avgF = getAverage(individualToFitness.values());
         if (prevAvgFs.size() == PREV_AVG_F_SIZE) {
             prevAvgFs.removeFirst();

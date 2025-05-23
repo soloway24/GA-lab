@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import static java.lang.Math.max;
 import static java.util.Collections.shuffle;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.stream.Collectors.toMap;
@@ -48,7 +49,7 @@ public class ScalingSelector {
     public <T extends Number> Map<Individual, Double> getIndividualToScaledFitness(SelectionContext selectionContext,
                                                                                    BiFunction<T, SelectionContext, Double> scalingFunction) {
         Map<Individual, Double> individualToScaledFitness = selectionContext.getIndividualToFitness().entrySet().stream()
-                .collect(toUnmodifiableMap(Entry::getKey, entry -> scalingFunction.apply((T) entry.getValue(), selectionContext)));
+                .collect(toUnmodifiableMap(Entry::getKey, entry -> max(scalingFunction.apply((T) entry.getValue(), selectionContext), 0)));
 
         if (doesNotContainPositiveFitness(individualToScaledFitness)) {
             return getDefaultIndividualToScaledFitness(individualToScaledFitness);

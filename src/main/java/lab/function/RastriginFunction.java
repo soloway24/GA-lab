@@ -113,6 +113,7 @@ public class RastriginFunction implements FitnessFunction<Double, Double> {
         }
 
         return List.of(PopulationType.ZERO_OPTIMAL, PopulationType.ONE_OPTIMAL);
+//        return List.of(PopulationType.ZERO_OPTIMAL);
 //        return List.of(PopulationType.ZERO_OPTIMAL, PopulationType.ONE_OPTIMAL, PopulationType.FIVE_PERCENT_OPTIMAL, PopulationType.TEN_PERCENT_OPTIMAL);
     }
 

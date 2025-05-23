@@ -327,6 +327,8 @@ public class RunPoolExecutor {
             boolean hasConverged = convergenceIdentifier.hasConverged(individualToFitness, prevAvgFs, operator.getOperatorType());
             boolean isSuc = function.isSuccessful(individualToFitness, operator.getOperatorType(), hasConverged);
 
+//            System.out.println("RUN " + (runIndex + 1) + "/" + runPoolSize + ", run pool " + (runPoolIndex + 1) + "/" + runPoolQuantity + " is suc = " + isSuc);
+
             double rrStart = iterationToRR.get(1);
             double rrFin = currentRR;
             double rrAvg = CalculationUtils.getAverage(iterationToRR.values());

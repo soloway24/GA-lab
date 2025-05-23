@@ -116,14 +116,20 @@ public class Executor {
                 int finalPoolIndex = poolIndex;
 
                 completionService.submit(() -> {
-                    RunStats runStats = runPoolExecutor.executeRun(
-                            run,
-                            finalRunIndex,
-                            runCount,
-                            finalPoolIndex,
-                            runPools.size()
-                    );
-                    return new RunStatsWithConfig(runConfiguration, runStats, finalRunIndex, finalPoolIndex);
+                    try {
+                        RunStats runStats = runPoolExecutor.executeRun(
+                                run,
+                                finalRunIndex,
+                                runCount,
+                                finalPoolIndex,
+                                runPools.size()
+                        );
+                        return new RunStatsWithConfig(runConfiguration, runStats, finalRunIndex, finalPoolIndex);
+                    } catch (Exception e) {
+                        System.err.println("Failed to execute run " + run.runConfiguration() + ", run index = " + finalRunIndex + " in pool " + finalPoolIndex
+                                + ". \n Exception: " + e.getMessage());
+                        throw new RuntimeException(e);
+                    }
                 });
 
                 totalSubmitted++;
@@ -164,7 +170,7 @@ public class Executor {
                             System.out.println("EXPORTING RUN POOL TO GENERAL TABLE FINISHED for run pool " + (runStatsWithConfig.runPoolIndex() + 1));
 
                             configToRunStats.remove(runConfiguration);
-                            System.gc(); // encourage cleanup of completed pool
+                            System.gc();
                         }
                     });
                 }
