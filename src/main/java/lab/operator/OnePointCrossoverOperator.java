@@ -2,13 +2,8 @@ package lab.operator;
 
 import lab.Individual;
 import lab.encoding.Encoding;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
+import java.util.*;
 
 import static java.util.Collections.shuffle;
 import static lab.operator.OperatorType.CROSSOVER;
@@ -46,12 +41,12 @@ public class OnePointCrossoverOperator implements Operator {
         List<Individual> parentPoolShuffled = new ArrayList<>(parentPool);
         shuffle(parentPoolShuffled);
 
-        Stream<Pair<Individual, Individual>> pairs = IntStream
-                .iterate(0, i -> i < parentPoolShuffled.size(), i -> i + 2)
-                .mapToObj(i -> Pair.of(parentPoolShuffled.get(i), parentPoolShuffled.get(i + 1)));
-
-        Stream<Individual> crossedIndividuals = pairs
-                .flatMap(pair -> crossover(pair.getLeft(), pair.getRight()).stream());
+        List<Individual> crossedIndividuals = new ArrayList<>(parentPool.size());
+        for (int i = 0; i < parentPoolShuffled.size(); i += 2) {
+            Individual individual1 = parentPoolShuffled.get(i);
+            Individual individual2 = parentPoolShuffled.get(i + 1);
+            crossedIndividuals.addAll(crossover(individual1, individual2));
+        }
 
         return getIndexedIndividuals(crossedIndividuals);
     }
@@ -76,25 +71,36 @@ public class OnePointCrossoverOperator implements Operator {
         Encoding encoding = individual1.getEncoding();
 
         int length = chromosome1.length();
+        int splitIndex = random.nextInt(1, length);
 
-        StringBuilder offspring1 = new StringBuilder(length);
-        StringBuilder offspring2 = new StringBuilder(length);
+        char[] offspring1 = chromosome1.toCharArray();
+        char[] offspring2 = chromosome2.toCharArray();
 
-        int splitIndex = random.nextInt(1, length - 1);
-
-        for (int i = 0; i < length; i++) {
-            if (i < splitIndex) {
-                offspring1.append(chromosome1.charAt(i));
-                offspring2.append(chromosome2.charAt(i));
-            } else {
-                offspring1.append(chromosome2.charAt(i));
-                offspring2.append(chromosome1.charAt(i));
-            }
+        for (int j = splitIndex; j < length; j++) {
+            char temp = offspring1[j];
+            offspring1[j] = offspring2[j];
+            offspring2[j] = temp;
         }
 
         return List.of(
-                new Individual(offspring1.toString(), encoding),
-                new Individual(offspring2.toString(), encoding)
+                new Individual(new String(offspring1), encoding),
+                new Individual(new String(offspring2), encoding)
         );
+    }
+
+    public static void main(String[] args) {
+        OnePointCrossoverOperator operator = new OnePointCrossoverOperator(1);
+
+        List<Individual> individuals = List.of(new Individual("1111111111", Encoding.STANDARD), new Individual("0000000000", Encoding.STANDARD));
+        Map<List<String>, Integer> resultToCount = new HashMap<>();
+        for (int i = 0; i < 10000; i++) {
+            List<String> crossed = operator.apply(individuals).stream().map(Individual::getBinaryCode).toList();
+            if (resultToCount.containsKey(crossed)) {
+                resultToCount.put(crossed, resultToCount.get(crossed) + 1);
+                continue;
+            }
+            resultToCount.put(crossed, 1);
+        }
+        resultToCount.forEach((k, v) -> System.out.println(k + " = " + v));
     }
 }

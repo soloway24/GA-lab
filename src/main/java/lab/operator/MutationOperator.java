@@ -7,6 +7,7 @@ import java.util.*;
 
 import static java.util.Optional.ofNullable;
 import static lab.operator.OperatorType.MUTATION;
+import static lab.util.CalculationUtils.getBinomialMutationCount;
 import static lab.util.CalculationUtils.getIndexedIndividuals;
 
 public class MutationOperator implements Operator {
@@ -43,11 +44,12 @@ public class MutationOperator implements Operator {
 
         int totalBits = shuffledParentPool.size() * chromosomeLength;
 
-        double probability = ofNullable(MUTATION_PROBABILITIES.get(Pair.of(chromosomeLength, shuffledParentPool.size())))
-                .orElseThrow(() -> new IllegalArgumentException("No mutation distribution config present for chromosome length: "
-                        + chromosomeLength + " and population size: " + shuffledParentPool.size()));
+//        double probability = ofNullable(MUTATION_PROBABILITIES.get(Pair.of(chromosomeLength, shuffledParentPool.size())))
+//                .orElseThrow(() -> new IllegalArgumentException("No mutation distribution config present for chromosome length: "
+//                        + chromosomeLength + " and population size: " + shuffledParentPool.size()));
 
-        int mutationCount = getMutationCount(totalBits, probability);
+//        int mutationCount = getMutationCount(totalBits, probability);
+        int mutationCount = getBinomialMutationCount(chromosomeLength, shuffledParentPool.size());
         return mutateWithBitCount(shuffledParentPool, chromosomeLength, totalBits, mutationCount);
     }
 

@@ -1,15 +1,46 @@
 package lab.util;
 
 import lab.Individual;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.math3.distribution.BinomialDistribution;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static java.util.Optional.ofNullable;
+
 public class CalculationUtils {
+
+    private static final Object BINOMIAL_DISTRIBUTION_LOCK = new Object();
+
+    private static final Map<Pair<Integer, Integer>, Double> MUTATION_PROBABILITIES = Map.of(
+            Pair.of(10, 100), 0.0001,
+            Pair.of(100, 100), 0.00001
+    );
+    private static final Map<Pair<Integer, Integer>, BinomialDistribution> MUTATION_DISTRIBUTIONS = buildDistributions();
+
+    private static Map<Pair<Integer, Integer>, BinomialDistribution> buildDistributions() {
+        return MUTATION_PROBABILITIES.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> new BinomialDistribution(entry.getKey().getKey() * entry.getKey().getValue(), entry.getValue()))
+                );
+    }
+
+    public static int getBinomialMutationCount(int chromosomeLength, int populationSize) {
+        synchronized (BINOMIAL_DISTRIBUTION_LOCK) {
+            BinomialDistribution binomialDistribution = ofNullable(MUTATION_DISTRIBUTIONS.get(Pair.of(chromosomeLength, populationSize)))
+                    .orElseThrow(() -> new IllegalArgumentException("No mutation distribution config present for chromosome length: "
+                            + chromosomeLength + " and population size: " + populationSize));
+
+            return binomialDistribution.sample();
+        }
+    }
 
     public static <T extends Number> double getAverageFitness(Map<Individual, T> individualToFitness) {
         return getAverage(individualToFitness.values());
