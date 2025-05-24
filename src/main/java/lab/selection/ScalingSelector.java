@@ -11,6 +11,8 @@ import java.util.Map.Entry;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import static java.lang.Double.isInfinite;
+import static java.lang.Double.isNaN;
 import static java.lang.Math.max;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toUnmodifiableMap;
@@ -62,6 +64,12 @@ public class ScalingSelector {
     }
 
     private boolean doesNotContainPositiveFitness(Map<Individual, Double> individualToScaledFitness) {
+        boolean allNanOrInfinite = individualToScaledFitness.entrySet().stream()
+                .allMatch(entry -> isNaN(entry.getValue()) || isInfinite(entry.getValue()));
+        if (allNanOrInfinite) {
+            return true;
+        }
+
         return individualToScaledFitness.entrySet().stream()
                 .noneMatch(entry -> entry.getValue() > 0);
     }
