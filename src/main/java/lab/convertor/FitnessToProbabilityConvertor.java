@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 
 import static java.lang.Math.abs;
 import static java.util.stream.Collectors.toUnmodifiableMap;
-import static lab.convertor.ValuesAdjuster.getAdjustedIndividualToValue;
 import static lab.util.CalculationUtils.getDoubleValues;
 import static lab.util.CalculationUtils.getValueSum;
 
@@ -34,11 +33,16 @@ public class FitnessToProbabilityConvertor {
         double probabilitySum = getValueSum(getDoubleValues(individualToProbability));
         verifyProbabilitySum(probabilitySum);
 
-        return getAdjustedIndividualToValue(individualToProbability, probabilitySum, VALID_PROBABILITY_SUM);
+        return individualToProbability;
     }
 
     private double getProbability(Entry<Individual, ? extends Number> individual, double fitnessSum) {
-        return individual.getValue().doubleValue() / fitnessSum;
+        double probability = individual.getValue().doubleValue() / fitnessSum;
+        if (probability < 0) {
+            throw new IllegalStateException(ERROR_PREFIX + "Probability of individual " + individual.getKey()
+                    + " is negative ! Fitness = " + individual.getValue() + ", sum = " + fitnessSum + ".");
+        }
+        return probability;
     }
 
     private void verifyProbabilitySum(double probabilitySum) {

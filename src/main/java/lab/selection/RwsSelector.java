@@ -65,6 +65,13 @@ public class RwsSelector implements Selector {
         double currentPercentage = 0;
 
         for (Entry<Individual, Double> entry : individualToPercentageShuffled) {
+            if (entry.getValue() == 0) {
+                continue;
+            }
+            if (entry.getValue() < 0) {
+                System.err.println("RWS: Found negative value " + entry.getValue());
+                continue;
+            }
             currentPercentage += entry.getValue();
             if (currentPercentage >= spin) {
                 return entry.getKey();

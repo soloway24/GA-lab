@@ -16,7 +16,7 @@ import static lab.util.CalculationUtils.*;
 public class ConvergenceIdentifier {
 
     private static final double HOMOGENOUS_PERCENTAGE = 0.99;
-    private static final int PREV_AVG_F_SIZE = 1000;
+    private static final int PREV_AVG_F_SIZE = 10;
     public static final double STOPPED_EVOLVING_EPSILON = 0.0001;
 
     public boolean hasConverged(Map<Individual, ? extends Number> individualToFitness,

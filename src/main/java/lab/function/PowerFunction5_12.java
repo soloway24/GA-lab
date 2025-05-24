@@ -131,10 +131,10 @@ public class PowerFunction5_12 implements FitnessFunction<Double, Double> {
         return isSuccessfulRealFunction(this, individualToFitness, hasConverged);
     }
 
-    @Override
-    public Optional<Integer> getCustomRunPoolSize(SelectorType selectorType, OperatorType operatorType) {
-        return selectorType == SelectorType.SUS && operatorType == OperatorType.MUTATION
-                ? of(20)
-                : empty();
-    }
+//    @Override
+//    public Optional<Integer> getCustomRunPoolSize(SelectorType selectorType, OperatorType operatorType) {
+//        return selectorType == SelectorType.SUS && operatorType == OperatorType.MUTATION
+//                ? of(20)
+//                : empty();
+//    }
 }

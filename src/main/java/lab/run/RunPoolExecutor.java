@@ -49,7 +49,8 @@ import static lab.util.MetricUtils.*;
 @RequiredArgsConstructor
 public class RunPoolExecutor {
 
-    private static final int MAX_ITERATIONS = 10000000;
+    private static final int MAX_ITERATIONS = 1000000;
+//    private static final int MAX_ITERATIONS = 10000000;
     private static final int CONST_SUS_MAX_ITERATIONS = 10000;
 
     private final ConvergenceIdentifier convergenceIdentifier;

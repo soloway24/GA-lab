@@ -122,10 +122,10 @@ public class RastriginFunction implements FitnessFunction<Double, Double> {
         return SuccessfulRunIdentifier.isSuccessfulRealFunction(this, individualToFitness, hasConverged);
     }
 
-    @Override
-    public Optional<Integer> getCustomRunPoolSize(SelectorType selectorType, OperatorType operatorType) {
-        return selectorType == SUS && operatorType == OperatorType.MUTATION
-                ? of(20)
-                : empty();
-    }
+//    @Override
+//    public Optional<Integer> getCustomRunPoolSize(SelectorType selectorType, OperatorType operatorType) {
+//        return selectorType == SUS && operatorType == OperatorType.MUTATION
+//                ? of(20)
+//                : empty();
+//    }
 }

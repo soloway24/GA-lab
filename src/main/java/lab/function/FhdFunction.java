@@ -115,10 +115,10 @@ public class FhdFunction implements FitnessFunction<Number, Long> {
         return false;
     }
 
-    @Override
-    public Optional<Integer> getCustomRunPoolSize(SelectorType selectorType, OperatorType operatorType) {
-        return selectorType == SelectorType.SUS && operatorType == OperatorType.MUTATION
-                ? of(20)
-                : empty();
-    }
+//    @Override
+//    public Optional<Integer> getCustomRunPoolSize(SelectorType selectorType, OperatorType operatorType) {
+//        return selectorType == SelectorType.SUS && operatorType == OperatorType.MUTATION
+//                ? of(20)
+//                : empty();
+//    }
 }

@@ -70,6 +70,13 @@ public class SusSelector implements Selector {
         List<Entry<Individual, Double>> individualToExpectedQuantityShuffled = new ArrayList<>(individualToExpectedQuantity.entrySet());
         shuffle(individualToExpectedQuantityShuffled);
         for (Entry<Individual, Double> entry : individualToExpectedQuantityShuffled) {
+            if (entry.getValue() == 0) {
+                continue;
+            }
+            if (entry.getValue() < 0) {
+                System.err.println("SUS: Found negative value " + entry.getValue());
+                continue;
+            }
             currentQuantity += entry.getValue();
             while (currentQuantity >= spin && selectedQuantity < populationSize) {
                 selected.add(new Individual(entry.getKey()));

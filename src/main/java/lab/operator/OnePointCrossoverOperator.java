@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static java.util.Collections.shuffle;
 import static lab.operator.OperatorType.CROSSOVER;
@@ -45,18 +46,13 @@ public class OnePointCrossoverOperator implements Operator {
         List<Individual> parentPoolShuffled = new ArrayList<>(parentPool);
         shuffle(parentPoolShuffled);
 
-        List<Pair<Individual, Individual>> pairs = IntStream
+        Stream<Pair<Individual, Individual>> pairs = IntStream
                 .iterate(0, i -> i < parentPoolShuffled.size(), i -> i + 2)
-                .mapToObj(i -> Pair.of(parentPoolShuffled.get(i), parentPoolShuffled.get(i + 1)))
-                .toList();
+                .mapToObj(i -> Pair.of(parentPoolShuffled.get(i), parentPoolShuffled.get(i + 1)));
 
-        List<Individual> crossedIndividuals = new ArrayList<>(
-                pairs.stream()
-                        .flatMap(pair -> crossover(pair.getLeft(), pair.getRight()).stream())
-                        .toList()
-        );
+        Stream<Individual> crossedIndividuals = pairs
+                .flatMap(pair -> crossover(pair.getLeft(), pair.getRight()).stream());
 
-        shuffle(crossedIndividuals);
         return getIndexedIndividuals(crossedIndividuals);
     }
 

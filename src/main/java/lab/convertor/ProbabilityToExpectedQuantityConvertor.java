@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 
 import static java.lang.Math.abs;
 import static java.util.stream.Collectors.toUnmodifiableMap;
-import static lab.convertor.ValuesAdjuster.getAdjustedIndividualToValue;
 import static lab.util.CalculationUtils.getDoubleValues;
 import static lab.util.CalculationUtils.getValueSum;
 
@@ -25,7 +24,7 @@ public class ProbabilityToExpectedQuantityConvertor {
         double expectedQuantitySum = getValueSum(getDoubleValues(individualToExpectedQuantity));
         verifyExpectedQuantitySum(expectedQuantitySum, populationSize);
 
-        return getAdjustedIndividualToValue(individualToExpectedQuantity, expectedQuantitySum, populationSize);
+        return individualToExpectedQuantity;
     }
 
     private Map<Individual, Double> getIndividualToExpectedQuantity(Map<Individual, Double> individualToProbability) {

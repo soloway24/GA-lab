@@ -2,10 +2,7 @@ package lab;
 
 import lab.function.*;
 import lab.function.f.*;
-import lab.operator.MutationOperator;
-import lab.operator.NoneOperator;
-import lab.operator.OnePointCrossoverOperator;
-import lab.operator.Operator;
+import lab.operator.*;
 import lab.run.RunConfigurationFactory;
 import lab.run.RunPool;
 import lab.run.RunPoolConfiguration;
@@ -145,9 +142,9 @@ public class Main {
 //                ,
 //                testSin500
 //                ,
-                 rastriginFunction
+//                 rastriginFunction
 //                ,
-//                quadratic512Function
+                quadratic512Function
 //                ,
 //                f1
 //                ,
@@ -314,21 +311,31 @@ public class Main {
 //                dynamicPowerScalingRws0p8to1p2,
 //                dynamicPowerScalingRws0p5to1p5,
 //                dynamicPowerScalingRws0p5to2,
+
 //                linearScalingRws12
 //                ,
-//                linearScalingRws14,
-//                linearScalingRws15,
-//                linearScalingRws16,
+//                linearScalingRws14
+//                ,
+//                linearScalingRws15
+//                ,
+//                linearScalingRws16
+//                ,
 //                linearScalingRws18,
 //                linearScalingRws2
 //                ,
-//                averageLinearRws,
-//                medianLinearRws,
-//                maxAvgWorstLinearRws,
+//                averageLinearRws
+//                ,
+//                medianLinearRws
+//                ,
+//                maxAvgWorstLinearRws
+//                ,
+
 //                sigmaTruncationRws1,
 //                sigmaTruncationRws2,
 //                sigmaTruncationRws3,
-//                sigmaTruncationRws4,
+//                sigmaTruncationRws4
+//                ,
+//
 //                spanMethodRws194
 //                ,
 //                spanMethodRws300
@@ -341,55 +348,59 @@ public class Main {
 //                ,
 //                adaptivePowerLawScalingRws500
 //                ,
-//                windowScalingRws0,
+//                windowScalingRws0
+//                ,
 //                windowScalingRws1,
 //                windowScalingRws2,
 //                windowScalingRws10,
+
+//                susSelector
+//                ,
+//                powerScalingSus11
+//                ,
+//                powerScalingSus12,
+//                powerScalingSus15
+//                ,
+//                powerScalingSus2,
+//                powerScalingSus3
+//                ,
 //
-                susSelector
-                ,
-                powerScalingSus11
-                ,
-                powerScalingSus12,
-                powerScalingSus15,
-                powerScalingSus2,
-                powerScalingSus3
-                ,
+//                dynamicPowerScalingSus0p9to1p1,
+//                dynamicPowerScalingSus0p8to1p2
+//                ,
+//                dynamicPowerScalingSus0p5to1p5,
+//                dynamicPowerScalingSus0p5to2
+//                ,
 
-                dynamicPowerScalingSus0p9to1p1,
-                dynamicPowerScalingSus0p8to1p2,
-                dynamicPowerScalingSus0p5to1p5,
-                dynamicPowerScalingSus0p5to2
-                ,
-
-                linearScalingSus12,
-                linearScalingSus14,
-                linearScalingSus15,
-                linearScalingSus16,
-                linearScalingSus18,
-                linearScalingSus2
-                ,
+                linearScalingSus12
+//                ,
+//                linearScalingSus14,
+//                linearScalingSus15,
+//                linearScalingSus16,
+//                linearScalingSus18,
+//                linearScalingSus2
+//                ,
 //
-                maxAvgWorstLinearSus
-                ,
-                averageLinearSus
-                ,
-                medianLinearSus,
-//
-                sigmaTruncationSus1,
-                sigmaTruncationSus2,
-                sigmaTruncationSus3,
-                sigmaTruncationSus4,
+//                maxAvgWorstLinearSus
+//                ,
+//                averageLinearSus
+//                ,
+//                medianLinearSus,
 
-                spanMethodSus5000
-                ,
-                adaptivePowerLawScalingSus5000
-                ,
+//                sigmaTruncationSus1,
+//                sigmaTruncationSus2,
+//                sigmaTruncationSus3,
+//                sigmaTruncationSus4,
+////
+//                spanMethodSus5000
+//                ,
+//                adaptivePowerLawScalingSus5000
+//                ,
 
-                windowScalingSus0,
-                windowScalingSus1,
-                windowScalingSus2,
-                windowScalingSus10
+//                windowScalingSus0,
+//                windowScalingSus1,
+//                windowScalingSus2,
+//                windowScalingSus10
         );
     }
 
@@ -397,10 +408,12 @@ public class Main {
         Operator noneOperator = new NoneOperator();
         Operator crossoverOperator = new OnePointCrossoverOperator(1);
         Operator mutationOperator = new MutationOperator();
+        Operator crossoverMutationOperator = new CrossoverMutationOperator(crossoverOperator, mutationOperator);
 //
 //        return List.of(noneOperator);
 //        return List.of(crossoverOperator);
         return List.of(mutationOperator);
+//        return List.of(crossoverMutationOperator);
     }
 
     private List<RunPoolConfiguration> getRunPoolConfigurations(List<FitnessFunction<?, ?>> functions,
