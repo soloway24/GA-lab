@@ -5,6 +5,7 @@ import com.github.sh0nk.matplotlib4j.PythonExecutionException;
 import lab.Individual;
 import lab.population.PopulationTimingType;
 import lab.selection.Selector;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -20,12 +21,12 @@ import java.util.stream.Collectors;
 public class SnapshotProbabilityPlotter {
 
     public void plotSelectorProbabilities(
-            Map<Selector, Map<PopulationTimingType, Map<Individual, Double>>> selectorToProbabilities,
+            Map<Selector, Map<PopulationTimingType, Pair<String, Map<Individual, Double>>>> selectorToProbabilities,
             Path baseParserPath
     ) throws IOException, PythonExecutionException {
 
         // Replace 'stats_v2' with 'probabilities' in the path
-        Path outputDir = replaceFirstDir(baseParserPath, "stats_v2", "probabilities");
+        Path outputDir = replaceFirstDir(baseParserPath, "population_snapshots", "probabilities");
 
         // Ensure the directory exists
         Files.createDirectories(outputDir);
@@ -36,11 +37,11 @@ public class SnapshotProbabilityPlotter {
             plt.xlabel("Individual Index (sorted)");
             plt.ylabel("Probability");
 
-            for (Map.Entry<Selector, Map<PopulationTimingType, Map<Individual, Double>>> selectorEntry : selectorToProbabilities.entrySet()) {
+            for (Map.Entry<Selector, Map<PopulationTimingType, Pair<String, Map<Individual, Double>>>> selectorEntry : selectorToProbabilities.entrySet()) {
                 Selector selector = selectorEntry.getKey();
-                Map<PopulationTimingType, Map<Individual, Double>> timingMap = selectorEntry.getValue();
+                Map<PopulationTimingType, Pair<String, Map<Individual, Double>>> timingMap = selectorEntry.getValue();
 
-                Map<Individual, Double> probabilities = timingMap.get(timing);
+                Map<Individual, Double> probabilities = timingMap.get(timing).getValue();
                 if (probabilities == null) continue;
 
                 List<Double> sortedProbs = probabilities.values().stream()
@@ -54,13 +55,15 @@ public class SnapshotProbabilityPlotter {
 
                 plt.plot()
                         .add(x, sortedProbs)
-                        .label(selector.getFullName())
+                        .label(timingMap.get(timing).getKey())
                         .linestyle("-")
                         .linewidth(2.0);
             }
 
             plt.legend().loc("best");
-            plt.savefig(outputDir.resolve("selector_probs_" + timing + ".png").toString()).dpi(150);
+            String outputFilePath = outputDir.resolve("selector_probs_" + timing + ".png").toString().replace("\\", "/");
+            plt.savefig(outputFilePath).dpi(150);
+
             plt.executeSilently(); // No GUI popup
         }
     }
@@ -81,6 +84,6 @@ public class SnapshotProbabilityPlotter {
                 parts.add(name);
             }
         }
-        return Paths.get("", parts.toArray(new String[0])).getParent(); // exclude 'population_snapshots'
+        return Paths.get("", parts.toArray(new String[0]));
     }
 }

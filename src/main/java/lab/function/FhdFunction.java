@@ -50,7 +50,7 @@ public class FhdFunction implements FitnessFunction<Number, Long> {
 
     @Override
     public Long getMinFitness() {
-        return 0L;
+        return 100L;
     }
 
     @Override

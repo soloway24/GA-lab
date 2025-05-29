@@ -30,7 +30,7 @@ public class SnapshotParser {
     private static final String FITNESS_HEADER = "Fitness";
 
     public static void main(String[] args) {
-        Path basePath = Paths.get("stats_v2/plots/FH/100/RWS/NONE/ONE_OPTIMAL/STANDARD/1/population_snapshots");
+        Path basePath = Paths.get("stats_none/plots/FH/100/NONE/ONE_OPTIMAL/STANDARD/RWS/success (1)/population_snapshots");
         int populationSize = 100;
         SnapshotParser snapshotParser = new SnapshotParser();
 
